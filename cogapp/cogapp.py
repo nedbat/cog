@@ -333,15 +333,16 @@ class Cog(Redirectable):
 
         sFileIn = fname or ''
         sFileOut = fname or ''
+        fInToClose = fOutToClose = None
         # Convert filenames to files.
         if isinstance(fIn, types.StringTypes):
             # Open the input file.
             sFileIn = fIn
-            fIn = open(fIn, 'r')
+            fIn = fInToClose = open(fIn, 'r')
         if isinstance(fOut, types.StringTypes):
             # Open the output file.
             sFileOut = fOut
-            fOut = open(fOut, self.sOutputMode)
+            fOut = fOutToClose = open(fOut, self.sOutputMode)
 
         fIn = NumberedFileReader(fIn)
         
@@ -478,6 +479,11 @@ class Cog(Redirectable):
 
         if not bSawCog and self.options.bWarnEmpty:
             self.showWarning("no cog code found in %s" % sFileIn)
+
+        if fInToClose:
+            fInToClose.close()
+        if fOutToClose:
+            fOutToClose.close()
 
     # A regex for non-empty lines, used by suffixLines.
     reNonEmptyLines = re.compile("^\s*\S+.*$", re.MULTILINE)
