@@ -1,15 +1,23 @@
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2008, Ned Batchelder.
+    Copyright 2004-2009, Ned Batchelder.
 """
 
 # $Id: cogapp.py 141 2008-05-22 10:56:43Z nedbat $
 
-import md5, os, re, string, sys, traceback, types
+import os, re, string, sys, traceback, types
 import imp, compiler
 import copy, getopt, shlex
 from cStringIO import StringIO
+
+# The recommended way to compute md5's changed in Python 2.5
+try:
+    import hashlib
+    hash_factory = hashlib.md5
+except ImportError:
+    import md5
+    hash_factory = md5.new
 
 __all__ = ['Cog', 'CogUsageError']
 
@@ -414,7 +422,7 @@ class Cog(Redirectable):
             
             # Eat all the lines in the output section.  While reading past
             # them, compute the md5 hash of the old output.
-            hasher = md5.new()
+            hasher = hash_factory()
             while l and not self.isEndOutputLine(l):
                 if self.isBeginSpecLine(l):
                     raise CogError("Unexpected '%s'" % self.sBeginSpec,
@@ -433,7 +441,7 @@ class Cog(Redirectable):
 
             # Write the output of the spec to be the new output if we're 
             # supposed to generate code.
-            hasher = md5.new()
+            hasher = hash_factory()
             if not self.options.bNoGenerate:
                 sFile = "%s+%d" % (sFileIn, firstLineNum)
                 sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
