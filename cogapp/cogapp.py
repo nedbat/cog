@@ -700,3 +700,5 @@ class Cog(Redirectable):
 #               Alexander Belchenko.
 # 20080522: It's now ok to have -d with output to stdout, and now we validate
 #               the args after each line of an @file.
+# 20090520: Use hashlib where it's available, to avoid a warning.
+#           Use the builtin compile() instead of compiler, for Jython.
