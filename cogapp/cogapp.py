@@ -7,7 +7,7 @@
 # $Id: cogapp.py 141 2008-05-22 10:56:43Z nedbat $
 
 import os, re, string, sys, traceback, types
-import imp, compiler
+import imp
 import copy, getopt, shlex
 from cStringIO import StringIO
 
@@ -132,7 +132,7 @@ class CogGenerator(Redirectable):
         
         # In Python 2.2, the last line has to end in a newline.
         intext = "import cog\n" + intext + "\n"
-        code = compiler.compile(intext, filename=str(fname), mode='exec')
+        code = compile(intext, str(fname), 'exec')
 
         # Make sure the "cog" module has our state.
         cog.cogmodule.msg = self.msg
