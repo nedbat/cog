@@ -6,6 +6,7 @@
 <what when='20080521T090400'>2.1: -U flag</what>
 <what when='20080522T065300'>More 2.1 stuff</what>
 <what when='20080524T095147'>Add a pointer to the Russian.</what>
+<what when='20090520T061826'>Started the 2.2 list.</what>
 </history>
 
 <docinfo>This document is also available in
@@ -13,6 +14,14 @@
 </docinfo>
 
 <p>These are changes to Cog over time.</p>
+
+<h2>Version 2.2</h2>
+
+<ul>
+<li>Removed a warning about using the no-longer-recommended md5 module.</li>
+<li>Use the compile() builtin rather than the compiler module, which isn't
+available in Jython.</li>
+</ul>
 
 <h2>Version 2.1, May 22 2008</h2>
 
