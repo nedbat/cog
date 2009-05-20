@@ -128,8 +128,8 @@ without a templating system dumbing down your tools for you.</p>
 
 <h1>Installation</h1>
 
-<p>Cog requires Python 2.3 or later.  Depending on the extent of your use,
-you may also need these packages:</p>
+<p>Cog requires Python 2.3 or later, or Jython 2.5.  Python 3.x is not supported.
+Depending on the extent of your use, you may also need these packages:</p>
 
 <ul>
 <li><a href='http://www.jorendorff.com/articles/python/path/'>path</a>, if you will be running the unit tests.</li>
