@@ -344,146 +344,148 @@ class Cog(Redirectable):
             sFileOut = fOut
             fOut = fOutToClose = open(fOut, self.sOutputMode)
 
-        fIn = NumberedFileReader(fIn)
-        
-        bSawCog = False
-        
-        self.cogmodule.inFile = sFileIn
-        self.cogmodule.outFile = sFileOut
-
-        # The globals dict we'll use for this file.
-        if globals is None:
-            globals = {}
-
-        # If there are any global defines, put them in the globals.
-        globals.update(self.options.defines)
-
-        # loop over generator chunks
-        l = fIn.readline()
-        while l:
-            # Find the next spec begin
-            while l and not self.isBeginSpecLine(l):
-                if self.isEndSpecLine(l):
-                    raise CogError("Unexpected '%s'" % self.sEndSpec,
-                        file=sFileIn, line=fIn.linenumber())
-                if self.isEndOutputLine(l):
-                    raise CogError("Unexpected '%s'" % self.sEndOutput,
-                        file=sFileIn, line=fIn.linenumber())
-                fOut.write(l)
-                l = fIn.readline()
-            if not l:
-                break
-            if not self.options.bDeleteCode:
-                fOut.write(l)
-
-            # l is the begin spec
-            gen = CogGenerator()
-            gen.setOutput(stdout=self.stdout)
-            gen.parseMarker(l)
-            firstLineNum = fIn.linenumber()
-            self.cogmodule.firstLineNum = firstLineNum
-
-            # If the spec begin is also a spec end, then process the single
-            # line of code inside.
-            if self.isEndSpecLine(l):
-                beg = string.find(l, self.sBeginSpec)
-                end = string.find(l, self.sEndSpec)
-                if beg > end:
-                    raise CogError("Cog code markers inverted",
-                        file=sFileIn, line=firstLineNum)
-                else:
-                    sCode = l[beg+len(self.sBeginSpec):end].strip()
-                    gen.parseLine(sCode)
-            else:
-                # Deal with an ordinary code block.
-                l = fIn.readline()
+        try:
+            fIn = NumberedFileReader(fIn)
+            
+            bSawCog = False
+            
+            self.cogmodule.inFile = sFileIn
+            self.cogmodule.outFile = sFileOut
     
-                # Get all the lines in the spec
-                while l and not self.isEndSpecLine(l):
-                    if self.isBeginSpecLine(l):
-                        raise CogError("Unexpected '%s'" % self.sBeginSpec,
+            # The globals dict we'll use for this file.
+            if globals is None:
+                globals = {}
+    
+            # If there are any global defines, put them in the globals.
+            globals.update(self.options.defines)
+    
+            # loop over generator chunks
+            l = fIn.readline()
+            while l:
+                # Find the next spec begin
+                while l and not self.isBeginSpecLine(l):
+                    if self.isEndSpecLine(l):
+                        raise CogError("Unexpected '%s'" % self.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
                     if self.isEndOutputLine(l):
                         raise CogError("Unexpected '%s'" % self.sEndOutput,
                             file=sFileIn, line=fIn.linenumber())
-                    if not self.options.bDeleteCode:
-                        fOut.write(l)
-                    gen.parseLine(l)
+                    fOut.write(l)
                     l = fIn.readline()
                 if not l:
-                    raise CogError(
-                        "Cog block begun but never ended.",
-                        file=sFileIn, line=firstLineNum)
-
+                    break
                 if not self.options.bDeleteCode:
                     fOut.write(l)
+    
+                # l is the begin spec
+                gen = CogGenerator()
+                gen.setOutput(stdout=self.stdout)
                 gen.parseMarker(l)
-            
-            l = fIn.readline()
-            
-            # Eat all the lines in the output section.  While reading past
-            # them, compute the md5 hash of the old output.
-            hasher = hash_factory()
-            while l and not self.isEndOutputLine(l):
-                if self.isBeginSpecLine(l):
-                    raise CogError("Unexpected '%s'" % self.sBeginSpec,
-                        file=sFileIn, line=fIn.linenumber())
+                firstLineNum = fIn.linenumber()
+                self.cogmodule.firstLineNum = firstLineNum
+    
+                # If the spec begin is also a spec end, then process the single
+                # line of code inside.
                 if self.isEndSpecLine(l):
-                    raise CogError("Unexpected '%s'" % self.sEndSpec,
-                        file=sFileIn, line=fIn.linenumber())
-                hasher.update(l)
-                l = fIn.readline()
-            curHash = hasher.hexdigest()
-
-            if not l and not self.options.bEofCanBeEnd:
-                # We reached end of file before we found the end output line.
-                raise CogError("Missing '%s' before end of file." % self.sEndOutput,
-                    file=sFileIn, line=fIn.linenumber())
-
-            # Write the output of the spec to be the new output if we're 
-            # supposed to generate code.
-            hasher = hash_factory()
-            if not self.options.bNoGenerate:
-                sFile = "%s+%d" % (sFileIn, firstLineNum)
-                sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
-                sGen = self.suffixLines(sGen)
-                hasher.update(sGen)
-                fOut.write(sGen)
-            newHash = hasher.hexdigest()
-            
-            bSawCog = True
-            
-            # Write the ending output line
-            hashMatch = self.reEndOutput.search(l)
-            if self.options.bHashOutput:
-                if hashMatch:
-                    oldHash = hashMatch.groupdict()['hash']
-                    if oldHash != curHash:
-                        raise CogError("Output has been edited! Delete old checksum to unprotect.",
-                            file=sFileIn, line=fIn.linenumber())
-                    # Create a new end line with the correct hash.
-                    endpieces = l.split(hashMatch.group(0), 1)
+                    beg = string.find(l, self.sBeginSpec)
+                    end = string.find(l, self.sEndSpec)
+                    if beg > end:
+                        raise CogError("Cog code markers inverted",
+                            file=sFileIn, line=firstLineNum)
+                    else:
+                        sCode = l[beg+len(self.sBeginSpec):end].strip()
+                        gen.parseLine(sCode)
                 else:
-                    # There was no old hash, but we want a new hash.
-                    endpieces = l.split(self.sEndOutput, 1)
-                l = (self.sEndFormat % newHash).join(endpieces)
-            else:
-                # We don't want hashes output, so if there was one, get rid of
-                # it.
-                if hashMatch:
-                    l = l.replace(hashMatch.groupdict()['hashsect'], '', 1)
-                    
-            if not self.options.bDeleteCode:
-                fOut.write(l)
-            l = fIn.readline()
+                    # Deal with an ordinary code block.
+                    l = fIn.readline()
+        
+                    # Get all the lines in the spec
+                    while l and not self.isEndSpecLine(l):
+                        if self.isBeginSpecLine(l):
+                            raise CogError("Unexpected '%s'" % self.sBeginSpec,
+                                file=sFileIn, line=fIn.linenumber())
+                        if self.isEndOutputLine(l):
+                            raise CogError("Unexpected '%s'" % self.sEndOutput,
+                                file=sFileIn, line=fIn.linenumber())
+                        if not self.options.bDeleteCode:
+                            fOut.write(l)
+                        gen.parseLine(l)
+                        l = fIn.readline()
+                    if not l:
+                        raise CogError(
+                            "Cog block begun but never ended.",
+                            file=sFileIn, line=firstLineNum)
+    
+                    if not self.options.bDeleteCode:
+                        fOut.write(l)
+                    gen.parseMarker(l)
+                
+                l = fIn.readline()
+                
+                # Eat all the lines in the output section.  While reading past
+                # them, compute the md5 hash of the old output.
+                hasher = hash_factory()
+                while l and not self.isEndOutputLine(l):
+                    if self.isBeginSpecLine(l):
+                        raise CogError("Unexpected '%s'" % self.sBeginSpec,
+                            file=sFileIn, line=fIn.linenumber())
+                    if self.isEndSpecLine(l):
+                        raise CogError("Unexpected '%s'" % self.sEndSpec,
+                            file=sFileIn, line=fIn.linenumber())
+                    hasher.update(l)
+                    l = fIn.readline()
+                curHash = hasher.hexdigest()
+    
+                if not l and not self.options.bEofCanBeEnd:
+                    # We reached end of file before we found the end output line.
+                    raise CogError("Missing '%s' before end of file." % self.sEndOutput,
+                        file=sFileIn, line=fIn.linenumber())
+    
+                # Write the output of the spec to be the new output if we're 
+                # supposed to generate code.
+                hasher = hash_factory()
+                if not self.options.bNoGenerate:
+                    sFile = "%s+%d" % (sFileIn, firstLineNum)
+                    sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
+                    sGen = self.suffixLines(sGen)
+                    hasher.update(sGen)
+                    fOut.write(sGen)
+                newHash = hasher.hexdigest()
+                
+                bSawCog = True
+                
+                # Write the ending output line
+                hashMatch = self.reEndOutput.search(l)
+                if self.options.bHashOutput:
+                    if hashMatch:
+                        oldHash = hashMatch.groupdict()['hash']
+                        if oldHash != curHash:
+                            raise CogError("Output has been edited! Delete old checksum to unprotect.",
+                                file=sFileIn, line=fIn.linenumber())
+                        # Create a new end line with the correct hash.
+                        endpieces = l.split(hashMatch.group(0), 1)
+                    else:
+                        # There was no old hash, but we want a new hash.
+                        endpieces = l.split(self.sEndOutput, 1)
+                    l = (self.sEndFormat % newHash).join(endpieces)
+                else:
+                    # We don't want hashes output, so if there was one, get rid of
+                    # it.
+                    if hashMatch:
+                        l = l.replace(hashMatch.groupdict()['hashsect'], '', 1)
+                        
+                if not self.options.bDeleteCode:
+                    fOut.write(l)
+                l = fIn.readline()
+    
+            if not bSawCog and self.options.bWarnEmpty:
+                self.showWarning("no cog code found in %s" % sFileIn)
+        finally:
+            if fInToClose:
+                fInToClose.close()
+            if fOutToClose:
+                fOutToClose.close()
 
-        if not bSawCog and self.options.bWarnEmpty:
-            self.showWarning("no cog code found in %s" % sFileIn)
-
-        if fInToClose:
-            fInToClose.close()
-        if fOutToClose:
-            fOutToClose.close()
 
     # A regex for non-empty lines, used by suffixLines.
     reNonEmptyLines = re.compile("^\s*\S+.*$", re.MULTILINE)

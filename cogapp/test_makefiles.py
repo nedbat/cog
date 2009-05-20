@@ -71,8 +71,9 @@ class SimpleTests(unittest.TestCase):
         cont0 = "I am bar.txt"
         d = { fname: cont0 }
         makefiles.makeFiles(d, self.tempdir)
-        cont1 = file(os.path.join(self.tempdir, fname)).read()
-        assert(cont1 == cont0)
+        fcont1 = file(os.path.join(self.tempdir, fname))
+        assert(fcont1.read() == cont0)
+        fcont1.close()
 
     def testDedent(self):
         fname = 'dedent.txt'
@@ -84,8 +85,9 @@ class SimpleTests(unittest.TestCase):
                     """
               }
         makefiles.makeFiles(d, self.tempdir)
-        cont = file(os.path.join(self.tempdir, fname)).read()
-        assert(cont == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
+        fcont = file(os.path.join(self.tempdir, fname))
+        assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
+        fcont.close()
 
     def testRawContents(self):
         fname = 'bar.txt'
@@ -93,12 +95,14 @@ class SimpleTests(unittest.TestCase):
         d = { fname: cont0 }
         # Making them regular doesn't keep the contents identical.
         makefiles.makeFiles(d, self.tempdir, raw=False)
-        cont1 = file(os.path.join(self.tempdir, fname), "rb").read()
-        assert(cont1 != cont0)
+        fcont1 = file(os.path.join(self.tempdir, fname), "rb")
+        assert(fcont1.read() != cont0)
+        fcont1.close()
         # Making them raw keeps all the bytes identical.
         makefiles.makeFiles(d, self.tempdir, raw=True)
-        cont1 = file(os.path.join(self.tempdir, fname), "rb").read()
-        assert(cont1 == cont0)
+        fcont2 = file(os.path.join(self.tempdir, fname), "rb")
+        assert(fcont2.read() == cont0)
+        fcont2.close()
 
 
 if __name__ == '__main__':      #pragma: no cover

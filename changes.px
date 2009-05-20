@@ -19,9 +19,9 @@
 
 <ul>
 <li>Removed a warning about using the no-longer-recommended md5 module.</li>
-<li>Use the compile() builtin rather than the compiler module, which isn't
-available in Jython.</li>
+<li>Jython 2.5 is now supported.</li>
 </ul>
+
 
 <h2>Version 2.1, May 22 2008</h2>
 
