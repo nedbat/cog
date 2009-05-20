@@ -589,7 +589,10 @@ class Cog(Redirectable):
     def processFileList(self, sFileList):
         """ Process the files in a file list.
         """
-        for l in open(sFileList).readlines():
+        flist = open(sFileList)
+        lines = flist.readlines()
+        flist.close()
+        for l in lines:
             # Use shlex to parse the line like a shell.
             lex = shlex.shlex(l, posix=True)
             lex.whitespace_split = True
@@ -708,3 +711,4 @@ class Cog(Redirectable):
 #               the args after each line of an @file.
 # 20090520: Use hashlib where it's available, to avoid a warning.
 #           Use the builtin compile() instead of compiler, for Jython.
+#           Explicitly close files we opened, Jython likes this.
