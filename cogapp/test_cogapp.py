@@ -1,7 +1,7 @@
 """ Test cogapp.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2008, Ned Batchelder.
+    Copyright 2004-2009, Ned Batchelder.
 """
 
 # $Id: test_cogapp.py 141 2008-05-22 10:56:43Z nedbat $
