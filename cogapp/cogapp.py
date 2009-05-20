@@ -21,7 +21,7 @@ except ImportError:
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.1.20080522'       # History at the end of the file.
+__version__ = '2.2'       # History at the end of the file.
 
 usage = """\
 cog - generate code with inlined Python code.

@@ -10,7 +10,7 @@
 from distutils.core import setup
 setup(
     name = 'cog',
-    version = '2.1',
+    version = '2.2',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
