@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Id: index.px 143 2008-05-24 14:59:47Z nedbat $ -->
+<page title='Cog'>
+<section title='Cog' order='50'/>
+<history>
+<!-- Actually created 20040208, but not posted until the 10th. -->
+<what when='20040210T200100'>Created.</what>
+<what when='20040321T000000'>Version 1.1.</what>
+<what when='20040515T204000'>Minor edits for clarity.</what>
+<what when='20040605T140000'>Updated to cog 1.11, added a See Also section, and fixed a sample.</what>
+<what when='20040621T221600'>Updated to cog 1.12.</what>
+<what when='20041229T203300'>Updated to cog 1.2.</what>
+<what when='20041230T172100'>Updated to cog 1.3.</what>
+<what when='20050225T191900'>Updated to cog 1.4.</what>
+<what when='20050517T063000'>Added links to other Cog implementations.</what>
+<what when='20050828T125100'>Added links to 2.0 beta 2.</what>
+<what when='20051006T220000'>Updating for 2.0.</what>
+<what when='20060205T090500'>Added PCG.</what>
+<what when='20060214T195400'>Added an explicit mention of the license: MIT.</what>
+<what when='20060810T081800'>Added links to 3rd-party packages.</what>
+<what when='20070720T080700'>Clarified -D value types, and fixed a 3rd-party link.</what>
+<what when='20080318T081200'>Tried to explain better about indentation, and fixed an incorrect parameter name.</what>
+<what when='20080521T085800'>Added -U switch from Alexander Belchenko.</what>
+<what when='20080524T092000'>Fixed the russian pointer to be to a current document.</what>
+</history>
+
+<docinfo>This document is also available in
+<a href='code/cog/index_ru.html'>Russian</a>.
+</docinfo>
+
+<p>Cog is a code generation tool.  It lets you use pieces of Python code
+as generators in your source files to generate whatever code you need.</p>
+
+<p>The sections below are:</p>
+
+<h1links/>
+
+<!-- ================================================================= -->
+
+<h1>What does it do?</h1>
+
+<p>Cog transforms files in a very simple way: it finds chunks of Python code
+embedded in them, executes the Python code, and inserts its output back
+into the original file.
+The file can contain whatever text you like around the Python code.
+It will usually be source code.</p>
+
+<p>For example, if you run this file through cog:</p>
+
+<code><![CDATA[
+// This is my C++ file.
+...
+/*[[[cog
+import cog
+fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+for fn in fnames:
+    cog.outl("void %s();" % fn)
+]]]*/
+//[[[end]]]
+...
+]]></code>
+
+<p>it will come out like this:</p>
+
+<code><![CDATA[
+// This is my C++ file.
+...
+/*[[[cog
+import cog
+fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+for fn in fnames:
+    cog.outl("void %s();" % fn)
+]]]*/
+void DoSomething();
+void DoAnotherThing();
+void DoLastThing();
+//[[[end]]]
+...
+]]></code>
+
+<p>Lines with triple square brackets are delimiter lines.
+The lines between <b>[[[cog</b> and <b>]]]</b> are the generator Python code.
+The lines between <b>]]]</b> and <b>[[[end]]]</b> are the output from
+the generator.</p>
+
+<p>When cog runs, it discards the last generated Python output,
+executes the generator Python code,
+and writes its generated output into the file.
+All text lines outside of the special markers are passed through unchanged.
+</p>
+
+<p>The cog marker lines can contain any text in addition to the triple square bracket
+tokens.  This makes it possible to hide the generator Python code from the source file.
+In the sample above, the entire chunk of Python code is a C++ comment, so the
+Python code can be left in place while the file is treated as C++ code.</p>
+
+
+<!-- ================================================================= -->
+
+<h1>Design</h1>
+
+<p>Cog is designed to be easy to run.
+It writes its results back into the original file while
+retaining the code it executed.
+This means cog can be run any number of times on the same file.
+Rather than have a source generator file, and a separate output file, typically
+cog is run with one file serving as both generator and output.</p>
+
+<p>Because the marker lines accommodate any language syntax, the markers
+can hide the cog Python code from the source file.
+This means cog files can be checked into source control
+without worrying about keeping the source files separate from the output
+files, without modifying build procedures, and so on.</p>
+
+<p>I experimented with using a templating engine for generating code,
+and found myself constantly struggling with white space in the generated
+output, and mentally converting from the Python code I could imagine, into
+its templating equivalent.  The advantages of a templating system (that most
+of the code could be entered literally) were lost as the code generation
+tasks became more complex, and the generation process needed more logic.
+</p>
+
+<p>Cog lets you use the full power of Python for code generation,
+without a templating system dumbing down your tools for you.</p>
+
+
+<!-- ================================================================= -->
+
+<h1>Installation</h1>
+
+<p>Cog requires Python 2.3 or later.  Depending on the extent of your use,
+you may also need these packages:</p>
+
+<ul>
+<li><a href='http://www.jorendorff.com/articles/python/path/'>path</a>, if you will be running the unit tests.</li>
+<li><a href='http://pyxml.sourceforge.net/'>PyXML</a> if you will use handyxml.</li>
+</ul>
+
+<p>Cog is installed with a standard Python distutils script:</p>
+
+<ol>
+<li>Download Cog, either:
+
+    <ul>
+    <li><a href='code/cog/cog-2.1.tar.gz'>cog-2.1.tar.gz</a>, or</li>
+    <li><a href='code/cog/cog-2.1.zip'>cog-2.1.zip</a>.</li>
+    </ul>
+
+</li>
+
+<li>Unpack the distribution archive somewhere.</li>
+
+<li>Run the setup.py script that was unpacked:
+
+<code><![CDATA[
+$ python setup.py install
+]]></code>
+
+</li>
+
+</ol>
+
+<p>You should now have cog.py in your Python scripts directory.</p>
+
+<h2>License</h2>
+
+<p>Cog is distributed under the
+<a href='http://www.opensource.org/licenses/mit-license.php'>MIT license</a>.
+Use it to spread goodness through the world.</p>
+
+
+<!-- ================================================================= -->
+
+<h1>Writing the source files</h1>
+
+<p>Source files to be run through cog are mostly just plain text that will
+be passed through untouched.
+The Python code in your source file is standard Python code.
+Any way you want to use Python to generate text to go into your file is fine.
+Each chunk of Python code (between the <b>[[[cog</b> and <b>]]]</b> lines)
+is called a <em>generator</em> and is executed in sequence.</p>
+
+<p>The output area for each generator (between the <b>]]]</b> and <b>[[[end]]]</b>
+lines) is deleted, and the output of running the Python code is inserted in its place.
+To accommodate all source file types, the format of the marker lines is irrelevant.
+If the line contains the special character sequence, the whole line is taken as
+a marker.
+Any of these lines mark the beginning of executable Python code:
+</p>
+
+<code><![CDATA[
+//[[[cog
+/* cog starts now: [[[cog */
+-- [[[cog (this is cog Python code)
+#if 0 // [[[cog
+]]></code>
+
+<p>Cog can also be used in languages without multi-line comments.
+If the marker lines all have the same text before the triple brackets,
+and all the lines in the generator code also have this text as a prefix,
+then the prefixes are removed from all the generator lines before execution.
+For example, in a SQL file, this:</p>
+
+<code><![CDATA[
+--[[[cog
+--   import cog
+--   for table in ['customers', 'orders', 'suppliers']:
+--      cog.outl("drop table %s;" % table)
+--]]]
+--[[[end]]]
+]]></code>
+
+<p>will produce this:</p>
+
+<code><![CDATA[
+--[[[cog
+--   import cog
+--   for table in ['customers', 'orders', 'suppliers']:
+--      cog.outl("drop table %s;" % table)
+--]]]
+drop table customers;
+drop table orders;
+drop table suppliers;
+--[[[end]]]
+]]></code>
+
+<p>Finally, a compact form can be used for single-line generators.
+The begin-code marker and the end-code marker can appear on the same
+line, and all the text between them will be taken as a single Python
+line:</p>
+
+<code><![CDATA[
+// blah blah
+//[[[cog import MyModule as m; m.generateCode() ]]]
+//[[[end]]]
+]]></code>
+
+<p>You can also use this form to simply import a module.  The top-level
+statements in the module can generate the code.</p>
+
+<p>If there are multiple generators in the same file, they are executed
+with the same globals dictionary, so it is as if they were all one Python
+module.</p>
+
+<p>Cog tries to do the right thing with white space.
+Your Python code can be block-indented to match the surrounding text in the
+source file, and cog will re-indent the output to fit as well.
+All of the output for a generator is collected as a block of text, a common
+whitespace prefix is removed, and then the block is indented to match the
+indentation of the cog generator. This means the left-most non-whitespace
+character in your output will have the same indentation as the begin-code
+marker line.  Other lines in your output keep their relative indentation.
+</p>
+
+
+<!-- ================================================================= -->
+
+<h1>The cog module</h1>
+
+<p>A module called cog provides the functions you call to produce output into
+your file.  The functions are:</p>
+
+<dl>
+
+<dt><b>cog.out</b><i>(sOut='' [, dedent=False][, trimblanklines=False])</i></dt>
+<dd>Writes text to the output.</dd>
+<dd><i>sOut</i> is the string to write to the output.</dd>
+<dd>If <i>dedent</i> is True, then common initial white space is removed from the
+lines in <i>sOut</i> before adding them to the output.
+If <i>trimblanklines</i> is True, then an initial and trailing
+blank line are removed from <i>sOut</i> before adding them to the output.
+Together, these option arguments make it easier to use multi-line strings:</dd>
+<code><![CDATA[
+cog.out("""
+    These are lines I
+    want to write into my source file.
+""", dedent=True, trimblanklines=True)
+]]></code>
+
+<dt><b>cog.outl</b></dt>
+<dd>Same as <b>cog.out</b>, but adds a trailing newline.</dd>
+
+<dt><b>cog.msg</b><i>(msg)</i></dt>
+<dd>Prints <i>msg</i> to stdout with a "Message: " prefix.</dd>
+
+<dt><b>cog.error</b><i>(msg)</i></dt>
+<dd>Raises an exception with <i>msg</i> as the text.
+No traceback is included, so that non-Python programmers using your code
+generators won't be scared.</dd>
+
+<dt><b>cog.inFile</b></dt>
+<dd>An attribute, the path of the input file.</dd>
+
+<dt><b>cog.outFile</b></dt>
+<dd>An attribute, the path of the output file.</dd>
+
+<dt><b>cog.firstLineNum</b></dt>
+<dd>An attribute, the line number of the first line of Python code
+in the generator.  This can be used to distinguish between two
+generators in the same input file, if needed.</dd>
+
+</dl>
+
+<p>Because I use XML data files in my own code generation tasks,
+<a href='code/modules/handyxml.html'>handyxml</a> is included in the cog
+distribution.</p>
+
+
+<!-- ================================================================= -->
+
+<h1>Running cog</h1>
+
+<p>Cog is a command-line utility which takes arguments in standard form.
+</p>
+
+<code><![CDATA[
+cog - generate code with inlined Python code.
+
+cog [OPTIONS] [INFILE | @FILELIST] ...
+
+INFILE is the name of an input file.
+FILELIST is the name of a text file containing file names or
+    other @FILELISTs.
+
+OPTIONS:
+    -c          Checksum the output to protect it against accidental change.
+    -d          Delete the generator code from the output file.
+    -D name=val Define a global string available to your generator code.
+    -e          Warn if a file has no cog code in it.
+    -I PATH     Add PATH to the list of directories for data files and modules.
+    -o OUTNAME  Write the output to OUTNAME.
+    -r          Replace the input file with the output.
+    -s STRING   Suffix all generated output lines with STRING.
+    -U          Write the output with Unix newlines (only LF line-endings).
+    -w CMD      Use CMD if the output file needs to be made writable.
+                    A %s in the CMD will be filled with the filename.
+    -x          Excise all the generated output without running the generators.
+    -z          The [[[end]]] marker can be omitted, and is assumed at eof.
+    -v          Print the version of cog and exit.
+    -h          Print this help.
+]]></code>
+
+<p>Files on the command line are processed as input files.
+Files can also be listed in a text file named on the command line
+with an @:</p>
+
+<code>$ cog @files_to_cog.txt</code>
+
+<p>These @-files can be nested, and each line can contain switches as well
+as a file to process.
+For example, you can create a file cogfiles.txt:
+</p>
+
+<code name='cogfiles.txt'><![CDATA[
+# These are the files I run through cog
+mycode.cpp
+myothercode.cpp
+myschema.sql -s " --**cogged**"
+readme.txt -s ""
+]]></code>
+
+<p>then invoke cog like this:</p>
+
+<code><![CDATA[
+cog -s " //**cogged**" @cogfiles.txt
+]]></code>
+
+<p>Now cog will process four files, using C++ syntax for markers on all the C++ files,
+SQL syntax for the .sql file, and no markers at all on the readme.txt file.</p>
+
+<p>As another example, cogfiles2.txt could be:</p>
+
+<code name='cogfiles2.txt'><![CDATA[
+template.h -D thefile=data1.xml -o data1.h
+template.h -D thefile=data2.xml -o data2.h
+]]></code>
+
+<p>with cog invoked like this:</p>
+
+<code><![CDATA[
+cog -D version=3.4.1 @cogfiles2.txt
+]]></code>
+
+<p>Cog will process template.h twice, creating both data1.h and data2.h.  Both executions
+would define the variable version as "3.4.1", but the first run would have thefile equal to "data1.xml"
+and the second run would have thefile equal to "data2.xml".</p>
+
+
+<h2>Overwriting files</h2>
+
+<p>The -r flag tells cog to write the output back to the input file.
+If the input file is not writable (for example, because it has not been
+checked out of a source control system),
+a command to make the file writable can be provided with -w:</p>
+
+<code>$ cog -r -w "p4 edit %s" @files_to_cog.txt</code>
+
+
+<h2>Setting globals</h2>
+
+<p>Global values can be set from the command line with the -D flag.
+For example, invoking Cog like this:
+</p>
+
+<code><![CDATA[
+cog -D thefile=fooey.xml mycode.txt
+]]></code>
+
+<p>will run Cog over mycode.txt, but first define a global variable called
+thefile with a value of "fooey.xml". This variable can then be referenced in
+your generator code. You can provide multiple -D arguments on the command line,
+and all will be defined and available.</p>
+
+<p>The value is always interpreted as a Python string, to simplify the problem of quoting.
+This means that:
+</p>
+
+<code><![CDATA[
+cog -D NUM_TO_DO=12
+]]></code>
+
+<p>will define NUM_TO_DO not as the integer 12, but as the string "12", which
+are different and not equal values in Python. Use int(NUM_TO_DO) to get the
+numeric value.</p>
+
+
+<h2>Checksummed output</h2>
+
+<p>If cog is run with the -c flag, then generated output is accompanied by
+a checksum:</p>
+
+<code><![CDATA[
+--[[[cog
+--   import cog
+--   for i in range(10):
+--      cog.out("%d " % i)
+--]]]
+0 1 2 3 4 5 6 7 8 9
+--[[[end]]] (checksum: bd7715304529f66c4d3493e786bb0f1f)
+]]></code>
+
+<p>If the generated code is edited by a misguided developer, the next time cog
+is run, the checksum won't match, and cog will stop to avoid overwriting the
+edited code.</p>
+
+
+<h2>Output line suffixes</h2>
+
+<p>To make it easier to identify generated lines when grepping your source files,
+the -s switch provides a suffix which is appended to every non-blank text line generated by
+Cog.  For example, with this input file (mycode.txt):</p>
+
+<code name='mycode.txt'><![CDATA[
+[[[cog
+cog.outl('Three times:\n')
+for i in range(3):
+    cog.outl('This is line %d' % i)
+]]]
+[[[end]]]
+]]></code>
+
+<p>invoking cog like this:</p>
+
+<code><![CDATA[
+cog -s " //(generated)" mycode.txt
+]]></code>
+
+<p>will produce this output:</p>
+
+<code><![CDATA[
+[[[cog
+cog.outl('Three times:\n')
+for i in range(3):
+    cog.outl('This is line %d' % i)
+]]]
+Three times: //(generated)
+
+This is line 0 //(generated)
+This is line 1 //(generated)
+This is line 2 //(generated)
+[[[end]]]
+]]></code>
+
+
+<h2>Miscellaneous</h2>
+
+<p>The -x flag tells cog to delete the old generated output without running
+the generators.  This lets you remove all the generated output from a source
+file.</p>
+
+<p>The -d flag tells cog to delete the generators from the output file.  This lets
+you generate code in a public file but not have to show the generator to your customers.</p>
+
+<p>The -U flag causes the output file to use pure Unix newlines rather than the
+platform's native line endings.  You can use this on Windows to produce Unix-style
+output files.</p>
+
+<p>The -I flag adds a directory to the path used to find Python modules,
+and to handyxml's search path.</p>
+
+<p>The -z flag lets you omit the [[[end]]] marker line, and it will be assumed at the
+end of the file.</p>
+
+
+<!-- ================================================================= -->
+
+<h1>History</h1>
+
+<p>Cog's change log is on a <a href='code/cog/changes.html'>separate change page</a>.</p>
+
+<!-- ================================================================= -->
+
+<h1>Feedback</h1>
+
+<p>I'd love to hear about your successes or difficulties using cog.
+Comment here, or
+<a href='mailto:ned@nedbatchelder.com?subject=Cog'>send me a note</a>.
+</p>
+
+<!-- ================================================================= -->
+
+<h1>See Also</h1>
+
+<p>There are a handful of other implementations of the ideas in Cog:</p>
+
+<ul>
+<li><a href='http://rubyforge.org/projects/argent/'>Argent</a> is a Ruby implementation.</li>
+<li><a href='http://babylon.idlevice.co.uk/php/precog/'>Precog</a> is a PHP implementation.</li>
+<li><a href='http://www.crazilocks.com/pcg.html'>PCG</a> is a Perl implementation.</li>
+<li><a href='http://sourceforge.net/projects/templarian'>Templarian</a> is a similar tool, also in Python.</li>
+<li><a href='http://www.midwinter.com/~lch/programming/nocog'>Nocog</a> is a build tool to detect files
+that should be run through cog.</li>
+</ul>
+
+<p>You might like to read:</p>
+
+<ul>
+<li><a href='http://pythonology.org/success&amp;story=cog'>Cog: A Code Generation Tool Written in Python</a>,
+the Python Success Story I wrote about Cog.</li>
+
+<li><a href='blog/index.html'>My blog</a>, where I ramble on about software,
+children, and other things that interest me.</li>
+
+</ul>
+
+<!-- ================================================================= -->
+
+<googleads/>
+<pagecomments/>
+
+</page>

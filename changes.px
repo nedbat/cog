@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- $Id: changes.px 143 2008-05-24 14:59:47Z nedbat $ -->
+<page title='Cog Change History'>
+<history>
+<what when='20051006T222500'>Split out from the main page.</what>
+<what when='20080521T090400'>2.1: -U flag</what>
+<what when='20080522T065300'>More 2.1 stuff</what>
+<what when='20080524T095147'>Add a pointer to the Russian.</what>
+</history>
+
+<docinfo>This document is also available in
+<a href='code/cog/changes_ru.html'>Russian</a>.
+</docinfo>
+
+<p>These are changes to Cog over time.</p>
+
+<h2>Version 2.1, May 22 2008</h2>
+
+<ul>
+<li>Added the -U switch to create Unix newlines on Windows.</li>
+<li>Improved argument validation: -d can be used with stdout-destined output,
+and switches are validated for every line of an @file, to prevent bad interactions.</li>
+</ul>
+
+
+<h2>Version 2.0, October 6 2005</h2>
+
+<p><em>Incompatible changes:</em></p>
+
+<ul>
+<li>Python 2.2 is no longer supported.</li>
+<li>In 1.4, you could put some generator code on the [[[cog line
+and some on the ]]] line, to make the generators more compact.
+Unfortunately, this also made it more difficult to seamlessly
+embed those markers in source files of all kinds.
+Now code is only allowed on marker lines when the entire generator is single-line.</li>
+<li>In 1.x, you could leave out the [[[end]]] marker, and it would be
+assumed at the end of the file.  Now that behavior must be enabled with
+a -z switch.  Without the switch, omitting the end marker is an error.</li>
+</ul>
+
+<p>Beneficial changes:</p>
+
+<ul>
+<li>The new -d switch removes all the generator code from the output file
+while running it to generate output (thanks, Blake).</li>
+
+<li>The new -D switch lets you define global string values for the generators.</li>
+
+<li>The new -s switch lets you mark generated output lines with a suffix.</li>
+
+<li>@-files now can have command line switches in addition to file names.</li>
+
+<li>Cog error messages now print without a traceback, and use a format similar
+to compiler error messages, so that clicking the message will likely bring you
+to the spot in your code (thanks, Mike).</li>
+
+<li>New cog method #1: cog.error(msg) will raise an error
+and end processing without creating a scary Python traceback (thanks, Alexander).</li>
+
+<li>New cog method #2: cog.msg(msg) will print the msg to stdout.
+This is better than print because it allows for all cog output to be managed
+through Cog.</li>
+
+<li>The sequence of Cog marker lines is much stricter.  This helps to
+ensure that Cog isn't eating up your precious source code (thanks, Kevin).</li>
+</ul>
+
+
+
+<h2>Version 1.4, February 25 2005</h2>
+
+<ul>
+<li>Added the -x switch to excise generated output.</li>
+<li>Added the -c switch to checksum the generated output.</li>
+</ul>
+
+
+
+<h2>Version 1.3, December 30 2004</h2>
+
+<ul>
+<li>All of the generators in a single file are now run with a common
+globals dictionary, so that state may be carried from one to the next.</li>
+</ul>
+
+
+
+<h2>Version 1.2, December 29 2004</h2>
+
+<ul>
+<li>Added module attributes cog.inFile, cog.outFile, and cog.firstLineNum.</li>
+<li>Made the sOut argument optional in cog.out and cog.outl.</li>
+<li>Added the compact one-line form of cog markers.</li>
+<li>Some warning messages weren't properly printing the file name.</li>
+</ul>
+
+
+
+<h2>Version 1.12, June 21 2004</h2>
+
+<ul>
+<li>Changed all the line endings in the source to the more-portable LF from
+the Windows-only CRLF.</li>
+</ul>
+
+
+
+<h2>Version 1.11, June 5 2004</h2>
+
+<p>Just bug fixes:</p>
+
+<ul>
+<li>Cog's whitespace handling deals correctly with a completely blank line
+(no whitespace at all) in a chunk of Cog code.</li>
+<li>Elements returned by handyxml can now have attributes assigned to them
+after parsing.</li>
+</ul>
+
+
+
+<h2>Version 1.1, March 21 2004</h2>
+
+<ul>
+<li>Now if the cog marker lines and all the lines they contain have the same prefix
+characters, then the prefix is removed from each line.  This allows cog to be used
+with languages that don't support multi-line comments.</li>
+<li>Ensure the last line of the output ends with a newline, or it will merge
+with the end marker, ruining cog's idempotency.</li>
+<li>Add the -v command line option, to print the version.</li>
+<li>Running cog with no options prints the usage help.</li>
+</ul>
+
+
+
+<h2>Version 1.0, February 10 2004</h2>
+
+<p>First version.</p>
+
+
+
+<googleads/>
+<pagecomments/>
+
+</page>
