@@ -6,7 +6,7 @@ clean:
 	-rm -f MANIFEST
 	-rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
 	-rm -f *.pyo */*.pyo */*/*.pyo */*/*/*.pyo
-	-rm -f *$py.class */*$py.class */*/*$py.class */*/*/*$py.class
+	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
 	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 	
 install:
