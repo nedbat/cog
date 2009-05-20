@@ -43,21 +43,8 @@ for t in testmodules:
         # else, just load all the test cases from the module.
         suite.addTest(unittest.defaultTestLoader.loadTestsFromName(t))
 
-use_oob = True
 
-if bCoverage:
-    use_oob = False
-
-if use_oob:
-    try:
-        import testoob
-    except ImportError:
-        use_oob = False
-
-if use_oob:    
-    testoob.main(suite=suite)
-else:
-    unittest.TextTestRunner().run(suite)
+unittest.TextTestRunner().run(suite)
 
 
 modnames = [
