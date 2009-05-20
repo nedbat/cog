@@ -21,7 +21,7 @@ if bCoverage:
 testmodules = [
     'cogapp.test_makefiles',
     'cogapp.test_whiteutils',
-    'handyxml.test_handyxml',
+    #'handyxml.test_handyxml',
     'cogapp.test_cogapp',
     ]
 
@@ -67,7 +67,7 @@ modnames = [
     "cogapp.test_cogapp",
     "cogapp.test_makefiles",
     "cogapp.test_whiteutils",
-    "handyxml.handyxml",
+    #"handyxml.handyxml",
 ]
 
 if bCoverage:
