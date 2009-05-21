@@ -1,12 +1,12 @@
 """ Indentation utilities for Cog.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2005, Ned Batchelder.
+    Copyright 2004-2009, Ned Batchelder.
 """
 
 # $Id: whiteutils.py 110 2005-08-27 22:35:20Z ned $
 
-import re, types
+import re
 
 def whitePrefix(strings):
     """ Determine the whitespace prefix common to all non-blank lines
@@ -35,7 +35,7 @@ def reindentBlock(lines, newIndent=''):
         Remove any common whitespace indentation.
         Re-indent using newIndent, and return it as a single string.
     """
-    if isinstance(lines, types.StringTypes):
+    if isinstance(lines, basestring):
         lines = lines.split('\n')
     oldIndent = whitePrefix(lines)
     outLines = []

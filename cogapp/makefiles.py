@@ -1,12 +1,11 @@
 """ Dictionary-to-filetree functions, to create test files for testing.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2005, Ned Batchelder.
+    Copyright 2004-2009, Ned Batchelder.
 """
 
 # $Id: makefiles.py 135 2008-05-21 12:05:43Z nedbat $
 
-import types
 import path     # Non-standard, from http://www.jorendorff.com/articles/python/path
 from whiteutils import reindentBlock
 
@@ -19,7 +18,7 @@ def makeFiles(d, basedir='.', raw=False):
     dirpath = path.path(basedir)
     for name, contents in d.items():
         child = dirpath / name
-        if isinstance(contents, types.StringTypes):
+        if isinstance(contents, basestring):
             mode = 'w'
             if raw:
                 mode = 'wb'
@@ -40,7 +39,7 @@ def removeFiles(d, basedir='.'):
     dirpath = path.path(basedir)
     for name, contents in d.items():
         child = dirpath / name
-        if isinstance(contents, types.StringTypes):
+        if isinstance(contents, basestring):
             child.remove()
         else:
             removeFiles(contents, child)

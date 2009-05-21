@@ -6,7 +6,7 @@
 
 # $Id: cogapp.py 141 2008-05-22 10:56:43Z nedbat $
 
-import copy, getopt, imp, os, re, shlex, string, sys, traceback, types
+import copy, getopt, imp, os, re, shlex, string, sys, traceback
 from cStringIO import StringIO
 
 # The recommended way to compute md5's changed in Python 2.5
@@ -330,11 +330,11 @@ class Cog(Redirectable):
         sFileOut = fname or ''
         fInToClose = fOutToClose = None
         # Convert filenames to files.
-        if isinstance(fIn, types.StringTypes):
+        if isinstance(fIn, basestring):
             # Open the input file.
             sFileIn = fIn
             fIn = fInToClose = open(fIn, 'r')
-        if isinstance(fOut, types.StringTypes):
+        if isinstance(fOut, basestring):
             # Open the output file.
             sFileOut = fOut
             fOut = fOutToClose = open(fOut, self.sOutputMode)

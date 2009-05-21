@@ -2,12 +2,12 @@
     Make simple XML use convenient.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2005, Ned Batchelder.
+    Copyright 2004-2009, Ned Batchelder.
 """
 
 # $Id: handyxml.py 110 2005-08-27 22:35:20Z ned $
 
-import os.path, sys, types
+import os.path, sys
 
 from xml.dom import EMPTY_NAMESPACE
 from xml.dom import Node
@@ -15,8 +15,6 @@ from xml.dom.ext.reader import PyExpat
 
 __version__ = '1.1.20040127'        # History at the end of the file.
 __all__ = ['path', 'xml', 'xpath']
-
-True, False = (1==1, 1==0)
 
 # Try to use 4Suite for speed.
 bDomlette = False
@@ -124,7 +122,7 @@ def xml(xmlin):
     filename = None
 
     # A string argument is a file name.
-    if isinstance(xmlin, types.StringTypes):
+    if isinstance(xmlin, basestring):
         filename = _findFile(xmlin)
         if not filename:
             raise "Couldn't find XML to parse: %s" % xmlin
@@ -152,7 +150,7 @@ if bXPath:
     def xpath(input, expr):
         """ Evaluate the xpath expression against the input XML.
         """
-        if isinstance(input, types.StringTypes) or hasattr(input, 'read'):
+        if isinstance(input, basestring) or hasattr(input, 'read'):
             # If input is a filename or an open file, then parse the XML.
             input = xml(input)
         return map(HandyXmlWrapper, xml_xpath.Evaluate(expr, input))
