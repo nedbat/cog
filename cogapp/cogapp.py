@@ -50,9 +50,6 @@ OPTIONS:
     -h          Print this help.
 """
 
-# Get True and False right even if they aren't already defined.
-True, False = 0==0, 0==1
-
 # Other package modules
 from whiteutils import *
 
