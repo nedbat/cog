@@ -6,9 +6,7 @@
 
 # $Id: cogapp.py 141 2008-05-22 10:56:43Z nedbat $
 
-import os, re, string, sys, traceback, types
-import imp
-import copy, getopt, shlex
+import copy, getopt, imp, os, re, shlex, string, sys, traceback, types
 from cStringIO import StringIO
 
 # The recommended way to compute md5's changed in Python 2.5
