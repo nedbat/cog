@@ -13,8 +13,8 @@ def whitePrefix(strings):
         in the argument list.
     """
     # Remove all blank lines from the list
-    strings = filter(lambda s: s.strip() != '', strings)
-    
+    strings = [s for s in strings if s.strip() != '']
+
     if not strings: return ''
 
     # Find initial whitespace chunk in the first line.
