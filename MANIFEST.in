@@ -1,4 +1,3 @@
 include README.txt
 recursive-include scripts *.py
 recursive-include cogapp *.py
-recursive-include handyxml *.py

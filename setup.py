@@ -17,7 +17,6 @@ setup(
 
     packages = [
         'cogapp',
-        'handyxml',
         ],
 
     scripts = [

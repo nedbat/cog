@@ -17,6 +17,7 @@
 <h2>Version 2.2</h2>
 
 <ul>
+<li>Removed handyxml: most Cog users don't need it.</li>
 <li>Removed a warning about using the no-longer-recommended md5 module.</li>
 <li>Jython 2.5 is now supported.</li>
 </ul>

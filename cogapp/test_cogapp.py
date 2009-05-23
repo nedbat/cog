@@ -1284,41 +1284,6 @@ class CogIncludeTests(TestCaseWithImports):
         self.cog.callableMain(['argv0', '-r', 'code/test.cog'])
         self.assertFilesSame('code/test.cog', 'code/test.out')
 
-    def testHandyXmlPath(self):
-        if 'handyxml' not in sys.modules:
-            # skip this test
-            return      # pragma: no cover
-        d = {
-            'test.cog': """\
-                //[[[cog
-                    import handyxml
-                    for e in handyxml.xpath('data.xml', './/e'):
-                        cog.outl(e.name)
-                //]]]
-                //[[[end]]]
-                """,
-
-            'test.out': """\
-                //[[[cog
-                    import handyxml
-                    for e in handyxml.xpath('data.xml', './/e'):
-                        cog.outl(e.name)
-                //]]]
-                Hello
-                There
-                //[[[end]]]
-                """,
-
-            'data': {
-                'data.xml': """\
-                    <root><e name='Hello'/><e name='There'/></root>
-                    """
-                }
-            }
-
-        makeFiles(d)
-        self.cog.callableMain(['argv0', '-r', '-I', 'data', 'test.cog'])
-        self.assertFilesSame('test.cog', 'test.out')
 
 class CogTestsInFiles(TestCaseWithTempDir):
     
