@@ -4,8 +4,6 @@
     Copyright 2004-2005, Ned Batchelder.
 """
 
-# $Id: test_makefiles.py 135 2008-05-21 12:05:43Z nedbat $
-
 import unittest                                 # This is a unittest, so this is fundamental.
 import StringIO, shutil, os, random, types, tempfile    # We need these modules to write the tests.
 import makefiles

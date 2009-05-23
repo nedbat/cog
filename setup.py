@@ -5,8 +5,6 @@
     Copyright 2004-2008, Ned Batchelder.
 """
 
-# $Id: setup.py 138 2008-05-21 13:24:40Z nedbat $
-
 from distutils.core import setup
 setup(
     name = 'cog',

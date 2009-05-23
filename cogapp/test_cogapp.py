@@ -4,8 +4,6 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
-# $Id: test_cogapp.py 141 2008-05-22 10:56:43Z nedbat $
-
 import unittest
 import os, random, re, StringIO, stat, sys, tempfile
 import path     # Non-standard, from http://www.jorendorff.com/articles/python/path

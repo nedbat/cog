@@ -5,8 +5,6 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
-# $Id: test_cog.py 110 2005-08-27 22:35:20Z ned $
-
 import unittest, sys
 
 bCoverage = ('-cover' in sys.argv or '--cover' in sys.argv)

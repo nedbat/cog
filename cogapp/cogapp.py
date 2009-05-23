@@ -4,8 +4,6 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
-# $Id: cogapp.py 141 2008-05-22 10:56:43Z nedbat $
-
 import copy, getopt, imp, os, re, shlex, string, sys, traceback
 from cStringIO import StringIO
 

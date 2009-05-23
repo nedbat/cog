@@ -4,8 +4,6 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
-# $Id: makefiles.py 135 2008-05-21 12:05:43Z nedbat $
-
 import path     # Non-standard, from http://www.jorendorff.com/articles/python/path
 from whiteutils import reindentBlock
 
