@@ -16,6 +16,8 @@ setup(
         'Cog: A code generator for executing Python snippets in source files.',
 
     long_description = '''\
+        Docs at `http://nedbatchelder.com/code/cog <http://nedbatchelder.com/code/cog>`_.
+    
         Code repository and issue tracker are at
         `bitbucket.org <http://bitbucket.org/ned/cog>`_.
         ''',

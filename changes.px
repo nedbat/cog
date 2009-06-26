@@ -6,6 +6,7 @@
 <what when='20080522T065300'>More 2.1 stuff</what>
 <what when='20080524T095147'>Add a pointer to the Russian.</what>
 <what when='20090520T061826'>Started the 2.2 list.</what>
+<what when='20090625T211136'>2.2</what>
 </history>
 
 <docinfo>This document is also available in
@@ -14,12 +15,12 @@
 
 <p>These are changes to Cog over time.</p>
 
-<h2>Version 2.2</h2>
+<h2>Version 2.2, June 25 2009</h2>
 
 <ul>
-<li>Removed handyxml: most Cog users don't need it.</li>
-<li>Removed a warning about using the no-longer-recommended md5 module.</li>
 <li>Jython 2.5 is now supported.</li>
+<li>Removed a warning about using the no-longer-recommended md5 module.</li>
+<li>Removed handyxml: most Cog users don't need it.</li>
 </ul>
 
 
