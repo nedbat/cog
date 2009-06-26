@@ -7,13 +7,13 @@
 
 from distutils.core import setup
 setup(
-    name = 'cog',
+    name = 'cogapp',    # Because there's already a Cog in pypi!  :(
     version = '2.2',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
     description = 
-        'A code generator for executing Python snippets in source files.',
+        'Cog: A code generator for executing Python snippets in source files.',
 
     long_description = '''\
         Code repository and issue tracker are at
@@ -21,8 +21,9 @@ setup(
         ''',
 
     classifiers = [
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
-        "Intended Audience :: Developers"
+        "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
