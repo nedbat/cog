@@ -22,8 +22,6 @@ testmodules = [
     'cogapp.test_cogapp',
     ]
 
-print "Testing under:", sys.version
-
 # We don't need to import these modules to run the tests.  But loadTestsFromNames
 # doesn't show import errors.  These imports do.
 exec "import " + ("\nimport ".join(testmodules))

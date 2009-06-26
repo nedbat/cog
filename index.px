@@ -21,6 +21,7 @@
 <what when='20080318T081200'>Tried to explain better about indentation, and fixed an incorrect parameter name.</what>
 <what when='20080521T085800'>Added -U switch from Alexander Belchenko.</what>
 <what when='20080524T092000'>Fixed the russian pointer to be to a current document.</what>
+<what when='20090625T202912'>Removed handyxml, files are now at pypi.</what>
 </history>
 
 <docinfo>This document is also available in
@@ -137,13 +138,7 @@ Depending on the extent of your use, you may also need these packages:</p>
 <p>Cog is installed with a standard Python distutils script:</p>
 
 <ol>
-<li>Download Cog, either:
-
-    <ul>
-    <li><a href='code/cog/cog-2.1.tar.gz'>cog-2.1.tar.gz</a>, or</li>
-    <li><a href='code/cog/cog-2.1.zip'>cog-2.1.zip</a>.</li>
-    </ul>
-
+<li>Download Cog from the <a href='http://pypi.python.org/pypi/cog'>Python Package Index</a>.
 </li>
 
 <li>Unpack the distribution archive somewhere.</li>

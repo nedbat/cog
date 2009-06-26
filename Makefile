@@ -19,10 +19,12 @@ cover: install
 	python scripts/test_cog.py --cover
 
 kit:
-	python setup.py sdist --formats=gztar,zip
+	python setup.py sdist --formats=gztar
+
+pypi:
+	python setup.py register
 
 WEBHOME = c:/ned/web/stellated/pages/code/cog
 
-publish: kit
-	cp -v dist/*.* $(WEBHOME)
+publish: 
 	cp -v *.px $(WEBHOME)
