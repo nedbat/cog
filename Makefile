@@ -8,7 +8,8 @@ clean:
 	-rm -f *.pyo */*.pyo */*/*.pyo */*/*/*.pyo
 	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
 	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-	
+	-rm -f .coverage
+
 install:
 	python setup.py install
 
