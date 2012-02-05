@@ -416,6 +416,31 @@ class CogTestsInMemory(TestCase):
             Cog().processString, (infile)
             )
 
+    def testCogPrevious(self):
+        # Check that we can access the previous run's output.
+        infile = """\
+            [[[cog
+            assert cog.previous == "Hello there!\\n", "WTF??"
+            cog.out(cog.previous)
+            cog.outl("Ran again!")
+            ]]]
+            Hello there!
+            [[[end]]]
+            """
+
+        outfile = """\
+            [[[cog
+            assert cog.previous == "Hello there!\\n", "WTF??"
+            cog.out(cog.previous)
+            cog.outl("Ran again!")
+            ]]]
+            Hello there!
+            Ran again!
+            [[[end]]]
+            """
+
+        infile = reindentBlock(infile)
+        self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
 class CogOptionsTests(TestCase):
     """ Test the CogOptions class.

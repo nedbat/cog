@@ -288,6 +288,10 @@ generators won't be scared.</dd>
 in the generator.  This can be used to distinguish between two
 generators in the same input file, if needed.</dd>
 
+<dt><b>cog.previous</b></dt>
+<dd>An attribute, the text output of the previous run of this
+generator.  This can be used for whatever purpose you like, including
+outputting again with cog.out().
 </dl>
 
 
@@ -522,8 +526,7 @@ that should be run through cog.</li>
 <li><a href='http://pythonology.org/success&amp;story=cog'>Cog: A Code Generation Tool Written in Python</a>,
 the Python Success Story I wrote about Cog.</li>
 
-<li><a href='blog/index.html'>My blog</a>, where I ramble on about software,
-children, and other things that interest me.</li>
+<li><a href='blog/index.html'>My blog</a>, where I ramble on about software and other things that interest me.</li>
 
 </ul>
 

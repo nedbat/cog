@@ -427,6 +427,7 @@ class Cog(Redirectable):
                 
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
+                previous = ""
                 hasher = hashlib.md5()
                 while l and not self.isEndOutputLine(l):
                     if self.isBeginSpecLine(l):
@@ -435,6 +436,7 @@ class Cog(Redirectable):
                     if self.isEndSpecLine(l):
                         raise CogError("Unexpected '%s'" % self.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
+                    previous += l
                     hasher.update(to_bytes(l))
                     l = fIn.readline()
                 curHash = hasher.hexdigest()
@@ -444,6 +446,9 @@ class Cog(Redirectable):
                     raise CogError("Missing '%s' before end of file." % self.sEndOutput,
                         file=sFileIn, line=fIn.linenumber())
     
+                # Make the previous output available to the current code
+                self.cogmodule.previous = previous
+
                 # Write the output of the spec to be the new output if we're 
                 # supposed to generate code.
                 hasher = hashlib.md5()
