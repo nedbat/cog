@@ -4,16 +4,10 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
-import copy, getopt, imp, os, re, shlex, string, sys, traceback
-from cStringIO import StringIO
+from __future__ import absolute_import, print_function
 
-# The recommended way to compute md5's changed in Python 2.5
-try:
-    import hashlib
-    hash_factory = hashlib.md5
-except ImportError:
-    import md5
-    hash_factory = md5.new
+import copy, getopt, hashlib, imp, os, re, shlex, sys, traceback
+from .backward import StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
@@ -47,7 +41,7 @@ OPTIONS:
 """
 
 # Other package modules
-from whiteutils import *
+from .whiteutils import *
 
 class CogError(Exception):
     """ Any exception raised by Cog.
@@ -87,6 +81,13 @@ class Redirectable:
             self.stdout = stdout
         if stderr:
             self.stderr = stderr
+
+    def prout(self, s, end="\n"):
+        print(s, file=self.stdout, end=end)
+
+    def prerr(self, s, end="\n"):
+        print(s, file=self.stderr, end=end)
+
 
 class CogGenerator(Redirectable):
     """ A generator pulled from a source file.
@@ -145,7 +146,7 @@ class CogGenerator(Redirectable):
         return reindentBlock(self.outstring, prefOut)
 
     def msg(self, s):
-        print >>self.stdout, "Message: "+s
+        self.prout("Message: "+s)
 
     def out(self, sOut='', dedent=False, trimblanklines=False):
         """ The cog.out function.
@@ -213,10 +214,10 @@ class CogOptions:
         self.sSuffix = None
         self.bNewlines = False
     
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """ Comparison operator for tests to use.
         """
-        return self.__dict__.__cmp__(other.__dict__)
+        return self.__dict__ == other.__dict__
 
     def clone(self):
         """ Make a clone of these options, for further refinement.
@@ -233,7 +234,7 @@ class CogOptions:
         # Parse the command line arguments.
         try:
             opts, self.args = getopt.getopt(argv, 'cdD:eI:o:rs:Uvw:xz')
-        except getopt.error, msg:
+        except getopt.error as msg:
             raise CogUsageError(msg)
 
         # Handle the command line arguments.
@@ -299,17 +300,16 @@ class Cog(Redirectable):
         self.installCogModule()
 
     def showWarning(self, msg):
-        print >>self.stdout, "Warning:", msg
+        self.prout("Warning: "+msg)
 
     def isBeginSpecLine(self, s):
-        return string.find(s, self.sBeginSpec) >= 0
+        return self.sBeginSpec in s
     
     def isEndSpecLine(self, s):
-        return string.find(s, self.sEndSpec) >= 0 and \
-            not self.isEndOutputLine(s)
+        return self.sEndSpec in s and not self.isEndOutputLine(s)
     
     def isEndOutputLine(self, s):
-        return string.find(s, self.sEndOutput) >= 0
+        return self.sEndOutput in s
 
     def installCogModule(self):
         """ Magic mumbo-jumbo so that imported Python modules
@@ -328,11 +328,11 @@ class Cog(Redirectable):
         sFileOut = fname or ''
         fInToClose = fOutToClose = None
         # Convert filenames to files.
-        if isinstance(fIn, basestring):
+        if isinstance(fIn, string_types):
             # Open the input file.
             sFileIn = fIn
             fIn = fInToClose = open(fIn, 'r')
-        if isinstance(fOut, basestring):
+        if isinstance(fOut, string_types):
             # Open the output file.
             sFileOut = fOut
             fOut = fOutToClose = open(fOut, self.sOutputMode)
@@ -380,8 +380,8 @@ class Cog(Redirectable):
                 # If the spec begin is also a spec end, then process the single
                 # line of code inside.
                 if self.isEndSpecLine(l):
-                    beg = string.find(l, self.sBeginSpec)
-                    end = string.find(l, self.sEndSpec)
+                    beg = l.find(self.sBeginSpec)
+                    end = l.find(self.sEndSpec)
                     if beg > end:
                         raise CogError("Cog code markers inverted",
                             file=sFileIn, line=firstLineNum)
@@ -417,7 +417,7 @@ class Cog(Redirectable):
                 
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
-                hasher = hash_factory()
+                hasher = hashlib.md5()
                 while l and not self.isEndOutputLine(l):
                     if self.isBeginSpecLine(l):
                         raise CogError("Unexpected '%s'" % self.sBeginSpec,
@@ -425,7 +425,7 @@ class Cog(Redirectable):
                     if self.isEndSpecLine(l):
                         raise CogError("Unexpected '%s'" % self.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
-                    hasher.update(l)
+                    hasher.update(to_bytes(l))
                     l = fIn.readline()
                 curHash = hasher.hexdigest()
     
@@ -436,12 +436,12 @@ class Cog(Redirectable):
     
                 # Write the output of the spec to be the new output if we're 
                 # supposed to generate code.
-                hasher = hash_factory()
+                hasher = hashlib.md5()
                 if not self.options.bNoGenerate:
                     sFile = "%s+%d" % (sFileIn, firstLineNum)
                     sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
                     sGen = self.suffixLines(sGen)
-                    hasher.update(sGen)
+                    hasher.update(to_bytes(sGen))
                     fOut.write(sGen)
                 newHash = hasher.hexdigest()
                 
@@ -557,7 +557,7 @@ class Cog(Redirectable):
             elif self.options.bReplace:
                 # We want to replace the cog file with the output,
                 # but only if they differ.
-                print >>self.stdout, "Cogging %s" % sFile,
+                self.prout("Cogging %s" % sFile, end="")
                 bNeedNewline = True
                 
                 try:
@@ -566,7 +566,7 @@ class Cog(Redirectable):
                     fOldFile.close()
                     sNewText = self.processString(sOldText, fname=sFile)
                     if sOldText != sNewText:
-                        print >>self.stdout, "  (changed)"
+                        self.prout("  (changed)")
                         bNeedNewline = False
                         self.replaceFile(sFile, sNewText)
                 finally:
@@ -575,7 +575,7 @@ class Cog(Redirectable):
                     # same line, but also make sure to break the line before
                     # any traceback.
                     if bNeedNewline:
-                        print >>self.stdout
+                        self.prout("")
             else:
                 self.processFile(sFile, self.stdout, sFile)
         finally:
@@ -625,14 +625,14 @@ class Cog(Redirectable):
 
         # Provide help if asked for anywhere in the command line.
         if '-?' in argv or '-h' in argv:
-            print >>self.stderr, usage,
+            self.prerr(usage, end="")
             return
 
         self.options.parseArgs(argv)
         self.options.validate()
 
         if self.options.bShowVersion:
-            print >>self.stdout, "Cog version %s" % __version__
+            self.prout("Cog version %s" % __version__)
             return
 
         if self.options.args:
@@ -648,15 +648,15 @@ class Cog(Redirectable):
         try:
             self.callableMain(argv)
             return 0
-        except CogUsageError, err:
-            print >>self.stderr, err
-            print >>self.stderr, "(for help use -?)"
+        except CogUsageError as err:
+            self.prerr(err)
+            self.prerr("(for help use -?)")
             return 2
-        except CogGeneratedError, err:
-            print >>self.stderr, "Error: %s" % err
+        except CogGeneratedError as err:
+            self.prerr("Error: %s" % err)
             return 3
-        except CogError, err:
-            print >>self.stderr, err
+        except CogError as err:
+            self.prerr(err)
             return 1
         except:
             traceback.print_exc(None, self.stderr)

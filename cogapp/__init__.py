@@ -4,4 +4,6 @@
     Copyright 2004-2005, Ned Batchelder.
 """
 
-from cogapp import *
+from __future__ import absolute_import
+
+from .cogapp import *

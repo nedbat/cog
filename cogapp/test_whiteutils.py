@@ -4,8 +4,9 @@
     Copyright 2004-2005, Ned Batchelder.
 """
 
+from __future__ import absolute_import
 import unittest
-from whiteutils import *
+from .whiteutils import *
 
 class WhitePrefixTests(unittest.TestCase):
     """ Test cases for cogapp.whiteutils.

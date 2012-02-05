@@ -5,8 +5,8 @@
 """
 
 import unittest                                 # This is a unittest, so this is fundamental.
-import StringIO, shutil, os, random, types, tempfile    # We need these modules to write the tests.
-import makefiles
+import shutil, os, random, types, tempfile    # We need these modules to write the tests.
+from . import makefiles
 
 class SimpleTests(unittest.TestCase):
 
@@ -69,7 +69,7 @@ class SimpleTests(unittest.TestCase):
         cont0 = "I am bar.txt"
         d = { fname: cont0 }
         makefiles.makeFiles(d, self.tempdir)
-        fcont1 = file(os.path.join(self.tempdir, fname))
+        fcont1 = open(os.path.join(self.tempdir, fname))
         assert(fcont1.read() == cont0)
         fcont1.close()
 
@@ -83,7 +83,7 @@ class SimpleTests(unittest.TestCase):
                     """
               }
         makefiles.makeFiles(d, self.tempdir)
-        fcont = file(os.path.join(self.tempdir, fname))
+        fcont = open(os.path.join(self.tempdir, fname))
         assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
         fcont.close()
 
@@ -93,12 +93,12 @@ class SimpleTests(unittest.TestCase):
         d = { fname: cont0 }
         # Making them regular doesn't keep the contents identical.
         makefiles.makeFiles(d, self.tempdir, raw=False)
-        fcont1 = file(os.path.join(self.tempdir, fname), "rb")
+        fcont1 = open(os.path.join(self.tempdir, fname), "rb")
         assert(fcont1.read() != cont0)
         fcont1.close()
         # Making them raw keeps all the bytes identical.
         makefiles.makeFiles(d, self.tempdir, raw=True)
-        fcont2 = file(os.path.join(self.tempdir, fname), "rb")
+        fcont2 = open(os.path.join(self.tempdir, fname), "rb")
         assert(fcont2.read() == cont0)
         fcont2.close()
 

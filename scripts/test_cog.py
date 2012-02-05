@@ -24,7 +24,7 @@ testmodules = [
 
 # We don't need to import these modules to run the tests.  But loadTestsFromNames
 # doesn't show import errors.  These imports do.
-exec "import " + ("\nimport ".join(testmodules))
+exec("import " + ("\nimport ".join(testmodules)))
 
 suite = unittest.TestSuite()
 

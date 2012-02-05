@@ -4,7 +4,9 @@
     Copyright 2004-2009, Ned Batchelder.
 """
 
+from __future__ import absolute_import
 import re
+from .backward import string_types
 
 def whitePrefix(strings):
     """ Determine the whitespace prefix common to all non-blank lines
@@ -33,7 +35,7 @@ def reindentBlock(lines, newIndent=''):
         Remove any common whitespace indentation.
         Re-indent using newIndent, and return it as a single string.
     """
-    if isinstance(lines, basestring):
+    if isinstance(lines, string_types):
         lines = lines.split('\n')
     oldIndent = whitePrefix(lines)
     outLines = []
