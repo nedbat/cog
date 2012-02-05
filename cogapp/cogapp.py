@@ -11,7 +11,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.2'       # History at the end of the file.
+__version__ = '2.3'       # History at the end of the file.
 
 usage = """\
 cog - generate code with inlined Python code.
@@ -711,3 +711,4 @@ class Cog(Redirectable):
 # 20090520: Use hashlib where it's available, to avoid a warning.
 #           Use the builtin compile() instead of compiler, for Jython.
 #           Explicitly close files we opened, Jython likes this.
+# 20120205: Port to Python 3.  Lowest supported version is 2.6.

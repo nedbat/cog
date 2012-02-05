@@ -22,9 +22,10 @@
 <what when='20080521T085800'>Added -U switch from Alexander Belchenko.</what>
 <what when='20080524T092000'>Fixed the russian pointer to be to a current document.</what>
 <what when='20090625T202912'>Removed handyxml, files are now at pypi.</what>
+<what when='20120205T141000'>Python 3 is supported!</what>
 </history>
 
-<docinfo>This document is also available in
+<docinfo>An older version of this document is also available in
 <a href='code/cog/index_ru.html'>Russian</a>.
 </docinfo>
 
@@ -128,12 +129,7 @@ without a templating system dumbing down your tools for you.</p>
 
 <h1>Installation</h1>
 
-<p>Cog requires Python 2.3 or later, or Jython 2.5.  Python 3.x is not supported.
-Depending on the extent of your use, you may also need these packages:</p>
-
-<ul>
-<li><a href='http://www.jorendorff.com/articles/python/path/'>path</a>, if you will be running the unit tests.</li>
-</ul>
+<p>Cog requires Python 2.6, 2.7, or 3.2, or Jython 2.5.</p>
 
 <p>Cog is installed with a standard Python distutils script:</p>
 
