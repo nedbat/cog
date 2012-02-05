@@ -12,24 +12,21 @@ from .backward import string_types, to_bytes
 __version__ = '1.0.20040126'
 __all__ = ['makeFiles', 'removeFiles']
 
-def makeFiles(d, basedir='.', raw=False):
+def makeFiles(d, basedir='.'):
     """ Create files from the dictionary `d`, in the directory named by `basedir`.
     """
     for name, contents in d.items():
         child = os.path.join(basedir, name)
         if isinstance(contents, string_types):
             mode = 'w'
-            if raw:
-                mode = 'wb'
             f = open(child, mode)
-            if not raw:
-                contents = reindentBlock(contents)
-            f.write(to_bytes(contents))
+            contents = reindentBlock(contents)
+            f.write(contents)
             f.close()
         else:
             if not os.path.exists(child):
                 os.mkdir(child)
-            makeFiles(contents, child, raw=raw)
+            makeFiles(contents, child)
 
 def removeFiles(d, basedir='.'):
     """ Remove the files created by makeFiles.

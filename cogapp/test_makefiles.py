@@ -87,21 +87,6 @@ class SimpleTests(unittest.TestCase):
         assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
         fcont.close()
 
-    def testRawContents(self):
-        fname = 'bar.txt'
-        cont0 = "I am bar.txt\r\nNewlines are different\nEven mixed up."
-        d = { fname: cont0 }
-        # Making them regular doesn't keep the contents identical.
-        makefiles.makeFiles(d, self.tempdir, raw=False)
-        fcont1 = open(os.path.join(self.tempdir, fname), "rb")
-        assert(fcont1.read() != cont0)
-        fcont1.close()
-        # Making them raw keeps all the bytes identical.
-        makefiles.makeFiles(d, self.tempdir, raw=True)
-        fcont2 = open(os.path.join(self.tempdir, fname), "rb")
-        assert(fcont2.read() == cont0)
-        fcont2.close()
-
 
 if __name__ == '__main__':      #pragma: no cover
     unittest.main()

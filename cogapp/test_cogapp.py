@@ -7,7 +7,7 @@
 from __future__ import absolute_import
 import unittest
 import os, os.path, random, re, shutil, stat, sys, tempfile
-from .backward import StringIO
+from .backward import StringIO, to_bytes
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
 from .cogapp import usage, __version__
@@ -714,7 +714,7 @@ class TestCaseWithTempDir(TestCase):
             sFileContent = f.read()
         finally:
             f.close()
-        self.assertEqual(sFileContent, sContent)
+        self.assertEqual(sFileContent, to_bytes(sContent))
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):

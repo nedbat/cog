@@ -7,7 +7,7 @@
 from __future__ import absolute_import, print_function
 
 import copy, getopt, hashlib, imp, os, re, shlex, sys, traceback
-from .backward import StringIO, string_types, to_bytes
+from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
@@ -295,7 +295,6 @@ class Cog(Redirectable):
         self.sEndFormat = '[[[end]]] (checksum: %s)'
 
         self.options = CogOptions()
-        self.sOutputMode = 'w'
         
         self.installCogModule()
 
@@ -318,7 +317,18 @@ class Cog(Redirectable):
         self.cogmodule = imp.new_module('cog')
         self.cogmodule.path = []
         sys.modules['cog'] = self.cogmodule
-        
+    
+    def openOutputFile(self, fname):
+        """ Open an output file, taking all the details into account.
+        """
+        if self.options.bNewlines:
+            if PY3:
+                return open(fname, 'w', newline='\n')
+            else:
+                return open(fname, 'wb')
+        else:
+            return open(fname, 'w')
+
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """ Process an input file object to an output file object.
             fIn and fOut can be file objects, or file names.
@@ -335,7 +345,7 @@ class Cog(Redirectable):
         if isinstance(fOut, string_types):
             # Open the output file.
             sFileOut = fOut
-            fOut = fOutToClose = open(fOut, self.sOutputMode)
+            fOut = fOutToClose = self.openOutputFile(fOut)
 
         try:
             fIn = NumberedFileReader(fIn)
@@ -516,7 +526,7 @@ class Cog(Redirectable):
             else:
                 # Can't write!
                 raise CogError("Can't overwrite %s" % sOldPath)
-        f = open(sOldPath, self.sOutputMode)
+        f = self.openOutputFile(sOldPath)
         f.write(sNewText)
         f.close()
 
@@ -545,12 +555,6 @@ class Cog(Redirectable):
             # push its directory onto the include path.
             self.addToIncludePath([os.path.dirname(sFile)])
 
-            # Set the file output mode based on whether we want \n or native
-            # line endings.
-            self.sOutputMode = 'w'
-            if self.options.bNewlines:
-                self.sOutputMode = 'wb'
-                
             # How we process the file depends on where the output is going.
             if self.options.sOutputName:
                 self.processFile(sFile, self.options.sOutputName, sFile)
