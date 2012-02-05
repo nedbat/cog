@@ -22,6 +22,7 @@
 <li>Python 3 is now supported.  Older Pythons (2.5 and below) no longer are.</li>
 <li>Added the cog.previous attribute to get the output from the last time cog
     was run.</li>
+<li>An input file name of "-" will read input from standard in.</li>
 </ul>
 
 

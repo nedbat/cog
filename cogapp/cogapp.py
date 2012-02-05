@@ -18,7 +18,7 @@ cog - generate code with inlined Python code.
 
 cog [OPTIONS] [INFILE | @FILELIST] ...
 
-INFILE is the name of an input file.
+INFILE is the name of an input file, '-' will read from stdin.
 FILELIST is the name of a text file containing file names or
     other @FILELISTs.
 
@@ -329,6 +329,13 @@ class Cog(Redirectable):
         else:
             return open(fname, 'w')
 
+    def openInputFile(self, fname):
+        """ Open an input file. """
+        if fname == "-":
+            return sys.stdin
+        else:
+            return open(fname, "r")
+
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """ Process an input file object to an output file object.
             fIn and fOut can be file objects, or file names.
@@ -341,7 +348,7 @@ class Cog(Redirectable):
         if isinstance(fIn, string_types):
             # Open the input file.
             sFileIn = fIn
-            fIn = fInToClose = open(fIn, 'r')
+            fIn = fInToClose = self.openInputFile(fIn)
         if isinstance(fOut, string_types):
             # Open the output file.
             sFileOut = fOut
@@ -593,7 +600,7 @@ class Cog(Redirectable):
     def processFileList(self, sFileList):
         """ Process the files in a file list.
         """
-        flist = open(sFileList)
+        flist = self.openInputFile(sFileList)
         lines = flist.readlines()
         flist.close()
         for l in lines:
