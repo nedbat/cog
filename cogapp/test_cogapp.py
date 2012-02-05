@@ -1,17 +1,18 @@
 """ Test cogapp.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
+from __future__ import absolute_import
 import unittest
-import os, random, re, StringIO, stat, sys, tempfile
-import path     # Non-standard, from http://www.jorendorff.com/articles/python/path
-from cogapp import Cog, CogOptions, CogGenerator
-from cogapp import CogError, CogUsageError, CogGeneratedError
-from cogapp import usage, __version__
-from whiteutils import reindentBlock
-from makefiles import *
+import os, os.path, random, re, shutil, stat, sys, tempfile
+from .backward import StringIO, to_bytes
+from .cogapp import Cog, CogOptions, CogGenerator
+from .cogapp import CogError, CogUsageError, CogGeneratedError
+from .cogapp import usage, __version__
+from .whiteutils import reindentBlock
+from .makefiles import *
 
 class TestCase(unittest.TestCase):
     """ Base class for all Cog test cases.  Adds utility methods I like.
@@ -22,7 +23,7 @@ class TestCase(unittest.TestCase):
         """
         try:
             callableObj(*args, **kwargs)
-        except excClass, exc:
+        except excClass as exc:
             excMsg = str(exc)
             if not msg:
                 # No message provided: it passes.
@@ -401,6 +402,21 @@ class CogTestsInMemory(TestCase):
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
+    def testAssertInCogCode(self):
+        # Check that we can test assertions in cog code in the test framework.
+        infile = """\
+            [[[cog
+            assert 1 == 2, "Oops"
+            ]]]
+            [[[end]]]
+            """
+        infile = reindentBlock(infile)
+        self.assertRaisesMsg(AssertionError, 
+            "Oops",
+            Cog().processString, (infile)
+            )
+
+
 class CogOptionsTests(TestCase):
     """ Test the CogOptions class.
     """
@@ -685,13 +701,13 @@ class TestCaseWithTempDir(TestCase):
         """
         # Create a cog engine, and catch its output.
         self.cog = Cog()
-        self.output = StringIO.StringIO()
+        self.output = StringIO()
         self.cog.setOutput(stdout=self.output, stderr=self.output)
 
     def setUp(self):
         # Create a temporary directory.
-        self.tempdir = path.path(tempfile.gettempdir()) / ('testcog_tempdir_' + str(random.random())[2:])
-        self.tempdir.mkdir()
+        self.tempdir = os.path.join(tempfile.gettempdir(), 'testcog_tempdir_' + str(random.random())[2:])
+        os.mkdir(self.tempdir)
         self.olddir = os.getcwd()
         os.chdir(self.tempdir)
         self.newCog()
@@ -699,19 +715,21 @@ class TestCaseWithTempDir(TestCase):
     def tearDown(self):
         os.chdir(self.olddir)
         # Get rid of the temporary directory.
-        self.tempdir.rmtree()
+        shutil.rmtree(self.tempdir)
 
     def assertFilesSame(self, sFName1, sFName2):
-        self.assertEqual((self.tempdir / sFName1).text(), (self.tempdir / sFName2).text())
+        text1 = open(os.path.join(self.tempdir, sFName1)).read()
+        text2 = open(os.path.join(self.tempdir, sFName2)).read()
+        self.assertEqual(text1, text2)
 
     def assertFileContent(self, sFName, sContent):
-        sAbsName = self.tempdir / sFName
+        sAbsName = os.path.join(self.tempdir, sFName)
         f = open(sAbsName, 'rb')
         try:
             sFileContent = f.read()
         finally:
             f.close()
-        self.assertEqual(sFileContent, sContent)
+        self.assertEqual(sFileContent, to_bytes(sContent))
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):
@@ -966,16 +984,16 @@ class TestFileHandling(TestCaseWithTempDir):
         d = {
             'both.cog': """\
                 //[[[cog
-                cog.outl("one: %s" % globals().has_key('one'))
-                cog.outl("two: %s" % globals().has_key('two'))
+                cog.outl("one: %s" % ('one' in globals()))
+                cog.outl("two: %s" % ('two' in globals()))
                 //]]]
                 //[[[end]]]
                 """,
             
             'one.out': """\
                 //[[[cog
-                cog.outl("one: %s" % globals().has_key('one'))
-                cog.outl("two: %s" % globals().has_key('two'))
+                cog.outl("one: %s" % ('one' in globals()))
+                cog.outl("two: %s" % ('two' in globals()))
                 //]]]
                 one: True // ONE
                 two: False // ONE
@@ -984,8 +1002,8 @@ class TestFileHandling(TestCaseWithTempDir):
             
             'two.out': """\
                 //[[[cog
-                cog.outl("one: %s" % globals().has_key('one'))
-                cog.outl("two: %s" % globals().has_key('two'))
+                cog.outl("one: %s" % ('one' in globals()))
+                cog.outl("two: %s" % ('two' in globals()))
                 //]]]
                 one: False // TWO
                 two: True // TWO
@@ -1008,8 +1026,8 @@ class TestFileHandling(TestCaseWithTempDir):
         d = {
             'both.cog': """\
                 //[[[cog
-                cog.outl("one: %s" % globals().has_key('one'))
-                cog.outl("two: %s" % globals().has_key('two'))
+                cog.outl("one: %s" % ('one' in globals()))
+                cog.outl("two: %s" % ('two' in globals()))
                 //]]]
                 //[[[end]]]
                 """,
@@ -1477,7 +1495,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO.StringIO()
+        stderr = StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.main(['argv0', '-c', '-r', "cog1.txt"])
         output = self.output.getvalue()
@@ -1532,7 +1550,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO.StringIO()
+        stderr = StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.callableMain(['argv0', 'test.cog'])
         output = self.output.getvalue()
@@ -1638,12 +1656,12 @@ class WritabilityTests(TestCaseWithTempDir):
     def setUp(self):
         TestCaseWithTempDir.setUp(self)
         makeFiles(self.d)
-        self.testcog = self.tempdir / 'test.cog'
-        self.testcog.chmod(stat.S_IREAD)   # Make the file readonly.
+        self.testcog = os.path.join(self.tempdir, 'test.cog')
+        os.chmod(self.testcog, stat.S_IREAD)   # Make the file readonly.
         assert not os.access(self.testcog, os.W_OK)
         
     def tearDown(self):
-        self.testcog.chmod(stat.S_IWRITE)   # Make the file writable again.
+        os.chmod(self.testcog, stat.S_IWRITE)   # Make the file writable again.
         TestCaseWithTempDir.tearDown(self)
 
     def testReadonlyNoCommand(self):

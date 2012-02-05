@@ -2,7 +2,7 @@
 """ Test the Cog distribution.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
 import unittest, sys
@@ -24,7 +24,7 @@ testmodules = [
 
 # We don't need to import these modules to run the tests.  But loadTestsFromNames
 # doesn't show import errors.  These imports do.
-exec "import " + ("\nimport ".join(testmodules))
+exec("import " + ("\nimport ".join(testmodules)))
 
 suite = unittest.TestSuite()
 

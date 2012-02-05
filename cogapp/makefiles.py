@@ -1,48 +1,45 @@
 """ Dictionary-to-filetree functions, to create test files for testing.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
-import path     # Non-standard, from http://www.jorendorff.com/articles/python/path
-from whiteutils import reindentBlock
+from __future__ import absolute_import
+import os.path
+from .whiteutils import reindentBlock
+from .backward import string_types, to_bytes
 
 __version__ = '1.0.20040126'
 __all__ = ['makeFiles', 'removeFiles']
 
-def makeFiles(d, basedir='.', raw=False):
-    """ Create files from the dictionary d, in the directory named by dirpath.
+def makeFiles(d, basedir='.'):
+    """ Create files from the dictionary `d`, in the directory named by `basedir`.
     """
-    dirpath = path.path(basedir)
     for name, contents in d.items():
-        child = dirpath / name
-        if isinstance(contents, basestring):
+        child = os.path.join(basedir, name)
+        if isinstance(contents, string_types):
             mode = 'w'
-            if raw:
-                mode = 'wb'
             f = open(child, mode)
-            if not raw:
-                contents = reindentBlock(contents)
+            contents = reindentBlock(contents)
             f.write(contents)
             f.close()
         else:
-            if not child.exists():
-                child.mkdir()
-            makeFiles(contents, child, raw=raw)
+            if not os.path.exists(child):
+                os.mkdir(child)
+            makeFiles(contents, child)
 
 def removeFiles(d, basedir='.'):
     """ Remove the files created by makeFiles.
         Directories are removed if they are empty.
     """
-    dirpath = path.path(basedir)
     for name, contents in d.items():
-        child = dirpath / name
-        if isinstance(contents, basestring):
-            child.remove()
+        child = os.path.join(basedir, name)
+        if isinstance(contents, string_types):
+            os.remove(child)
         else:
             removeFiles(contents, child)
-            if not child.files() and not child.dirs():
-                child.rmdir()
+            if not os.listdir(child):
+                os.rmdir(child)
 
 if __name__ == '__main__':      #pragma: no cover
     # Try it a little.

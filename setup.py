@@ -2,13 +2,13 @@
 """ Setup.py for Cog
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
 from distutils.core import setup
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '2.2',
+    version = '2.3',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
@@ -28,7 +28,8 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
         "Topic :: Software Development :: Code Generators",
         ],
 

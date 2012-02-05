@@ -7,6 +7,7 @@ clean:
 	-rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
 	-rm -f *.pyo */*.pyo */*/*.pyo */*/*/*.pyo
 	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
+	-rm -rf __pycache__ */__pycache__ */*/__pycache__
 	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 	-rm -f .coverage
 
