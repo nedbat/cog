@@ -1,7 +1,7 @@
 """ Test cogapp.
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
 from __future__ import absolute_import

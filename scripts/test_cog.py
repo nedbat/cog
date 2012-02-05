@@ -2,7 +2,7 @@
 """ Test the Cog distribution.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2009, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
 import unittest, sys

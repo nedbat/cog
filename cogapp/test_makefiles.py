@@ -1,9 +1,10 @@
 """ Test the cogapp.makefiles modules
     http://nedbatchelder.com/code/cog
     
-    Copyright 2004-2005, Ned Batchelder.
+    Copyright 2004-2012, Ned Batchelder.
 """
 
+from __future__ import absolute_import
 import unittest                                 # This is a unittest, so this is fundamental.
 import shutil, os, random, types, tempfile    # We need these modules to write the tests.
 from . import makefiles
