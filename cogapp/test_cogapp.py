@@ -1890,6 +1890,12 @@ class ChecksumTests(TestCaseWithTempDir):
             "cog6.txt(6): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog6.txt"]))
 
+    def testArgvIsntModified(self):
+        argv = ['argv0', '-v']
+        orig_argv = argv[:]
+        self.cog.callableMain(argv)
+        self.assertEqual(argv, orig_argv)
+
 class BlakeTests(TestCaseWithTempDir):
 
     # Blake Winton's contributions.        
