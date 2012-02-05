@@ -402,6 +402,21 @@ class CogTestsInMemory(TestCase):
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
+    def testAssertInCogCode(self):
+        # Check that we can test assertions in cog code in the test framework.
+        infile = """\
+            [[[cog
+            assert 1 == 2, "Oops"
+            ]]]
+            [[[end]]]
+            """
+        infile = reindentBlock(infile)
+        self.assertRaisesMsg(AssertionError, 
+            "Oops",
+            Cog().processString, (infile)
+            )
+
+
 class CogOptionsTests(TestCase):
     """ Test the CogOptions class.
     """
