@@ -23,6 +23,7 @@
 <li>Added the cog.previous attribute to get the output from the last time cog
     was run.</li>
 <li>An input file name of "-" will read input from standard in.</li>
+<li>Cog can now be run with "python -m cogapp [args]".</li>
 </ul>
 
 
