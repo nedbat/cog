@@ -5,11 +5,23 @@ import sys
 PY3 = sys.version_info[0] == 3
 
 if PY3:
-    string_types = (str,)
+    string_types = (str,bytes)
+    text_types = (str,)
+    bytes_types = (bytes,)
+    def b(s):
+        return s.encode("latin-1")
+    def u(s):
+        return s
     def to_bytes(s):
         return s.encode('utf8')
 else:
     string_types = (basestring,)
+    text_types = (unicode,)
+    bytes_types = (str,)
+    def b(s):
+        return s
+    def u(s):
+        return unicode(s, "unicode_escape")
     def to_bytes(s):
         return s
 

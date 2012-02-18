@@ -7,7 +7,7 @@
 from __future__ import absolute_import
 import os.path
 from .whiteutils import reindentBlock
-from .backward import string_types, to_bytes
+from .backward import string_types, bytes_types
 
 __version__ = '1.0.20040126'
 __all__ = ['makeFiles', 'removeFiles']
@@ -19,6 +19,8 @@ def makeFiles(d, basedir='.'):
         child = os.path.join(basedir, name)
         if isinstance(contents, string_types):
             mode = 'w'
+            if isinstance(contents, bytes_types):
+                mode += "b"
             f = open(child, mode)
             contents = reindentBlock(contents)
             f.write(contents)

@@ -321,20 +321,26 @@ class Cog(Redirectable):
     def openOutputFile(self, fname):
         """ Open an output file, taking all the details into account.
         """
+        opts = {}
+        mode = "w"
+        if PY3:
+            opts['encoding'] = "utf-8"
         if self.options.bNewlines:
             if PY3:
-                return open(fname, 'w', newline='\n')
+                opts['newline'] = "\n"
             else:
-                return open(fname, 'wb')
-        else:
-            return open(fname, 'w')
+                mode = "wb"
+        return open(fname, mode, **opts)
 
     def openInputFile(self, fname):
         """ Open an input file. """
         if fname == "-":
             return sys.stdin
         else:
-            return open(fname, "r")
+            opts = {}
+            if PY3:
+                opts['encoding'] = "utf-8"
+            return open(fname, "r", **opts)
 
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """ Process an input file object to an output file object.
@@ -577,7 +583,7 @@ class Cog(Redirectable):
                 bNeedNewline = True
                 
                 try:
-                    fOldFile = open(sFile)
+                    fOldFile = self.openInputFile(sFile)
                     sOldText = fOldFile.read()
                     fOldFile.close()
                     sNewText = self.processString(sOldText, fname=sFile)

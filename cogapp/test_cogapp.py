@@ -7,7 +7,7 @@
 from __future__ import absolute_import
 import unittest
 import os, os.path, random, re, shutil, stat, sys, tempfile
-from .backward import StringIO, to_bytes
+from .backward import StringIO, to_bytes, b, u
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
 from .cogapp import usage, __version__
@@ -1153,6 +1153,35 @@ class CogTestLineEndings(TestCaseWithTempDir):
         makeFiles({'test.cog': '\n'.join(self.lines_in)})
         self.cog.callableMain(['argv0', '-U', '-r', 'test.cog'])
         self.assertFileContent('test.cog', '\n'.join(self.lines_out))
+
+
+class CogTestCharacterEncoding(TestCaseWithTempDir):
+
+    def testSimple(self):
+        d = {
+            'test.cog': b("""\
+                // This is my C++ file.
+                //[[[cog
+                cog.outl("// Unicode: \xe1\x88\xb4 (U+1234)")
+                //]]]
+                //[[[end]]]
+                """),
+
+            'test.out': b("""\
+                // This is my C++ file.
+                //[[[cog
+                cog.outl("// Unicode: \xe1\x88\xb4 (U+1234)")
+                //]]]
+                // Unicode: \xe1\x88\xb4 (U+1234)
+                //[[[end]]]
+                """),
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-r', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        output = self.output.getvalue()
+        assert(output.find("(changed)") >= 0)
 
 
 class TestCaseWithImports(TestCaseWithTempDir):
