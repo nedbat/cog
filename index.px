@@ -23,6 +23,7 @@
 <what when='20080524T092000'>Fixed the russian pointer to be to a current document.</what>
 <what when='20090625T202912'>Removed handyxml, files are now at pypi.</what>
 <what when='20120205T141000'>Python 3 is supported!</what>
+<what when='20120227T192300'>Polish up Cog 2.3</what>
 </history>
 
 <docinfo>An older version of this document is also available in
@@ -129,7 +130,7 @@ without a templating system dumbing down your tools for you.</p>
 
 <h1>Installation</h1>
 
-<p>Cog requires Python 2.6, 2.7, or 3.2, or Jython 2.5.</p>
+<p>Cog requires Python 2.6, 2.7, 3.2, or Jython 2.5.</p>
 
 <p>Cog is installed with a standard Python distutils script:</p>
 
@@ -329,8 +330,24 @@ OPTIONS:
     -h          Print this help.
 ]]></code>
 
-<p>Files on the command line are processed as input files.
-Files can also be listed in a text file named on the command line
+<p>In addition to running cog as a command on the command line:</p>
+
+<code>$ cog [options] [arguments]</code>
+
+<p>you can also invoke it as a module with the Python interpreter:</p>
+
+<code>$ python -m cogapp [options] [arguments]</code>
+
+<p>Note that the Python module is called "cogapp".</p>
+
+
+<h2>Input files</h2>
+
+<p>Files on the command line are processed as input files. All input files
+are assumed to be UTF-8 encoded. Using a minus for a filename (-) will read
+the standard input.</p>
+
+<p>Files can also be listed in a text file named on the command line
 with an @:</p>
 
 <code>$ cog @files_to_cog.txt</code>
