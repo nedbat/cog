@@ -292,7 +292,7 @@ generators in the same input file, if needed.</dd>
 <dt><b>cog.previous</b></dt>
 <dd>An attribute, the text output of the previous run of this
 generator.  This can be used for whatever purpose you like, including
-outputting again with cog.out().
+outputting again with cog.out().</dd>
 </dl>
 
 
