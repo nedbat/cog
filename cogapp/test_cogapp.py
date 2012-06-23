@@ -841,6 +841,32 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-Dfooey', 'cog.txt']))
         self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-D', 'fooey', 'cog.txt']))
 
+    def testFileEncoding(self):
+        d = {
+            'test.cog': b("""\
+                // \xca\xee\xe4\xe8\xf0\xe2\xea\xe0 Windows
+                //[[[cog
+                cog.outl("\xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe")
+                //]]]
+                //[[[end]]]
+                """),
+
+            'test.out': b("""\
+                // \xca\xee\xe4\xe8\xf0\xe2\xea\xe0 Windows
+                //[[[cog
+                cog.outl("\xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe")
+                //]]]
+                \xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe
+                //[[[end]]]
+                """),
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-n', '"cp1251"', '-r', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        output = self.output.getvalue()
+        assert(output.find("(changed)") >= 0)
+
 
 class TestFileHandling(TestCaseWithTempDir):
     

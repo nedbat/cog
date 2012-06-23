@@ -28,6 +28,7 @@ OPTIONS:
     -D name=val Define a global string available to your generator code.
     -e          Warn if a file has no cog code in it.
     -I PATH     Add PATH to the list of directories for data files and modules.
+    -n ENCODING Use ENCODING when read and write files (Python3 only).
     -o OUTNAME  Write the output to OUTNAME.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
@@ -213,6 +214,7 @@ class CogOptions:
         self.bEofCanBeEnd = False
         self.sSuffix = None
         self.bNewlines = False
+        self.sEncoding = "utf-8"
     
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -233,7 +235,7 @@ class CogOptions:
     def parseArgs(self, argv):
         # Parse the command line arguments.
         try:
-            opts, self.args = getopt.getopt(argv, 'cdD:eI:o:rs:Uvw:xz')
+            opts, self.args = getopt.getopt(argv, 'cdD:eI:n:o:rs:Uvw:xz')
         except getopt.error as msg:
             raise CogUsageError(msg)
 
@@ -252,6 +254,8 @@ class CogOptions:
                 self.bWarnEmpty = True
             elif o == '-I':
                 self.addToIncludePath(a)
+            elif o == '-n':
+                self.sEncoding = a
             elif o == '-o':
                 self.sOutputName = a
             elif o == '-r':
@@ -324,7 +328,7 @@ class Cog(Redirectable):
         opts = {}
         mode = "w"
         if PY3:
-            opts['encoding'] = "utf-8"
+            opts['encoding'] = self.options.sEncoding
         if self.options.bNewlines:
             if PY3:
                 opts['newline'] = "\n"
@@ -339,7 +343,7 @@ class Cog(Redirectable):
         else:
             opts = {}
             if PY3:
-                opts['encoding'] = "utf-8"
+                opts['encoding'] = self.options.sEncoding
             return open(fname, "r", **opts)
 
     def processFile(self, fIn, fOut, fname=None, globals=None):
