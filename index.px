@@ -259,7 +259,8 @@ your file.  The functions are:</p>
 lines in <i>sOut</i> before adding them to the output.
 If <i>trimblanklines</i> is True, then an initial and trailing
 blank line are removed from <i>sOut</i> before adding them to the output.
-Together, these option arguments make it easier to use multi-line strings:</dd>
+Together, these option arguments make it easier to use multi-line strings,
+and they only are useful for multi-line strings:</dd>
 <code><![CDATA[
 cog.out("""
     These are lines I
