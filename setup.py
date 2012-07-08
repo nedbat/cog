@@ -6,6 +6,20 @@
 """
 
 from distutils.core import setup
+
+try:
+    # For building on Windows, need to fix the tar file after it's made.
+    # Install https://bitbucket.org/ned/fixtar, then this will work.
+    from setuptools_fixtar import fixtar
+except:
+    extra_options = {}
+else:
+    extra_options = {
+        'cmdclass': {
+            'fixtar': fixtar.FixtarCommand,
+        }
+    }
+
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
     version = '2.3',
@@ -43,4 +57,6 @@ setup(
         'scripts/cog.py',
         'scripts/test_cog.py',
         ],
+
+    **extra_options
     )

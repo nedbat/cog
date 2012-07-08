@@ -21,7 +21,7 @@ cover: install
 	python scripts/test_cog.py --cover
 
 kit:
-	python setup.py sdist --formats=gztar
+	python setup.py sdist --keep-temp --formats=gztar fixtar --owner=ned --group=cogapp --clean
 
 pypi:
 	python setup.py register
