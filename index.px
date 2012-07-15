@@ -259,7 +259,8 @@ your file.  The functions are:</p>
 lines in <i>sOut</i> before adding them to the output.
 If <i>trimblanklines</i> is True, then an initial and trailing
 blank line are removed from <i>sOut</i> before adding them to the output.
-Together, these option arguments make it easier to use multi-line strings:</dd>
+Together, these option arguments make it easier to use multi-line strings,
+and they only are useful for multi-line strings:</dd>
 <code><![CDATA[
 cog.out("""
     These are lines I
@@ -533,14 +534,14 @@ Comment here, or
 <li><a href='http://babylon.idlevice.co.uk/php/precog/'>Precog</a> is a PHP implementation.</li>
 <li><a href='http://www.crazilocks.com/pcg.html'>PCG</a> is a Perl implementation.</li>
 <li><a href='http://sourceforge.net/projects/templarian'>Templarian</a> is a similar tool, also in Python.</li>
-<li><a href='http://www.midwinter.com/~lch/programming/nocog'>Nocog</a> is a build tool to detect files
+<li><a href='http://www.larryhastings.com/programming/nocog/'>Nocog</a> is a build tool to detect files
 that should be run through cog.</li>
 </ul>
 
 <p>You might like to read:</p>
 
 <ul>
-<li><a href='http://pythonology.org/success&amp;story=cog'>Cog: A Code Generation Tool Written in Python</a>,
+<li><a href='http://www.python.org/about/success/cog/'>Cog: A Code Generation Tool Written in Python</a>,
 the Python Success Story I wrote about Cog.</li>
 
 <li><a href='blog/index.html'>My blog</a>, where I ramble on about software and other things that interest me.</li>

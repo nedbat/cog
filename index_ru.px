@@ -519,13 +519,13 @@ Python-модулей, и в которых ведется поиск файло
 <li><a href='http://babylon.idlevice.co.uk/php/precog/'>Precog</a> <emdash/> реализация на языке PHP.</li>
 <li><a href='http://www.crazilocks.com/pcg.html'>PCG</a> <emdash/> реализация на языке Perl.</li>
 <li><a href='http://sourceforge.net/projects/templarian'>Templarian</a> <emdash/> похожий инструмент, также написан на Python.</li>
-<li><a href='http://www.midwinter.com/~lch/programming/nocog'>Nocog</a> <emdash/> инструмент для автоматического
+<li><a href='http://www.larryhastings.com/programming/nocog/'>Nocog</a> <emdash/> инструмент для автоматического
 определения тех файлов, которые должны обрабатываться при помощи Cog.</li>
 </ul>
 
 <p>Возможно, вы захотите прочитать:</p>
 <ul>
-<li><a href="http://pythonology.org/success&amp;story=cog">Cog: 
+<li><a href="http://www.python.org/about/success/cog/">Cog: 
 A Code Generation Tool Written in Python</a>, я написал историю про утилиту Cog, 
 как пример успешного применения Python.</li>
 <li><a href="blog/index.html">Мой блог</a>, на страницах которого я рассуждаю 
