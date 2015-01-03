@@ -35,8 +35,16 @@ OPTIONS:
     -w CMD      Use CMD if the output file needs to be made writable.
                     A %s in the CMD will be filled with the filename.
     -x          Excise all the generated output without running the generators.
-    -z          The [[[end]]] marker can be omitted, and is assumed at eof.
+    -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
+    --begin-spec=val
+                The pattern beginning cog inline instructions. Defaults
+                to '[[[cog'.
+    --end-spec=val
+                The pattern ending cog inline instructions. Defaults
+                to ']]]'.
+    --end-output=val
+                The pattern ending a cog block. Defaults to '[[[end]]]'.
     -h          Print this help.
 """
 
@@ -213,6 +221,9 @@ class CogOptions:
         self.bEofCanBeEnd = False
         self.sSuffix = None
         self.bNewlines = False
+        self.sBeginSpec = '[[[cog'
+        self.sEndSpec = ']]]'
+        self.sEndOutput = '[[[end]]]'
     
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -233,7 +244,9 @@ class CogOptions:
     def parseArgs(self, argv):
         # Parse the command line arguments.
         try:
-            opts, self.args = getopt.getopt(argv, 'cdD:eI:o:rs:Uvw:xz')
+            opts, self.args = getopt.getopt(argv, 'cdD:eI:o:rs:Uvw:xz',
+                                            ['begin-spec=', 'end-spec=',
+                                             'end-output='])
         except getopt.error as msg:
             raise CogUsageError(msg)
 
@@ -268,6 +281,12 @@ class CogOptions:
                 self.bNoGenerate = True
             elif o == '-z':
                 self.bEofCanBeEnd = True
+            elif o == '--begin-spec':
+                self.sBeginSpec = a
+            elif o == '--end-spec':
+                self.sEndSpec = a
+            elif o == '--end-output':
+                self.sEndOutput = a
             else:
                 # Since getopt.getopt is given a list of possible flags,
                 # this is an internal error.
@@ -288,27 +307,27 @@ class Cog(Redirectable):
     """
     def __init__(self):
         Redirectable.__init__(self)
-        self.sBeginSpec = '[[[cog'
-        self.sEndSpec = ']]]'
-        self.sEndOutput = '[[[end]]]'
-        self.reEndOutput = re.compile(r'\[\[\[end]]](?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
-        self.sEndFormat = '[[[end]]] (checksum: %s)'
-
         self.options = CogOptions()
-        
+        self._fixEndOutputPatterns()
         self.installCogModule()
+
+    def _fixEndOutputPatterns(self):
+        end_output = self.options.sEndOutput
+        end_output.replace('[', r'\[')
+        self.reEndOutput = re.compile(end_output + r' (?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
+        self.sEndFormat = self.options.sEndOutput + ' (checksum: %s)'
 
     def showWarning(self, msg):
         self.prout("Warning: "+msg)
 
     def isBeginSpecLine(self, s):
-        return self.sBeginSpec in s
+        return self.options.sBeginSpec in s
     
     def isEndSpecLine(self, s):
-        return self.sEndSpec in s and not self.isEndOutputLine(s)
+        return self.options.sEndSpec in s and not self.isEndOutputLine(s)
     
     def isEndOutputLine(self, s):
-        return self.sEndOutput in s
+        return self.options.sEndOutput in s
 
     def installCogModule(self):
         """ Magic mumbo-jumbo so that imported Python modules
@@ -381,10 +400,10 @@ class Cog(Redirectable):
                 # Find the next spec begin
                 while l and not self.isBeginSpecLine(l):
                     if self.isEndSpecLine(l):
-                        raise CogError("Unexpected '%s'" % self.sEndSpec,
+                        raise CogError("Unexpected '%s'" % self.options.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
                     if self.isEndOutputLine(l):
-                        raise CogError("Unexpected '%s'" % self.sEndOutput,
+                        raise CogError("Unexpected '%s'" % self.options.sEndOutput,
                             file=sFileIn, line=fIn.linenumber())
                     fOut.write(l)
                     l = fIn.readline()
@@ -403,13 +422,13 @@ class Cog(Redirectable):
                 # If the spec begin is also a spec end, then process the single
                 # line of code inside.
                 if self.isEndSpecLine(l):
-                    beg = l.find(self.sBeginSpec)
-                    end = l.find(self.sEndSpec)
+                    beg = l.find(self.options.sBeginSpec)
+                    end = l.find(self.options.sEndSpec)
                     if beg > end:
                         raise CogError("Cog code markers inverted",
                             file=sFileIn, line=firstLineNum)
                     else:
-                        sCode = l[beg+len(self.sBeginSpec):end].strip()
+                        sCode = l[beg+len(self.options.sBeginSpec):end].strip()
                         gen.parseLine(sCode)
                 else:
                     # Deal with an ordinary code block.
@@ -418,10 +437,10 @@ class Cog(Redirectable):
                     # Get all the lines in the spec
                     while l and not self.isEndSpecLine(l):
                         if self.isBeginSpecLine(l):
-                            raise CogError("Unexpected '%s'" % self.sBeginSpec,
+                            raise CogError("Unexpected '%s'" % self.options.sBeginSpec,
                                 file=sFileIn, line=fIn.linenumber())
                         if self.isEndOutputLine(l):
-                            raise CogError("Unexpected '%s'" % self.sEndOutput,
+                            raise CogError("Unexpected '%s'" % self.options.sEndOutput,
                                 file=sFileIn, line=fIn.linenumber())
                         if not self.options.bDeleteCode:
                             fOut.write(l)
@@ -444,10 +463,10 @@ class Cog(Redirectable):
                 hasher = hashlib.md5()
                 while l and not self.isEndOutputLine(l):
                     if self.isBeginSpecLine(l):
-                        raise CogError("Unexpected '%s'" % self.sBeginSpec,
+                        raise CogError("Unexpected '%s'" % self.options.sBeginSpec,
                             file=sFileIn, line=fIn.linenumber())
                     if self.isEndSpecLine(l):
-                        raise CogError("Unexpected '%s'" % self.sEndSpec,
+                        raise CogError("Unexpected '%s'" % self.options.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
                     previous += l
                     hasher.update(to_bytes(l))
@@ -456,7 +475,7 @@ class Cog(Redirectable):
     
                 if not l and not self.options.bEofCanBeEnd:
                     # We reached end of file before we found the end output line.
-                    raise CogError("Missing '%s' before end of file." % self.sEndOutput,
+                    raise CogError("Missing '%s' before end of file." % self.options.sEndOutput,
                         file=sFileIn, line=fIn.linenumber())
     
                 # Make the previous output available to the current code
@@ -487,7 +506,7 @@ class Cog(Redirectable):
                         endpieces = l.split(hashMatch.group(0), 1)
                     else:
                         # There was no old hash, but we want a new hash.
-                        endpieces = l.split(self.sEndOutput, 1)
+                        endpieces = l.split(self.options.sEndOutput, 1)
                     l = (self.sEndFormat % newHash).join(endpieces)
                 else:
                     # We don't want hashes output, so if there was one, get rid of
@@ -653,6 +672,7 @@ class Cog(Redirectable):
 
         self.options.parseArgs(argv)
         self.options.validate()
+        self._fixEndOutputPatterns()
 
         if self.options.bShowVersion:
             self.prout("Cog version %s" % __version__)
