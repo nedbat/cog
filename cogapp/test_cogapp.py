@@ -7,7 +7,7 @@
 from __future__ import absolute_import
 import unittest
 import os, os.path, random, re, shutil, stat, sys, tempfile
-from .backward import StringIO, to_bytes, b, u
+from .backward import StringIO, to_bytes, b
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
 from .cogapp import usage, __version__
