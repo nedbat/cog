@@ -1,17 +1,19 @@
 """ Test the cogapp.whiteutils module.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
 from __future__ import absolute_import
+
 import unittest
+
 from .whiteutils import *
+
 
 class WhitePrefixTests(unittest.TestCase):
     """ Test cases for cogapp.whiteutils.
     """
-
     def testSingleLine(self):
         self.assertEqual(whitePrefix(['']), '')
         self.assertEqual(whitePrefix([' ']), '')
@@ -39,10 +41,10 @@ class WhitePrefixTests(unittest.TestCase):
         self.assertEqual(whitePrefix(['   x','  x',' x']), ' ')
         self.assertEqual(whitePrefix(['     x',' x',' x']), ' ')
 
+
 class ReindentBlockTests(unittest.TestCase):
     """ Test cases for cogapp.reindentBlock.
     """
-
     def testNonTermLine(self):
         self.assertEqual(reindentBlock(''), '')
         self.assertEqual(reindentBlock('x'), 'x')
@@ -73,10 +75,10 @@ class ReindentBlockTests(unittest.TestCase):
             'import sys\n\nprint sys.argv\n'
             )
 
+
 class CommonPrefixTests(unittest.TestCase):
     """ Test cases for cogapp.commonPrefix.
     """
-
     def testDegenerateCases(self):
         self.assertEqual(commonPrefix([]), '')
         self.assertEqual(commonPrefix(['']), '')
@@ -98,6 +100,3 @@ class CommonPrefixTests(unittest.TestCase):
 
     def testDecreasingLengths(self):
         self.assertEqual(commonPrefix(['abcd', 'abc', 'ab']), 'ab')
-
-if __name__ == '__main__':      #pragma: no cover
-    unittest.main()
