@@ -1,6 +1,6 @@
 """ Indentation utilities for Cog.
     http://nedbatchelder.com/code/cog
-    
+
     Copyright 2004-2012, Ned Batchelder.
 """
 
@@ -23,7 +23,7 @@ def whitePrefix(strings):
     if isinstance(strings[0], bytes_types):
         pat = to_bytes(pat)
     prefix = re.match(pat, strings[0]).group(0)
-    
+
     # Loop over the other strings, keeping only as much of
     # the prefix as matches each string.
     for s in strings:

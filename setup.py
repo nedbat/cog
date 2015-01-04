@@ -26,12 +26,12 @@ setup(
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
-    description = 
+    description =
         'Cog: A code generator for executing Python snippets in source files.',
 
     long_description = '''\
         Docs at `http://nedbatchelder.com/code/cog <http://nedbatchelder.com/code/cog>`_.
-    
+
         Code repository and issue tracker are at
         `bitbucket.org <http://bitbucket.org/ned/cog>`_.
         ''',

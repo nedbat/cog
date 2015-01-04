@@ -1,6 +1,6 @@
 """ Test cogapp.
     http://nedbatchelder.com/code/cog
-    
+
     Copyright 2004-2012, Ned Batchelder.
 """
 
@@ -296,7 +296,7 @@ class CogTestsInMemory(TestCase):
                 [[[end]]]
             epilogue
             """
-            
+
         infile = reindentBlock(infile.replace('$', ''))
         self.assertEqual(Cog().processString(infile), infile)
 
@@ -316,7 +316,7 @@ class CogTestsInMemory(TestCase):
             x
 
             y
-            
+
             z
             [[[end]]]
             epilogue
@@ -343,7 +343,7 @@ class CogTestsInMemory(TestCase):
 
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), infile)
-        
+
     def testCompactOneLineCode(self):
         infile = """\
             first line
@@ -352,7 +352,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             last line
             """
-        
+
         outfile = """\
             first line
             hey: [[[cog cog.outl("hello %d" % (3*3*3*3)) ]]] looky!
@@ -360,7 +360,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             last line
             """
-        
+
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
@@ -387,7 +387,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             last line
             """
-        
+
         outfile = """\
             first line
             hey: [[[cog s="hey there" ]]] looky!
@@ -398,7 +398,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             last line
             """
-        
+
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
@@ -411,7 +411,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             """
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(AssertionError, 
+        self.assertRaisesMsg(AssertionError,
             "Oops",
             Cog().processString, (infile)
             )
@@ -445,7 +445,7 @@ class CogTestsInMemory(TestCase):
 class CogOptionsTests(TestCase):
     """ Test the CogOptions class.
     """
-    
+
     def testEquality(self):
         o = CogOptions()
         p = CogOptions()
@@ -454,7 +454,7 @@ class CogOptionsTests(TestCase):
         self.assertNotEqual(o, p)
         p.parseArgs(['-r'])
         self.assertEqual(o, p)
-        
+
     def testCloning(self):
         o = CogOptions()
         o.parseArgs(['-I', 'fooey', '-I', 'booey', '-s', ' /*x*/'])
@@ -465,7 +465,7 @@ class CogOptionsTests(TestCase):
         q = CogOptions()
         q.parseArgs(['-I', 'fooey', '-I', 'booey', '-s', ' /*x*/', '-I', 'huey', '-D', 'foo=quux'])
         self.assertEqual(p, q)
-    
+
     def testCombiningFlags(self):
         # Single-character flags can be combined.
         o = CogOptions()
@@ -481,10 +481,10 @@ class FileStructureTests(TestCase):
 
     def isBad(self, infile, msg=None):
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             msg,
             Cog().processString, (infile), 'infile.txt')
-        
+
     def testBeginNoEnd(self):
         infile = """\
             Fooey
@@ -523,11 +523,11 @@ class FileStructureTests(TestCase):
             #[[[cog
                 cog.outl('hello')
             #]]]
-            #[[[end]]]    
+            #[[[end]]]
             #]]]
             """
         self.isBad(infile2, "infile.txt(5): Unexpected ']]]'")
-        
+
     def testStartWithEoo(self):
         infile = """\
             #[[[end]]]
@@ -584,7 +584,7 @@ class FileStructureTests(TestCase):
             #[[[end]]]
             """
         self.isBad(infile2, "infile.txt(6): Unexpected '[[[cog'")
-        
+
     def testTwoEnds(self):
         infile = """\
             #[[[cog
@@ -617,20 +617,20 @@ class CogErrorTests(TestCase):
             [[[cog cog.error("This ain't right!")]]]
             [[[end]]]
             """
-        
+
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogGeneratedError, 
+        self.assertRaisesMsg(CogGeneratedError,
             "This ain't right!",
             Cog().processString, (infile))
-        
+
     def testErrorNoMsg(self):
         infile = """\
             [[[cog cog.error()]]]
             [[[end]]]
             """
-        
+
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogGeneratedError, 
+        self.assertRaisesMsg(CogGeneratedError,
             "Error raised by cog generator.",
             Cog().processString, (infile))
 
@@ -656,7 +656,7 @@ class CogGeneratorGetCodeTests(TestCase):
     """ Unit tests against CogGenerator to see if its getCode() method works
         properly.
     """
-    
+
     def setUp(self):
         """ All tests get a generator to use, and short same-length names for
             the functions we're going to use.
@@ -664,7 +664,7 @@ class CogGeneratorGetCodeTests(TestCase):
         self.gen = CogGenerator()
         self.m = self.gen.parseMarker
         self.l = self.gen.parseLine
-        
+
     def testEmpty(self):
         self.m('// [[[cog')
         self.m('// ]]]')
@@ -736,7 +736,7 @@ class TestCaseWithTempDir(TestCase):
         self.olddir = os.getcwd()
         os.chdir(self.tempdir)
         self.newCog()
-        
+
     def tearDown(self):
         os.chdir(self.olddir)
         # Get rid of the temporary directory.
@@ -758,7 +758,7 @@ class TestCaseWithTempDir(TestCase):
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):
-    
+
     def testArgumentFailure(self):
         # Return value 2 means usage problem.
         assert(self.cog.main(['argv0', '-j']) == 2)
@@ -843,7 +843,7 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
 
 
 class TestFileHandling(TestCaseWithTempDir):
-    
+
     def testSimple(self):
         d = {
             'test.cog': """\
@@ -915,7 +915,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'one.out': """\
                 //[[[cog
                 cog.outl("hello world")
@@ -923,14 +923,14 @@ class TestFileHandling(TestCaseWithTempDir):
                 hello world
                 //[[[end]]]
                 """,
-            
+
             'two.cog': """\
                 //[[[cog
                 cog.outl("goodbye cruel world")
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'two.out': """\
                 //[[[cog
                 cog.outl("goodbye cruel world")
@@ -938,11 +938,11 @@ class TestFileHandling(TestCaseWithTempDir):
                 goodbye cruel world
                 //[[[end]]]
                 """,
-            
+
             'cogfiles.txt': """\
                 # Please run cog
                 one.cog
-                
+
                 two.cog
                 """
             }
@@ -962,7 +962,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'one.out': """\
                 //[[[cog
                 cog.outl("hello world")
@@ -970,14 +970,14 @@ class TestFileHandling(TestCaseWithTempDir):
                 hello world
                 //[[[end]]]
                 """,
-            
+
             'two.cog': """\
                 //[[[cog
                 cog.outl("goodbye cruel world")
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'two.out': """\
                 //[[[cog
                 cog.outl("goodbye cruel world")
@@ -985,7 +985,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 goodbye cruel world
                 //[[[end]]]
                 """,
-            
+
             'cogfiles.txt': """\
                 # Please run cog
                 one.cog
@@ -1014,7 +1014,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'one.out': """\
                 //[[[cog
                 cog.outl("one: %s" % ('one' in globals()))
@@ -1024,7 +1024,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 two: False // ONE
                 //[[[end]]]
                 """,
-            
+
             'two.out': """\
                 //[[[cog
                 cog.outl("one: %s" % ('one' in globals()))
@@ -1034,7 +1034,7 @@ class TestFileHandling(TestCaseWithTempDir):
                 two: True // TWO
                 //[[[end]]]
                 """,
-            
+
             'cogfiles.txt': """\
                 # Please run cog
                 both.cog -o both.one -s ' // ONE' -D one=x
@@ -1056,10 +1056,10 @@ class TestFileHandling(TestCaseWithTempDir):
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'cogfiles.txt': """\
                 # Please run cog
-                both.cog 
+                both.cog
                 both.cog -d # This is bad: -r and -d
                 """
             }
@@ -1078,7 +1078,7 @@ class TestFileHandling(TestCaseWithTempDir):
             'one 1.cog': """\
                 //[[[cog cog.outl("hello world") ]]]
                 """,
-            
+
             'one.out': """\
                 //[[[cog cog.outl("hello world") ]]]
                 hello world //xxx
@@ -1093,17 +1093,17 @@ class TestFileHandling(TestCaseWithTempDir):
                     //[[[cog cog.outl("down deep with slashes") ]]]
                     """,
                 },
-                
+
             'subback.out': """\
                 //[[[cog cog.outl("down deep with backslashes") ]]]
                 down deep with backslashes //yyy
                 """,
-                
+
             'subfwd.out': """\
                 //[[[cog cog.outl("down deep with slashes") ]]]
                 down deep with slashes //zzz
                 """,
-                
+
             'cogfiles.txt': fix_backslashes("""\
                 # Please run cog
                 'one 1.cog' -s ' //xxx'
@@ -1199,7 +1199,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
     def setUp(self):
         TestCaseWithTempDir.setUp(self)
         self.sysmodulekeys = list(sys.modules)
-        
+
     def tearDown(self):
         modstoscrub = [
             modname
@@ -1219,7 +1219,7 @@ class CogIncludeTests(TestCaseWithImports):
             //]]]
             //[[[end]]]
             """,
-            
+
         'test.out': """\
             //[[[cog
                 import mymodule
@@ -1258,7 +1258,7 @@ class CogIncludeTests(TestCaseWithImports):
             },
         }
 
-    def testNeedIncludePath(self):    
+    def testNeedIncludePath(self):
         # Try it without the -I, to see that an ImportError happens.
         makeFiles(self.dincludes)
         self.assertRaises(ImportError, self.cog.callableMain, (['argv0', '-r', 'test.cog']))
@@ -1328,7 +1328,7 @@ class CogIncludeTests(TestCaseWithImports):
         self.newCog()
         self.assertRaises(CogError, self.cog.callableMain, (['argv0', '-r', '-I', 'xyzzy', '-I', 'quux', 'bad.cog']))
         self.assertEqual(oldsyspath, sys.path)
-        
+
     def testSubDirectories(self):
         # Test that relative paths on the command line work, with includes.
 
@@ -1340,7 +1340,7 @@ class CogIncludeTests(TestCaseWithImports):
                     //]]]
                     //[[[end]]]
                     """,
-                    
+
                 'test.out': """\
                     //[[[cog
                         import mysubmodule
@@ -1355,7 +1355,7 @@ class CogIncludeTests(TestCaseWithImports):
                     """
                 }
             }
-            
+
         makeFiles(d)
         # We should be able to invoke cog without the -I switch, and it will
         # auto-include the current directory
@@ -1364,7 +1364,7 @@ class CogIncludeTests(TestCaseWithImports):
 
 
 class CogTestsInFiles(TestCaseWithTempDir):
-    
+
     def testWarnIfNoCogCode(self):
         # Test that the -e switch warns if there is no Cog code.
         d = {
@@ -1375,7 +1375,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 hello world
                 //[[[end]]]
                 """,
-            
+
             'without.cog': """\
                 There's no cog
                 code in this file.
@@ -1428,7 +1428,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.newCog()
         self.cog.callableMain(['argv0', '-o', 'cog1out.txt', 'cog1.txt'])
         self.assertFilesSame('cog1out.txt', 'cog1out.out')
-        
+
     def testGlobalsDontCrossFiles(self):
         # Make sure that global values don't get shared between files.
         d = {
@@ -1438,7 +1438,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 //[[[cog cog.outl(s) ]]]
                 //[[[end]]]
                 """,
-            
+
             'one.out': """\
                 //[[[cog s = "This was set in one.cog" ]]]
                 //[[[end]]]
@@ -1446,7 +1446,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 This was set in one.cog
                 //[[[end]]]
                 """,
-            
+
             'two.cog': """\
                 //[[[cog
                 try:
@@ -1456,7 +1456,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 //]]]
                 //[[[end]]]
                 """,
-            
+
             'two.out': """\
                 //[[[cog
                 try:
@@ -1467,11 +1467,11 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 s isn't set!
                 //[[[end]]]
                 """,
-            
+
             'cogfiles.txt': """\
                 # Please run cog
                 one.cog
-                
+
                 two.cog
                 """
             }
@@ -1616,7 +1616,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         output = self.output.getvalue()
         outerr = stderr.getvalue()
         self.assertEqual(output, "--[[[cog cog.outl('Hey there!') ]]]\nHey there!\n--[[[end]]]\n")
-        self.assertEqual(outerr, "")        
+        self.assertEqual(outerr, "")
 
     def testSuffixOutputLines(self):
         d = {
@@ -1632,7 +1632,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 ;[[[cog cog.outl('a\\nb\\n   \\nc') ]]]
                 a (foo)
                 b (foo)
-                   
+
                 c (foo)
                 ;[[[end]]]
                 Good bye.
@@ -1672,7 +1672,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             'test.out': """\
                 ;[[[cog cog.outl('a\\n\\nb') ]]]
                 a /\\n*+([)]><
-                
+
                 b /\\n*+([)]><
                 """,
             }
@@ -1719,7 +1719,7 @@ class WritabilityTests(TestCaseWithTempDir):
         self.testcog = os.path.join(self.tempdir, 'test.cog')
         os.chmod(self.testcog, stat.S_IREAD)   # Make the file readonly.
         assert not os.access(self.testcog, os.W_OK)
-        
+
     def tearDown(self):
         os.chmod(self.testcog, stat.S_IWRITE)   # Make the file writable again.
         TestCaseWithTempDir.tearDown(self)
@@ -1729,17 +1729,17 @@ class WritabilityTests(TestCaseWithTempDir):
             CogError, "Can't overwrite test.cog",
             self.cog.callableMain, (['argv0', '-r', 'test.cog']))
         assert not os.access(self.testcog, os.W_OK)
-    
+
     def testReadonlyWithCommand(self):
         self.cog.callableMain(['argv0', '-r', '-w', self.cmd_w_args, 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         assert os.access(self.testcog, os.W_OK)
-    
+
     def testReadonlyWithCommandWithNoSlot(self):
         self.cog.callableMain(['argv0', '-r', '-w', self.cmd_w_asterisk, 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         assert os.access(self.testcog, os.W_OK)
-    
+
     def testReadonlyWithIneffectualCommand(self):
         self.assertRaisesMsg(
             CogError, "Couldn't make test.cog writable",
@@ -1772,7 +1772,7 @@ class ChecksumTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', '-c', 'cog1.txt'])
         self.assertFilesSame('cog1.txt', 'cog1.out')
-        
+
     def testCheckChecksumOutput(self):
         d = {
             'cog1.txt': """\
@@ -1801,7 +1801,7 @@ class ChecksumTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', '-c', 'cog1.txt'])
         self.assertFilesSame('cog1.txt', 'cog1.out')
-        
+
     def testRemoveChecksumOutput(self):
         d = {
             'cog1.txt': """\
@@ -1830,7 +1830,7 @@ class ChecksumTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', 'cog1.txt'])
         self.assertFilesSame('cog1.txt', 'cog1.out')
-        
+
     def testTamperedChecksumOutput(self):
         d = {
             'cog1.txt': """\
@@ -1863,7 +1863,7 @@ class ChecksumTests(TestCaseWithTempDir):
                 cog.outl("generated by cog")
                 cog.outl("blah blah.")
                 //]]]
-                
+
                 This line was newly
                 generated by cog
                 blah blah.
@@ -1906,22 +1906,22 @@ class ChecksumTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog1.txt(9): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog1.txt"]))
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog2.txt(9): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog2.txt"]))
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog3.txt(10): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog3.txt"]))
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog4.txt(9): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog4.txt"]))
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog5.txt(10): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog5.txt"]))
-        self.assertRaisesMsg(CogError, 
+        self.assertRaisesMsg(CogError,
             "cog6.txt(6): Output has been edited! Delete old checksum to unprotect.",
             self.cog.callableMain, (['argv0', '-c', "cog6.txt"]))
 
@@ -1933,7 +1933,7 @@ class ChecksumTests(TestCaseWithTempDir):
 
 class BlakeTests(TestCaseWithTempDir):
 
-    # Blake Winton's contributions.        
+    # Blake Winton's contributions.
     def testDeleteCode(self):
         # -o sets the output file.
         d = {

@@ -1,6 +1,6 @@
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
-    
+
     Copyright 2004-2012, Ned Batchelder.
 """
 
@@ -59,7 +59,7 @@ class CogError(Exception):
             Exception.__init__(self, "%s(%d): %s" % (file, line, msg))
         else:
             Exception.__init__(self, msg)
-    
+
 class CogUsageError(CogError):
     """ An error in usage of command-line arguments in cog.
     """
@@ -81,7 +81,7 @@ class Redirectable:
     def __init__(self):
         self.stdout = sys.stdout
         self.stderr = sys.stderr
-        
+
     def setOutput(self, stdout=None, stderr=None):
         """ Assign new files for standard out and/or standard error.
         """
@@ -104,10 +104,10 @@ class CogGenerator(Redirectable):
         Redirectable.__init__(self)
         self.markers = []
         self.lines = []
-        
+
     def parseMarker(self, l):
         self.markers.append(l)
-    
+
     def parseLine(self, l):
         self.lines.append(l.strip('\n'))
 
@@ -123,7 +123,7 @@ class CogGenerator(Redirectable):
             self.lines = [ l.replace(prefIn, '', 1) for l in self.lines ]
 
         return reindentBlock(self.lines, '')
-        
+
     def evaluate(self, cog, globals, fname='cog generator'):
         # figure out the right whitespace prefix for the output
         prefOut = whitePrefix(self.markers)
@@ -131,7 +131,7 @@ class CogGenerator(Redirectable):
         intext = self.getCode()
         if not intext:
             return ''
-        
+
         # In Python 2.2, the last line has to end in a newline.
         intext = "import cog\n" + intext + "\n"
         code = compile(intext, str(fname), 'exec')
@@ -141,7 +141,7 @@ class CogGenerator(Redirectable):
         cog.cogmodule.out = self.out
         cog.cogmodule.outl = self.outl
         cog.cogmodule.error = self.error
-        
+
         self.outstring = ''
         eval(code, globals)
 
@@ -224,7 +224,7 @@ class CogOptions:
         self.sBeginSpec = '[[[cog'
         self.sEndSpec = ']]]'
         self.sEndOutput = '[[[end]]]'
-    
+
     def __eq__(self, other):
         """ Comparison operator for tests to use.
         """
@@ -322,10 +322,10 @@ class Cog(Redirectable):
 
     def isBeginSpecLine(self, s):
         return self.options.sBeginSpec in s
-    
+
     def isEndSpecLine(self, s):
         return self.options.sEndSpec in s and not self.isEndOutputLine(s)
-    
+
     def isEndOutputLine(self, s):
         return self.options.sEndOutput in s
 
@@ -336,7 +336,7 @@ class Cog(Redirectable):
         self.cogmodule = imp.new_module('cog')
         self.cogmodule.path = []
         sys.modules['cog'] = self.cogmodule
-    
+
     def openOutputFile(self, fname):
         """ Open an output file, taking all the details into account.
         """
@@ -381,19 +381,19 @@ class Cog(Redirectable):
 
         try:
             fIn = NumberedFileReader(fIn)
-            
+
             bSawCog = False
-            
+
             self.cogmodule.inFile = sFileIn
             self.cogmodule.outFile = sFileOut
-    
+
             # The globals dict we'll use for this file.
             if globals is None:
                 globals = {}
-    
+
             # If there are any global defines, put them in the globals.
             globals.update(self.options.defines)
-    
+
             # loop over generator chunks
             l = fIn.readline()
             while l:
@@ -411,14 +411,14 @@ class Cog(Redirectable):
                     break
                 if not self.options.bDeleteCode:
                     fOut.write(l)
-    
+
                 # l is the begin spec
                 gen = CogGenerator()
                 gen.setOutput(stdout=self.stdout)
                 gen.parseMarker(l)
                 firstLineNum = fIn.linenumber()
                 self.cogmodule.firstLineNum = firstLineNum
-    
+
                 # If the spec begin is also a spec end, then process the single
                 # line of code inside.
                 if self.isEndSpecLine(l):
@@ -433,7 +433,7 @@ class Cog(Redirectable):
                 else:
                     # Deal with an ordinary code block.
                     l = fIn.readline()
-        
+
                     # Get all the lines in the spec
                     while l and not self.isEndSpecLine(l):
                         if self.isBeginSpecLine(l):
@@ -450,13 +450,13 @@ class Cog(Redirectable):
                         raise CogError(
                             "Cog block begun but never ended.",
                             file=sFileIn, line=firstLineNum)
-    
+
                     if not self.options.bDeleteCode:
                         fOut.write(l)
                     gen.parseMarker(l)
-                
+
                 l = fIn.readline()
-                
+
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
                 previous = ""
@@ -472,16 +472,16 @@ class Cog(Redirectable):
                     hasher.update(to_bytes(l))
                     l = fIn.readline()
                 curHash = hasher.hexdigest()
-    
+
                 if not l and not self.options.bEofCanBeEnd:
                     # We reached end of file before we found the end output line.
                     raise CogError("Missing '%s' before end of file." % self.options.sEndOutput,
                         file=sFileIn, line=fIn.linenumber())
-    
+
                 # Make the previous output available to the current code
                 self.cogmodule.previous = previous
 
-                # Write the output of the spec to be the new output if we're 
+                # Write the output of the spec to be the new output if we're
                 # supposed to generate code.
                 hasher = hashlib.md5()
                 if not self.options.bNoGenerate:
@@ -491,9 +491,9 @@ class Cog(Redirectable):
                     hasher.update(to_bytes(sGen))
                     fOut.write(sGen)
                 newHash = hasher.hexdigest()
-                
+
                 bSawCog = True
-                
+
                 # Write the ending output line
                 hashMatch = self.reEndOutput.search(l)
                 if self.options.bHashOutput:
@@ -513,11 +513,11 @@ class Cog(Redirectable):
                     # it.
                     if hashMatch:
                         l = l.replace(hashMatch.groupdict()['hashsect'], '', 1)
-                        
+
                 if not self.options.bDeleteCode:
                     fOut.write(l)
                 l = fIn.readline()
-    
+
             if not bSawCog and self.options.bWarnEmpty:
                 self.showWarning("no cog code found in %s" % sFileIn)
         finally:
@@ -529,7 +529,7 @@ class Cog(Redirectable):
 
     # A regex for non-empty lines, used by suffixLines.
     reNonEmptyLines = re.compile("^\s*\S+.*$", re.MULTILINE)
-    
+
     def suffixLines(self, text):
         """ Add suffixes to the lines in text, if our options desire it.
             text is many lines, as a single string.
@@ -548,7 +548,7 @@ class Cog(Redirectable):
         fNew = StringIO()
         self.processFile(fOld, fNew, fname=fname)
         return fNew.getvalue()
-        
+
     def replaceFile(self, sOldPath, sNewText):
         """ Replace file sOldPath with the contents sNewText
         """
@@ -600,7 +600,7 @@ class Cog(Redirectable):
                 # but only if they differ.
                 self.prout("Cogging %s" % sFile, end="")
                 bNeedNewline = True
-                
+
                 try:
                     fOldFile = self.openInputFile(sFile)
                     sOldText = fOldFile.read()
@@ -647,7 +647,7 @@ class Cog(Redirectable):
 
         self.options.parseArgs(args[1:])
         self.options.validate()
-        
+
         if args[0][0] == '@':
             if self.options.sOutputName:
                 raise CogUsageError("Can't use -o with @file")
@@ -679,11 +679,11 @@ class Cog(Redirectable):
             return
 
         if self.options.args:
-            for a in self.options.args:            
+            for a in self.options.args:
                 self.processArguments([a])
         else:
             raise CogUsageError("No files to process")
-        
+
     def main(self, argv):
         """ Handle the command-line execution for cog.
         """
