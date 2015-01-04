@@ -313,8 +313,8 @@ class Cog(Redirectable):
 
     def _fixEndOutputPatterns(self):
         end_output = self.options.sEndOutput
-        end_output.replace('[', r'\[')
-        self.reEndOutput = re.compile(end_output + r' (?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
+        end_output = end_output.replace('[', r'\[')
+        self.reEndOutput = re.compile(end_output + r'(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
         self.sEndFormat = self.options.sEndOutput + ' (checksum: %s)'
 
     def showWarning(self, msg):
