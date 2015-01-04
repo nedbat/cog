@@ -11,6 +11,7 @@ syntax: glob
 build
 dist
 .coverage
+.coverage.*
 coverage.xml
 htmlcov
 MANIFEST
