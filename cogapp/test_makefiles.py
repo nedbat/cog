@@ -1,6 +1,6 @@
 """ Test the cogapp.makefiles modules
     http://nedbatchelder.com/code/cog
-    
+
     Copyright 2004-2012, Ned Batchelder.
 """
 
@@ -50,7 +50,7 @@ class SimpleTests(unittest.TestCase):
         assert(not self.exists(self.tempdir, notfname))
 
     def testManyFiles(self):
-        d = { 
+        d = {
             'top1.txt': "howdy",
             'top2.txt': "hello",
             'sub': {
@@ -58,7 +58,7 @@ class SimpleTests(unittest.TestCase):
                  'sub2.txt': "inside2"
                  },
             }
-            
+
         self.checkFilesDontExist(d, self.tempdir)
         makefiles.makeFiles(d, self.tempdir)
         self.checkFilesExist(d, self.tempdir)

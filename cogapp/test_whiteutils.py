@@ -1,6 +1,6 @@
 """ Test the cogapp.whiteutils module.
     http://nedbatchelder.com/code/cog
-    
+
     Copyright 2004-2012, Ned Batchelder.
 """
 
@@ -54,7 +54,7 @@ class ReindentBlockTests(unittest.TestCase):
         self.assertEqual(reindentBlock(' x', ' '), ' x')
         self.assertEqual(reindentBlock(' x', '\t'), '\tx')
         self.assertEqual(reindentBlock(' x', '  '), '  x')
-        
+
     def testSingleLine(self):
         self.assertEqual(reindentBlock('\n'), '\n')
         self.assertEqual(reindentBlock('x\n'), 'x\n')
@@ -98,6 +98,6 @@ class CommonPrefixTests(unittest.TestCase):
 
     def testDecreasingLengths(self):
         self.assertEqual(commonPrefix(['abcd', 'abc', 'ab']), 'ab')
-        
+
 if __name__ == '__main__':      #pragma: no cover
     unittest.main()
