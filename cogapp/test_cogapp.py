@@ -6,8 +6,14 @@
 
 from __future__ import absolute_import
 
-import unittest
 import os, os.path, random, re, shutil, stat, sys, tempfile
+
+# Use unittest2 if it's available, otherwise unittest.  This gives us
+# back-ported features for 2.6.
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 from .backward import StringIO, to_bytes, b
 from .cogapp import Cog, CogOptions, CogGenerator
@@ -1655,6 +1661,22 @@ class CogTestsInFiles(TestCaseWithTempDir):
         outerr = stderr.getvalue()
         self.assertEqual(output, "--[[[cog cog.outl('Hey there!') ]]]\nHey there!\n--[[[end]]]\n")
         self.assertEqual(outerr, "")
+
+    def testReadFromStdin(self):
+        stdin = StringIO("--[[[cog cog.outl('Wow') ]]]\n--[[[end]]]\n")
+        def restore_stdin(old_stdin):
+            sys.stdin = old_stdin
+        self.addCleanup(restore_stdin, sys.stdin)
+        sys.stdin = stdin
+
+        stderr = StringIO()
+        self.cog.setOutput(stderr=stderr)
+        self.cog.callableMain(['argv0', '-'])
+        output = self.output.getvalue()
+        outerr = stderr.getvalue()
+        self.assertEqual(output, "--[[[cog cog.outl('Wow') ]]]\nWow\n--[[[end]]]\n")
+        self.assertEqual(outerr, "")
+
 
     def testSuffixOutputLines(self):
         d = {
