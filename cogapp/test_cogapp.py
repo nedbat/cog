@@ -726,8 +726,8 @@ class TestCaseWithTempDir(TestCase):
         shutil.rmtree(self.tempdir)
 
     def assertFilesSame(self, sFName1, sFName2):
-        text1 = open(os.path.join(self.tempdir, sFName1)).read()
-        text2 = open(os.path.join(self.tempdir, sFName2)).read()
+        text1 = open(os.path.join(self.tempdir, sFName1), 'rb').read()
+        text2 = open(os.path.join(self.tempdir, sFName2), 'rb').read()
         self.assertEqual(text1, text2)
 
     def assertFileContent(self, sFName, sContent):
@@ -1174,6 +1174,32 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
 
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        output = self.output.getvalue()
+        self.assertIn("(changed)", output)
+
+    def testFileEncodingOption(self):
+        d = {
+            'test.cog': b("""\
+                // \xca\xee\xe4\xe8\xf0\xe2\xea\xe0 Windows
+                //[[[cog
+                cog.outl("\xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe")
+                //]]]
+                //[[[end]]]
+                """),
+
+            'test.out': b("""\
+                // \xca\xee\xe4\xe8\xf0\xe2\xea\xe0 Windows
+                //[[[cog
+                cog.outl("\xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe")
+                //]]]
+                \xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe
+                //[[[end]]]
+                """),
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-n', 'cp1251', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
         self.assertIn("(changed)", output)
