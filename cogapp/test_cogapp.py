@@ -5,8 +5,10 @@
 """
 
 from __future__ import absolute_import
+
 import unittest
 import os, os.path, random, re, shutil, stat, sys, tempfile
+
 from .backward import StringIO, to_bytes, b
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
@@ -2131,9 +2133,6 @@ class ErrorCallTests(TestCaseWithTempDir):
         self.assert_(output.startswith("Cogging error.cog\nTraceback (most recent"), msg)
         self.assert_(output.find("RuntimeError: Hey!") > 0, msg)
 
-
-if __name__ == '__main__':      #pragma: no cover
-    unittest.main()
 
 # Things not yet tested:
 # - A bad -w command (currently fails silently).

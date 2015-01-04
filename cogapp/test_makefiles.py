@@ -1,13 +1,16 @@
 """ Test the cogapp.makefiles modules
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
 from __future__ import absolute_import
+
 import unittest                                 # This is a unittest, so this is fundamental.
-import shutil, os, random, types, tempfile    # We need these modules to write the tests.
+import shutil, os, random, types, tempfile      # We need these modules to write the tests.
+
 from . import makefiles
+
 
 class SimpleTests(unittest.TestCase):
 
@@ -87,7 +90,3 @@ class SimpleTests(unittest.TestCase):
         fcont = open(os.path.join(self.tempdir, fname))
         assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
         fcont.close()
-
-
-if __name__ == '__main__':      #pragma: no cover
-    unittest.main()
