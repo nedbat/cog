@@ -1714,11 +1714,11 @@ class WritabilityTests(TestCaseWithTempDir):
             """,
         }
 
-    if os.name == 'nt':     # pragma: no cover
+    if os.name == 'nt':     #pragma: no cover
         # for Windows
         cmd_w_args = 'attrib -R %s'
         cmd_w_asterisk = 'attrib -R *'
-    else:   # pragma: no cover
+    else:   #pragma: no cover
         # for unix-like
         cmd_w_args = 'chmod +w %s'
         cmd_w_asterisk = 'chmod +w *'

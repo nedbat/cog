@@ -6,3 +6,5 @@ To run the tests::
 
     $ pip install tox
     $ tox
+
+(Sometimes tox fails on new installations. Run tox again, it will be fine.)
