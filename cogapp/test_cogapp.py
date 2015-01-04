@@ -1632,7 +1632,9 @@ class CogTestsInFiles(TestCaseWithTempDir):
                 ;[[[cog cog.outl('a\\nb\\n   \\nc') ]]]
                 a (foo)
                 b (foo)
-
+                   """  # These three trailing spaces are important.
+                        # The suffix is not applied to completely blank lines.
+                """
                 c (foo)
                 ;[[[end]]]
                 Good bye.
