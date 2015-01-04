@@ -6,11 +6,14 @@ syntax: glob
 *.pyd
 *$py.class
 *.bak
-.coverage
 
 # Stuff in the root.
 build
 dist
+.coverage
+coverage.xml
 htmlcov
 MANIFEST
 setuptools-*.egg
+cogapp.egg-info
+.tox
