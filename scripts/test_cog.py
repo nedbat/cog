@@ -2,10 +2,14 @@
 """ Test the Cog distribution.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
+from __future__ import print_function
+
 import unittest, sys
+
+print(sys.version.splitlines()[0])
 
 bCoverage = ('-cover' in sys.argv or '--cover' in sys.argv)
 

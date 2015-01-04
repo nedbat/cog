@@ -9,7 +9,8 @@ clean:
 	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
 	-rm -rf __pycache__ */__pycache__ */*/__pycache__
 	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-	-rm -f .coverage
+	-rm -f .coverage coverage.xml
+	-rm -rf cogapp.egg-info htmlcov
 
 install:
 	python setup.py install
