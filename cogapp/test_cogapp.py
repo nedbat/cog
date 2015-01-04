@@ -14,6 +14,7 @@ from .cogapp import usage, __version__
 from .whiteutils import reindentBlock
 from .makefiles import *
 
+
 class TestCase(unittest.TestCase):
     """ Base class for all Cog test cases.  Adds utility methods I like.
     """
@@ -40,6 +41,7 @@ class TestCase(unittest.TestCase):
             else:
                 excName = str(excClass)
             raise self.failureException("Expected to raise %s, didn't get an exception at all" % excName)
+
 
 class CogTestsInMemory(TestCase):
     """ Test cases for cogapp.Cog()
@@ -442,6 +444,7 @@ class CogTestsInMemory(TestCase):
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), reindentBlock(outfile))
 
+
 class CogOptionsTests(TestCase):
     """ Test the CogOptions class.
     """
@@ -473,6 +476,7 @@ class CogOptionsTests(TestCase):
         p = CogOptions()
         p.parseArgs(['-erz'])
         self.assertEqual(o, p)
+
 
 class FileStructureTests(TestCase):
     """ Test cases to check that we're properly strict about the structure
@@ -608,6 +612,7 @@ class FileStructureTests(TestCase):
             """
         self.isBad(infile2, "infile.txt(8): Unexpected ']]]'")
 
+
 class CogErrorTests(TestCase):
     """ Test cases for cog.error().
     """
@@ -651,6 +656,7 @@ class CogErrorTests(TestCase):
 
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), infile)
+
 
 class CogGeneratorGetCodeTests(TestCase):
     """ Unit tests against CogGenerator to see if its getCode() method works
@@ -718,6 +724,7 @@ class CogGeneratorGetCodeTests(TestCase):
         self.l('\tprint sys.argv')
         self.m('#endif //]]]')
         self.assertEqual(self.gen.getCode(), 'import cog, sys\n\nprint sys.argv')
+
 
 class TestCaseWithTempDir(TestCase):
 
@@ -1683,6 +1690,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.cog.callableMain(['argv0', '-z', '-r', '-s', r' /\n*+([)]><', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
 
+
 class WritabilityTests(TestCaseWithTempDir):
 
     d = {
@@ -1747,6 +1755,7 @@ class WritabilityTests(TestCaseWithTempDir):
             CogError, "Couldn't make test.cog writable",
             self.cog.callableMain, (['argv0', '-r', '-w', 'echo %s', 'test.cog']))
         assert not os.access(self.testcog, os.W_OK)
+
 
 class ChecksumTests(TestCaseWithTempDir):
 
@@ -1933,6 +1942,7 @@ class ChecksumTests(TestCaseWithTempDir):
         self.cog.callableMain(argv)
         self.assertEqual(argv, orig_argv)
 
+
 class BlakeTests(TestCaseWithTempDir):
 
     # Blake Winton's contributions.
@@ -2001,6 +2011,7 @@ class BlakeTests(TestCaseWithTempDir):
         self.cog.options.bDeleteCode = True
         self.cog.processFile('test.cog', 'test.cogged', globals=globals)
         self.assertFilesSame('test.cogged', 'test.out')
+
 
 class ErrorCallTests(TestCaseWithTempDir):
 
