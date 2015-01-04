@@ -751,3 +751,5 @@ class Cog(Redirectable):
 #           Use the builtin compile() instead of compiler, for Jython.
 #           Explicitly close files we opened, Jython likes this.
 # 20120205: Port to Python 3.  Lowest supported version is 2.6.
+# 20150104: --begin-spec, --end-spec, and --end-output options added by Doug
+#               Hellmann.
