@@ -744,9 +744,9 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
 
     def testArgumentFailure(self):
         # Return value 2 means usage problem.
-        assert(self.cog.main(['argv0', '-j']) == 2)
+        self.assertEqual(self.cog.main(['argv0', '-j']), 2)
         output = self.output.getvalue()
-        assert(output.find("option -j not recognized") >= 0)
+        self.assertIn("option -j not recognized", output)
         with self.assertRaises(CogUsageError):
             self.cog.callableMain(['argv0'])
         with self.assertRaises(CogUsageError):
@@ -764,15 +764,15 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             self.cog.callableMain(['argv0', '-o', 'foo', '@cogfiles.txt'])
 
     def testDashV(self):
-        assert(self.cog.main(['argv0', '-v']) == 0)
+        self.assertEqual(self.cog.main(['argv0', '-v']), 0)
         output = self.output.getvalue()
         self.assertEqual('Cog version %s\n' % __version__, output)
 
     def producesHelp(self, args):
         self.newCog()
         argv = ['argv0'] + args.split()
-        assert(self.cog.main(argv) == 0)
-        self.assertEquals(usage, self.output.getvalue())
+        self.assertEqual(self.cog.main(argv), 0)
+        self.assertEqual(usage, self.output.getvalue())
 
     def testDashH(self):
         # -h or -? anywhere on the command line should just print help.
@@ -862,7 +862,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
-        assert(output.find("(changed)") >= 0)
+        self.assertIn("(changed)", output)
 
     def testOutputFile(self):
         # -o sets the output file.
@@ -940,7 +940,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertFilesSame('one.cog', 'one.out')
         self.assertFilesSame('two.cog', 'two.out')
         output = self.output.getvalue()
-        assert(output.find("(changed)") >= 0)
+        self.assertIn("(changed)", output)
 
     def testNestedAtFile(self):
         d = {
@@ -991,7 +991,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertFilesSame('one.cog', 'one.out')
         self.assertFilesSame('two.cog', 'two.out')
         output = self.output.getvalue()
-        assert(output.find("(changed)") >= 0)
+        self.assertIn("(changed)", output)
 
     def testAtFileWithArgs(self):
         d = {
@@ -1176,7 +1176,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
-        assert(output.find("(changed)") >= 0)
+        self.assertIn("(changed)", output)
 
 
 class TestCaseWithImports(TestCaseWithTempDir):
@@ -1378,15 +1378,15 @@ class CogTestsInFiles(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-e', 'with.cog'])
         output = self.output.getvalue()
-        assert(output.find("Warning") < 0)
+        self.assertNotIn("Warning", output)
         self.newCog()
         self.cog.callableMain(['argv0', '-e', 'without.cog'])
         output = self.output.getvalue()
-        assert(output.find("Warning: no cog code found in without.cog") >= 0)
+        self.assertIn("Warning: no cog code found in without.cog", output)
         self.newCog()
         self.cog.callableMain(['argv0', 'without.cog'])
         output = self.output.getvalue()
-        assert(output.find("Warning") < 0)
+        self.assertNotIn("Warning", output)
 
     def testFileNameProps(self):
         d = {
@@ -1474,7 +1474,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertFilesSame('one.cog', 'one.out')
         self.assertFilesSame('two.cog', 'two.out')
         output = self.output.getvalue()
-        assert(output.find("(changed)") >= 0)
+        self.assertIn("(changed)", output)
 
     def testRemoveGeneratedOutput(self):
         d = {
@@ -2130,7 +2130,7 @@ class ErrorCallTests(TestCaseWithTempDir):
         output = self.output.getvalue()
         msg = 'Actual output:\n' + output
         self.assert_(output.startswith("Cogging error.cog\nTraceback (most recent"), msg)
-        self.assert_(output.find("RuntimeError: Hey!") > 0, msg)
+        self.assertIn("RuntimeError: Hey!", output)
 
 
 # Things not yet tested:
