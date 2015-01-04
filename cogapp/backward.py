@@ -10,8 +10,6 @@ if PY3:
     bytes_types = (bytes,)
     def b(s):
         return s.encode("latin-1")
-    def u(s):
-        return s
     def to_bytes(s):
         return s.encode('utf8')
 else:
@@ -20,8 +18,6 @@ else:
     bytes_types = (str,)
     def b(s):
         return s
-    def u(s):
-        return unicode(s, "unicode_escape")
     def to_bytes(s):
         return s
 
