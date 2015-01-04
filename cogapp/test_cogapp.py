@@ -1068,6 +1068,12 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-r', '@cogfiles.txt']))
 
     def testAtFileWithTrickyFilenames(self):
+        def fix_backslashes(files_txt):
+            """Make the contents of a files.txt sensitive to the platform."""
+            if sys.platform != "win32":
+                files_txt = files_txt.replace("\\", "/")
+            return files_txt
+
         d = {
             'one 1.cog': """\
                 //[[[cog cog.outl("hello world") ]]]
@@ -1098,12 +1104,12 @@ class TestFileHandling(TestCaseWithTempDir):
                 down deep with slashes //zzz
                 """,
                 
-            'cogfiles.txt': """\
+            'cogfiles.txt': fix_backslashes("""\
                 # Please run cog
                 'one 1.cog' -s ' //xxx'
-                subdir\subback.cog -s ' //yyy'
+                subdir\\subback.cog -s ' //yyy'
                 subdir/subfwd.cog -s ' //zzz'
-                """
+                """)
             }
 
         makeFiles(d)
