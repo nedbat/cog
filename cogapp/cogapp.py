@@ -1,7 +1,7 @@
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
 from __future__ import absolute_import, print_function
@@ -312,8 +312,7 @@ class Cog(Redirectable):
         self.installCogModule()
 
     def _fixEndOutputPatterns(self):
-        end_output = self.options.sEndOutput
-        end_output = end_output.replace('[', r'\[')
+        end_output = re.escape(self.options.sEndOutput)
         self.reEndOutput = re.compile(end_output + r'(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
         self.sEndFormat = self.options.sEndOutput + ' (checksum: %s)'
 
