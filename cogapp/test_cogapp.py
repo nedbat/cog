@@ -1,7 +1,7 @@
 """ Test cogapp.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
 from __future__ import absolute_import
@@ -1941,6 +1941,88 @@ class ChecksumTests(TestCaseWithTempDir):
         orig_argv = argv[:]
         self.cog.callableMain(argv)
         self.assertEqual(argv, orig_argv)
+
+
+class CustomDelimiterTests(TestCaseWithTempDir):
+
+    def testCustomerDelimiters(self):
+        d = {
+            'test.cog': """\
+                //{{cog
+                cog.outl("void %s();" % "MyFunction")
+                //}}
+                //{{end}}
+                """,
+
+            'test.out': """\
+                //{{cog
+                cog.outl("void %s();" % "MyFunction")
+                //}}
+                void MyFunction();
+                //{{end}}
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain([
+            'argv0', '-r',
+            '--begin-spec={{', '--end-spec=}}', '--end-output={{end}}',
+            'test.cog'
+        ])
+        self.assertFilesSame('test.cog', 'test.out')
+
+    def testTrulyWackyDelimiters(self):
+        # Make sure the delimiters are properly re-escaped.
+        d = {
+            'test.cog': """\
+                //**(cog
+                cog.outl("void %s();" % "MyFunction")
+                //**)
+                //**(end)**
+                """,
+
+            'test.out': """\
+                //**(cog
+                cog.outl("void %s();" % "MyFunction")
+                //**)
+                void MyFunction();
+                //**(end)**
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain([
+            'argv0', '-r',
+            '--begin-spec=**(', '--end-spec=**)', '--end-output=**(end)**',
+            'test.cog'
+        ])
+        self.assertFilesSame('test.cog', 'test.out')
+
+    def testChangeJustOneDelimiter(self):
+        d = {
+            'test.cog': """\
+                //**(cog
+                cog.outl("void %s();" % "MyFunction")
+                //]]]
+                //[[[end]]]
+                """,
+
+            'test.out': """\
+                //**(cog
+                cog.outl("void %s();" % "MyFunction")
+                //]]]
+                void MyFunction();
+                //[[[end]]]
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain([
+            'argv0', '-r',
+            '--begin-spec=**(',
+            'test.cog'
+        ])
+        self.assertFilesSame('test.cog', 'test.out')
 
 
 class BlakeTests(TestCaseWithTempDir):
