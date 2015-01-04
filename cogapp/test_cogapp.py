@@ -28,21 +28,50 @@ class TestCase(unittest.TestCase):
             callableObj(*args, **kwargs)
         except excClass as exc:
             excMsg = str(exc)
-            if not msg:
-                # No message provided: it passes.
-                return  #pragma: no cover
-            elif excMsg == msg:
+            assert msg
+            if excMsg == msg:
                 # Message provided, and we got the right message: it passes.
                 return
-            else:   #pragma: no cover
-                # Message provided, and it didn't match: fail!
-                raise self.failureException("Right exception, wrong message: got '%s' expected '%s'" % (excMsg, msg))
-        else:   #pragma: no cover
-            if hasattr(excClass,'__name__'):
-                excName = excClass.__name__
             else:
-                excName = str(excClass)
-            raise self.failureException("Expected to raise %s, didn't get an exception at all" % excName)
+                # Message provided, and it didn't match: fail!
+                fail_msg = "Right exception, wrong message: got %r expected %r"
+                raise self.failureException(fail_msg % (excMsg, msg))
+        else:
+            excName = excClass.__name__
+            fail_msg = "Expected to raise %s, didn't get an exception at all"
+            raise self.failureException(fail_msg % excName)
+
+
+class RaisesMsgTest(TestCase):
+    """ Test cases for assertRaisesMsg.
+    """
+    def boom(self):
+        raise ValueError("BOOM!")
+
+    def testSimple(self):
+        self.assertRaisesMsg(ValueError, "BOOM!", self.boom)
+
+    def testWrongMessage(self):
+        def doit():
+            self.assertRaisesMsg(ValueError, "Oops", self.boom)
+        self.assertRaises(AssertionError, doit)
+        self.assertRaisesMsg(
+            AssertionError,
+            "Right exception, wrong message: got 'BOOM!' expected 'Oops'",
+            doit,
+        )
+
+    def testDidntRaise(self):
+        def its_fine():
+            return 17
+        def doit():
+            self.assertRaisesMsg(ValueError, "BOOM!", its_fine)
+        self.assertRaises(AssertionError, doit)
+        self.assertRaisesMsg(
+            AssertionError,
+            "Expected to raise ValueError, didn't get an exception at all",
+            doit
+        )
 
 
 class CogTestsInMemory(TestCase):
