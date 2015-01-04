@@ -23,61 +23,7 @@ from .whiteutils import reindentBlock
 from .makefiles import *
 
 
-class TestCase(unittest.TestCase):
-    """ Base class for all Cog test cases.  Adds utility methods I like.
-    """
-    def assertRaisesMsg(self, excClass, msg, callableObj, *args, **kwargs):
-        """ Just like unittest.TestCase.assertRaises,
-            but checks that the message is right too.
-        """
-        try:
-            callableObj(*args, **kwargs)
-        except excClass as exc:
-            excMsg = str(exc)
-            assert msg
-            if excMsg == msg:
-                # Message provided, and we got the right message: it passes.
-                return
-            else:
-                # Message provided, and it didn't match: fail!
-                fail_msg = "Right exception, wrong message: got %r expected %r"
-                raise self.failureException(fail_msg % (excMsg, msg))
-        else:
-            excName = excClass.__name__
-            fail_msg = "Expected to raise %s, didn't get an exception at all"
-            raise self.failureException(fail_msg % excName)
-
-
-class RaisesMsgTest(TestCase):
-    """ Test cases for assertRaisesMsg.
-    """
-    def boom(self):
-        raise ValueError("BOOM!")
-
-    def testSimple(self):
-        self.assertRaisesMsg(ValueError, "BOOM!", self.boom)
-
-    def testWrongMessage(self):
-        def doit():
-            self.assertRaisesMsg(ValueError, "Oops", self.boom)
-        self.assertRaises(AssertionError, doit)
-        self.assertRaisesMsg(
-            AssertionError,
-            "Right exception, wrong message: got 'BOOM!' expected 'Oops'",
-            doit,
-        )
-
-    def testDidntRaise(self):
-        def its_fine():
-            return 17
-        def doit():
-            self.assertRaisesMsg(ValueError, "BOOM!", its_fine)
-        self.assertRaises(AssertionError, doit)
-        self.assertRaisesMsg(
-            AssertionError,
-            "Expected to raise ValueError, didn't get an exception at all",
-            doit
-        )
+TestCase = unittest.TestCase
 
 
 class CogTestsInMemory(TestCase):
@@ -411,10 +357,8 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             last line
             """
-        self.assertRaisesMsg(CogError,
-             "infile.txt(2): Cog code markers inverted",
-             Cog().processString,
-             reindentBlock(infile), "infile.txt")
+        with self.assertRaisesRegexp(CogError, r"infile.txt\(2\): Cog code markers inverted"):
+             Cog().processString(reindentBlock(infile), "infile.txt")
 
     def testSharingGlobals(self):
         infile = """\
@@ -450,10 +394,8 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             """
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(AssertionError,
-            "Oops",
-            Cog().processString, (infile)
-            )
+        with self.assertRaisesRegexp(AssertionError, "Oops"):
+            Cog().processString(infile)
 
     def testCogPrevious(self):
         # Check that we can access the previous run's output.
@@ -522,9 +464,8 @@ class FileStructureTests(TestCase):
 
     def isBad(self, infile, msg=None):
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogError,
-            msg,
-            Cog().processString, (infile), 'infile.txt')
+        with self.assertRaisesRegexp(CogError, re.escape(msg)):
+            Cog().processString(infile, 'infile.txt')
 
     def testBeginNoEnd(self):
         infile = """\
@@ -661,9 +602,8 @@ class CogErrorTests(TestCase):
             """
 
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogGeneratedError,
-            "This ain't right!",
-            Cog().processString, (infile))
+        with self.assertRaisesRegexp(CogGeneratedError, "This ain't right!"):
+            Cog().processString(infile)
 
     def testErrorNoMsg(self):
         infile = """\
@@ -672,9 +612,8 @@ class CogErrorTests(TestCase):
             """
 
         infile = reindentBlock(infile)
-        self.assertRaisesMsg(CogGeneratedError,
-            "Error raised by cog generator.",
-            Cog().processString, (infile))
+        with self.assertRaisesRegexp(CogGeneratedError, "Error raised by cog generator."):
+            Cog().processString(infile)
 
     def testNoErrorIfErrorNotCalled(self):
         infile = """\
@@ -808,8 +747,10 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         assert(self.cog.main(['argv0', '-j']) == 2)
         output = self.output.getvalue()
         assert(output.find("option -j not recognized") >= 0)
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0']))
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-j']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0'])
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-j'])
 
     def testNoDashOAndAtFile(self):
         d = {
@@ -819,7 +760,8 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-o', 'foo', '@cogfiles.txt']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-o', 'foo', '@cogfiles.txt'])
 
     def testDashV(self):
         assert(self.cog.main(['argv0', '-v']) == 0)
@@ -847,7 +789,8 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-o', 'foo', '-r', 'cogfile.txt']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-o', 'foo', '-r', 'cogfile.txt'])
 
     def testDashZ(self):
         d = {
@@ -874,16 +817,17 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaisesMsg(
-            CogError, "test.cog(6): Missing '[[[end]]]' before end of file.",
-            self.cog.callableMain, (['argv0', '-r', 'test.cog']))
+        with self.assertRaisesRegexp(CogError, re.escape("test.cog(6): Missing '[[[end]]]' before end of file.")):
+            self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.newCog()
         self.cog.callableMain(['argv0', '-r', '-z', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
 
     def testBadDashD(self):
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-Dfooey', 'cog.txt']))
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-D', 'fooey', 'cog.txt']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-Dfooey', 'cog.txt'])
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-D', 'fooey', 'cog.txt'])
 
 
 class TestFileHandling(TestCaseWithTempDir):
@@ -1109,7 +1053,8 @@ class TestFileHandling(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-r', '@cogfiles.txt']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-r', '@cogfiles.txt'])
 
     def testAtFileWithTrickyFilenames(self):
         def fix_backslashes(files_txt):
@@ -1305,7 +1250,8 @@ class CogIncludeTests(TestCaseWithImports):
     def testNeedIncludePath(self):
         # Try it without the -I, to see that an ImportError happens.
         makeFiles(self.dincludes)
-        self.assertRaises(ImportError, self.cog.callableMain, (['argv0', '-r', 'test.cog']))
+        with self.assertRaises(ImportError):
+            self.cog.callableMain(['argv0', '-r', 'test.cog'])
 
     def testIncludePath(self):
         # Test that -I adds include directories properly.
@@ -1362,15 +1308,18 @@ class CogIncludeTests(TestCaseWithImports):
         self.assertEqual(oldsyspath, sys.path)
         # Is it unchanged for a failed run?
         self.newCog()
-        self.assertRaises(CogError, self.cog.callableMain, (['argv0', '-r', 'bad.cog']))
+        with self.assertRaises(CogError):
+            self.cog.callableMain(['argv0', '-r', 'bad.cog'])
         self.assertEqual(oldsyspath, sys.path)
         # Is it unchanged for a failed run with includes?
         self.newCog()
-        self.assertRaises(CogError, self.cog.callableMain, (['argv0', '-r', '-I', 'xyzzy', 'bad.cog']))
+        with self.assertRaises(CogError):
+            self.cog.callableMain(['argv0', '-r', '-I', 'xyzzy', 'bad.cog'])
         self.assertEqual(oldsyspath, sys.path)
         # Is it unchanged for a failed run with two includes?
         self.newCog()
-        self.assertRaises(CogError, self.cog.callableMain, (['argv0', '-r', '-I', 'xyzzy', '-I', 'quux', 'bad.cog']))
+        with self.assertRaises(CogError):
+            self.cog.callableMain(['argv0', '-r', '-I', 'xyzzy', '-I', 'quux', 'bad.cog'])
         self.assertEqual(oldsyspath, sys.path)
 
     def testSubDirectories(self):
@@ -1788,9 +1737,8 @@ class WritabilityTests(TestCaseWithTempDir):
         TestCaseWithTempDir.tearDown(self)
 
     def testReadonlyNoCommand(self):
-        self.assertRaisesMsg(
-            CogError, "Can't overwrite test.cog",
-            self.cog.callableMain, (['argv0', '-r', 'test.cog']))
+        with self.assertRaisesRegexp(CogError, "Can't overwrite test.cog"):
+            self.cog.callableMain(['argv0', '-r', 'test.cog'])
         assert not os.access(self.testcog, os.W_OK)
 
     def testReadonlyWithCommand(self):
@@ -1804,9 +1752,8 @@ class WritabilityTests(TestCaseWithTempDir):
         assert os.access(self.testcog, os.W_OK)
 
     def testReadonlyWithIneffectualCommand(self):
-        self.assertRaisesMsg(
-            CogError, "Couldn't make test.cog writable",
-            self.cog.callableMain, (['argv0', '-r', '-w', 'echo %s', 'test.cog']))
+        with self.assertRaisesRegexp(CogError, "Couldn't make test.cog writable"):
+            self.cog.callableMain(['argv0', '-r', '-w', 'echo %s', 'test.cog'])
         assert not os.access(self.testcog, os.W_OK)
 
 
@@ -1970,24 +1917,24 @@ class ChecksumTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaisesMsg(CogError,
-            "cog1.txt(9): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog1.txt"]))
-        self.assertRaisesMsg(CogError,
-            "cog2.txt(9): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog2.txt"]))
-        self.assertRaisesMsg(CogError,
-            "cog3.txt(10): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog3.txt"]))
-        self.assertRaisesMsg(CogError,
-            "cog4.txt(9): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog4.txt"]))
-        self.assertRaisesMsg(CogError,
-            "cog5.txt(10): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog5.txt"]))
-        self.assertRaisesMsg(CogError,
-            "cog6.txt(6): Output has been edited! Delete old checksum to unprotect.",
-            self.cog.callableMain, (['argv0', '-c', "cog6.txt"]))
+        with self.assertRaisesRegexp(CogError,
+            r"cog1.txt\(9\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog1.txt"])
+        with self.assertRaisesRegexp(CogError,
+            r"cog2.txt\(9\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog2.txt"])
+        with self.assertRaisesRegexp(CogError,
+            r"cog3.txt\(10\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog3.txt"])
+        with self.assertRaisesRegexp(CogError,
+            r"cog4.txt\(9\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog4.txt"])
+        with self.assertRaisesRegexp(CogError,
+            r"cog5.txt\(10\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog5.txt"])
+        with self.assertRaisesRegexp(CogError,
+            r"cog6.txt\(6\): Output has been edited! Delete old checksum to unprotect."):
+            self.cog.callableMain(['argv0', '-c', "cog6.txt"])
 
     def testArgvIsntModified(self):
         argv = ['argv0', '-v']
@@ -2117,7 +2064,8 @@ class BlakeTests(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.assertRaises(CogUsageError, self.cog.callableMain, (['argv0', '-r', '-d', 'test.cog']))
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '-r', '-d', 'test.cog'])
 
     def testSettingGlobals(self):
         # Blake Winton contributed a way to set the globals that will be used in
