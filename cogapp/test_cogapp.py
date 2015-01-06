@@ -1974,14 +1974,14 @@ class CustomDelimiterTests(TestCaseWithTempDir):
     def testCustomerDelimiters(self):
         d = {
             'test.cog': """\
-                //{{cog
+                //{{
                 cog.outl("void %s();" % "MyFunction")
                 //}}
                 //{{end}}
                 """,
 
             'test.out': """\
-                //{{cog
+                //{{
                 cog.outl("void %s();" % "MyFunction")
                 //}}
                 void MyFunction();
@@ -2001,14 +2001,14 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         # Make sure the delimiters are properly re-escaped.
         d = {
             'test.cog': """\
-                //**(cog
+                //**(
                 cog.outl("void %s();" % "MyFunction")
                 //**)
                 //**(end)**
                 """,
 
             'test.out': """\
-                //**(cog
+                //**(
                 cog.outl("void %s();" % "MyFunction")
                 //**)
                 void MyFunction();
@@ -2027,14 +2027,14 @@ class CustomDelimiterTests(TestCaseWithTempDir):
     def testChangeJustOneDelimiter(self):
         d = {
             'test.cog': """\
-                //**(cog
+                //**(
                 cog.outl("void %s();" % "MyFunction")
                 //]]]
                 //[[[end]]]
                 """,
 
             'test.out': """\
-                //**(cog
+                //**(
                 cog.outl("void %s();" % "MyFunction")
                 //]]]
                 void MyFunction();
