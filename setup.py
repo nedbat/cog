@@ -55,7 +55,6 @@ setup(
 
     scripts = [
         'scripts/cog.py',
-        'scripts/test_cog.py',
         ],
 
     **extra_options
