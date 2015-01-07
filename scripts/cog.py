@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
 

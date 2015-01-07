@@ -5,7 +5,10 @@
     Copyright 2004-2012, Ned Batchelder.
 """
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 try:
     # For building on Windows, need to fix the tar file after it's made.
