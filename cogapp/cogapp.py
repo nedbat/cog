@@ -38,6 +38,9 @@ OPTIONS:
     -x          Excise all the generated output without running the generators.
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
+    --verbosity=VERBOSITY
+                Control the amount of output. 2 (the default) lists all files,
+                1 lists only changed files, 0 lists no files.
     --begin-spec=val
                 The pattern beginning cog inline instructions. Defaults
                 to '[[[cog'.
@@ -226,6 +229,7 @@ class CogOptions:
         self.sEndSpec = ']]]'
         self.sEndOutput = '[[[end]]]'
         self.sEncoding = "utf-8"
+        self.verbosity = 2
 
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -246,9 +250,14 @@ class CogOptions:
     def parseArgs(self, argv):
         # Parse the command line arguments.
         try:
-            opts, self.args = getopt.getopt(argv, 'cdD:eI:n:o:rs:Uvw:xz',
-                                            ['begin-spec=', 'end-spec=',
-                                             'end-output='])
+            opts, self.args = getopt.getopt(
+                argv,
+                'cdD:eI:n:o:rs:Uvw:xz',
+                [
+                    'begin-spec=', 'end-spec=', 'end-output=',
+                    'verbosity=',
+                ]
+            )
         except getopt.error as msg:
             raise CogUsageError(msg)
 
@@ -291,6 +300,8 @@ class CogOptions:
                 self.sEndSpec = a
             elif o == '--end-output':
                 self.sEndOutput = a
+            elif o == '--verbosity':
+                self.verbosity = int(a)
             else:
                 # Since getopt.getopt is given a list of possible flags,
                 # this is an internal error.
@@ -588,6 +599,7 @@ class Cog(Redirectable):
         """
 
         self.saveIncludePath()
+        bNeedNewline = False
 
         try:
             self.addToIncludePath(self.options.includePath)
@@ -601,8 +613,9 @@ class Cog(Redirectable):
             elif self.options.bReplace:
                 # We want to replace the cog file with the output,
                 # but only if they differ.
-                self.prout("Cogging %s" % sFile, end="")
-                bNeedNewline = True
+                if self.options.verbosity >= 2:
+                    self.prout("Cogging %s" % sFile, end="")
+                    bNeedNewline = True
 
                 try:
                     fOldFile = self.openInputFile(sFile)
@@ -610,8 +623,11 @@ class Cog(Redirectable):
                     fOldFile.close()
                     sNewText = self.processString(sOldText, fname=sFile)
                     if sOldText != sNewText:
-                        self.prout("  (changed)")
-                        bNeedNewline = False
+                        if self.options.verbosity >= 1:
+                            if self.options.verbosity < 2:
+                                self.prout("Cogging %s" % sFile, end="")
+                            self.prout("  (changed)")
+                            bNeedNewline = False
                         self.replaceFile(sFile, sNewText)
                 finally:
                     # The try-finally block is so we can print a partial line
@@ -757,3 +773,4 @@ class Cog(Redirectable):
 # 20150104: --begin-spec, --end-spec, and --end-output options added by Doug
 #               Hellmann.
 # 20150104: -n ENCODING option added by Petr Gladkiy.
+# 20150107: Added --verbose to control what files get listed.
