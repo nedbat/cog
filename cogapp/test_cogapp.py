@@ -1107,6 +1107,46 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertFilesSame('subdir/subback.cog', 'subback.out')
         self.assertFilesSame('subdir/subfwd.cog', 'subfwd.out')
 
+    def run_with_verbosity(self, verbosity):
+        d = {
+            'unchanged.cog': """\
+                //[[[cog
+                cog.outl("hello world")
+                //]]]
+                hello world
+                //[[[end]]]
+                """,
+
+            'changed.cog': """\
+                //[[[cog
+                cog.outl("goodbye cruel world")
+                //]]]
+                //[[[end]]]
+                """,
+
+            'cogfiles.txt': """\
+                unchanged.cog
+                changed.cog
+                """
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-r', '--verbosity='+verbosity, '@cogfiles.txt'])
+        output = self.output.getvalue()
+        return output
+
+    def test_verbosity0(self):
+        output = self.run_with_verbosity("0")
+        self.assertEqual(output, "")
+
+    def test_verbosity1(self):
+        output = self.run_with_verbosity("1")
+        self.assertEqual(output, "Cogging changed.cog  (changed)\n")
+
+    def test_verbosity2(self):
+        output = self.run_with_verbosity("2")
+        self.assertEqual(output, "Cogging unchanged.cog\nCogging changed.cog  (changed)\n")
+
 
 class CogTestLineEndings(TestCaseWithTempDir):
     """Tests for -U option (force LF line-endings in output)."""
