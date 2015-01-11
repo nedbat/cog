@@ -456,6 +456,20 @@ class CogOptionsTests(TestCase):
         p.parseArgs(['-erz'])
         self.assertEqual(o, p)
 
+    def testDelimiters(self):
+        o = CogOptions()
+        o._parse_delimiters('a b c')
+        self.assertEqual('a', o.sBeginSpec)
+        self.assertEqual('b', o.sEndSpec)
+        self.assertEqual('c', o.sEndOutput)
+
+    def testDelimiterSwitch(self):
+        o = CogOptions()
+        o.parseArgs(['--delimiter', 'a b c'])
+        self.assertEqual('a', o.sBeginSpec)
+        self.assertEqual('b', o.sEndSpec)
+        self.assertEqual('c', o.sEndOutput)
+
 
 class FileStructureTests(TestCase):
     """ Test cases to check that we're properly strict about the structure
@@ -2032,7 +2046,7 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--begin-spec={{', '--end-spec=}}', '--end-output={{end}}',
+            '--delimiters={{ }} {{end}}',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')
@@ -2059,7 +2073,7 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--begin-spec=**(', '--end-spec=**)', '--end-output=**(end)**',
+            '--delimiters=**( **) **(end)**',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')
@@ -2085,7 +2099,7 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--begin-spec=**(',
+            '--delimiters=**( ]]] [[[end]]]',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')

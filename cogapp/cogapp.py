@@ -41,14 +41,11 @@ OPTIONS:
     --verbosity=VERBOSITY
                 Control the amount of output. 2 (the default) lists all files,
                 1 lists only changed files, 0 lists no files.
-    --begin-spec=val
-                The pattern beginning cog inline instructions. Defaults
-                to '[[[cog'.
-    --end-spec=val
-                The pattern ending cog inline instructions. Defaults
-                to ']]]'.
-    --end-output=val
-                The pattern ending a cog block. Defaults to '[[[end]]]'.
+    --delimeters='START END END-OUTPUT'
+                The patterns surrounding cog inline
+                instructions. Should include three values separated by
+                spaces, the start, end, and end-output
+                delimiters. Defaults to '[[[cog ]]] [[[end]]]'.
     -h          Print this help.
 """
 
@@ -254,7 +251,7 @@ class CogOptions:
                 argv,
                 'cdD:eI:n:o:rs:Uvw:xz',
                 [
-                    'begin-spec=', 'end-spec=', 'end-output=',
+                    'delimiters=',
                     'verbosity=',
                 ]
             )
@@ -294,18 +291,22 @@ class CogOptions:
                 self.bNoGenerate = True
             elif o == '-z':
                 self.bEofCanBeEnd = True
-            elif o == '--begin-spec':
-                self.sBeginSpec = a
-            elif o == '--end-spec':
-                self.sEndSpec = a
-            elif o == '--end-output':
-                self.sEndOutput = a
+            elif o == '--delimiters':
+                self._parse_delimiters(a)
             elif o == '--verbosity':
                 self.verbosity = int(a)
             else:
                 # Since getopt.getopt is given a list of possible flags,
                 # this is an internal error.
                 raise CogInternalError("Don't understand argument %s" % o)
+
+    def _parse_delimiters(self, val):
+        try:
+            self.sBeginSpec, self.sEndSpec, self.sEndOutput = val.split(' ')
+        except ValueError:
+            raise CogUsageError(
+                '--delimiters requires 3 values separated by spaces, could not parse %r' % val
+            )
 
     def validate(self):
         """ Does nothing if everything is OK, raises CogError's if it's not.
