@@ -6,8 +6,8 @@
 
 from __future__ import absolute_import
 
-import unittest                                 # This is a unittest, so this is fundamental.
-import shutil, os, random, types, tempfile      # We need these modules to write the tests.
+import unittest
+import shutil, os, random, tempfile
 
 from . import makefiles
 
