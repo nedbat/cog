@@ -843,6 +843,12 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         with self.assertRaises(CogUsageError):
             self.cog.callableMain(['argv0', '-D', 'fooey', 'cog.txt'])
 
+    def testBadDelimiters(self):
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '--delimiters=X'])
+        with self.assertRaises(CogUsageError):
+            self.cog.callableMain(['argv0', '--delimiters=A B C D'])
+
 
 class TestFileHandling(TestCaseWithTempDir):
 
