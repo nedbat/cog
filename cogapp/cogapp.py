@@ -41,11 +41,10 @@ OPTIONS:
     --verbosity=VERBOSITY
                 Control the amount of output. 2 (the default) lists all files,
                 1 lists only changed files, 0 lists no files.
-    --delimeters='START END END-OUTPUT'
-                The patterns surrounding cog inline
-                instructions. Should include three values separated by
-                spaces, the start, end, and end-output
-                delimiters. Defaults to '[[[cog ]]] [[[end]]]'.
+    --delimiters='START END END-OUTPUT'
+                The patterns surrounding cog inline instructions. Should
+                include three values separated by spaces, the start, end,
+                and end-output delimiters. Defaults to '[[[cog ]]] [[[end]]]'.
     -h          Print this help.
 """
 
@@ -771,7 +770,6 @@ class Cog(Redirectable):
 #           Use the builtin compile() instead of compiler, for Jython.
 #           Explicitly close files we opened, Jython likes this.
 # 20120205: Port to Python 3.  Lowest supported version is 2.6.
-# 20150104: --begin-spec, --end-spec, and --end-output options added by Doug
-#               Hellmann.
+# 20150104: --delimiter option added by Doug Hellmann.
 # 20150104: -n ENCODING option added by Petr Gladkiy.
 # 20150107: Added --verbose to control what files get listed.
