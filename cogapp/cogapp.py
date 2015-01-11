@@ -681,8 +681,7 @@ class Cog(Redirectable):
             This is used by main.
             argv is the equivalent of sys.argv.
         """
-        argv = argv[:]
-        argv0 = argv.pop(0)
+        argv = argv[1:]
 
         # Provide help if asked for anywhere in the command line.
         if '-?' in argv or '-h' in argv:

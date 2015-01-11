@@ -1637,7 +1637,6 @@ class CogTestsInFiles(TestCaseWithTempDir):
         stderr = StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.main(['argv0', '-c', '-r', "cog1.txt"])
-        output = self.output.getvalue()
         self.assertEqual(self.output.getvalue(), "Cogging cog1.txt\n")
         self.assertEqual(stderr.getvalue(), "cog1.txt(9): Output has been edited! Delete old checksum to unprotect.\n")
 
