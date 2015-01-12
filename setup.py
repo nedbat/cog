@@ -24,7 +24,7 @@ else:
 
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '2.4b1',
+    version = '2.4',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
