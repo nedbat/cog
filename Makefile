@@ -29,7 +29,7 @@ kit:
 pypi:
 	python setup.py register
 
-WEBHOME = c:/ned/web/stellated/pages/code/cog
+WEBHOME = ~/web/stellated/pages/code/cog
 
 publish: 
 	cp -v *.px $(WEBHOME)
