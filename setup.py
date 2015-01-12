@@ -10,17 +10,16 @@ try:
 except ImportError:
     from distutils.core import setup
 
+extra_options = {}
 try:
     # For building on Windows, need to fix the tar file after it's made.
     # Install https://bitbucket.org/ned/fixtar, then this will work.
     from setuptools_fixtar import fixtar
-except:
-    extra_options = {}
+except ImportError:
+    pass
 else:
-    extra_options = {
-        'cmdclass': {
-            'fixtar': fixtar.FixtarCommand,
-        }
+    extra_options['cmdclass'] = {
+        'fixtar': fixtar.FixtarCommand,
     }
 
 setup(

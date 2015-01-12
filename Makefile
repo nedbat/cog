@@ -22,7 +22,9 @@ cover: install
 	python scripts/test_cog.py --cover
 
 kit:
-	python setup.py sdist --keep-temp --formats=gztar fixtar --owner=ned --group=cogapp --clean
+	# Needed this on Windows:
+	# python setup.py sdist --keep-temp --formats=gztar fixtar --owner=ned --group=cogapp --clean
+	python setup.py sdist --formats=gztar
 
 pypi:
 	python setup.py register
