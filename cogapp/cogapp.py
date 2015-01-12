@@ -11,7 +11,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.4b1'   # History at the end of the file.
+__version__ = '2.4'     # History at the end of the file.
 
 usage = """\
 cog - generate code with inlined Python code.
@@ -28,7 +28,7 @@ OPTIONS:
     -D name=val Define a global string available to your generator code.
     -e          Warn if a file has no cog code in it.
     -I PATH     Add PATH to the list of directories for data files and modules.
-    -n ENCODING Use ENCODING when read and write files.
+    -n ENCODING Use ENCODING when reading and writing files.
     -o OUTNAME  Write the output to OUTNAME.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
@@ -769,6 +769,7 @@ class Cog(Redirectable):
 #           Use the builtin compile() instead of compiler, for Jython.
 #           Explicitly close files we opened, Jython likes this.
 # 20120205: Port to Python 3.  Lowest supported version is 2.6.
-# 20150104: --delimiter option added by Doug Hellmann.
+# 20150104: --delimiters option added by Doug Hellmann.
 # 20150104: -n ENCODING option added by Petr Gladkiy.
 # 20150107: Added --verbose to control what files get listed.
+# 20150111: Version 2.4
