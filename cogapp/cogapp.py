@@ -41,10 +41,10 @@ OPTIONS:
     --verbosity=VERBOSITY
                 Control the amount of output. 2 (the default) lists all files,
                 1 lists only changed files, 0 lists no files.
-    --delimiters='START END END-OUTPUT'
+    --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
                 include three values separated by spaces, the start, end,
-                and end-output delimiters. Defaults to '[[[cog ]]] [[[end]]]'.
+                and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
     -h          Print this help.
 """
 
@@ -250,7 +250,7 @@ class CogOptions:
                 argv,
                 'cdD:eI:n:o:rs:Uvw:xz',
                 [
-                    'delimiters=',
+                    'markers=',
                     'verbosity=',
                 ]
             )
@@ -290,8 +290,8 @@ class CogOptions:
                 self.bNoGenerate = True
             elif o == '-z':
                 self.bEofCanBeEnd = True
-            elif o == '--delimiters':
-                self._parse_delimiters(a)
+            elif o == '--markers':
+                self._parse_markers(a)
             elif o == '--verbosity':
                 self.verbosity = int(a)
             else:
@@ -299,12 +299,12 @@ class CogOptions:
                 # this is an internal error.
                 raise CogInternalError("Don't understand argument %s" % o)
 
-    def _parse_delimiters(self, val):
+    def _parse_markers(self, val):
         try:
             self.sBeginSpec, self.sEndSpec, self.sEndOutput = val.split(' ')
         except ValueError:
             raise CogUsageError(
-                '--delimiters requires 3 values separated by spaces, could not parse %r' % val
+                '--markers requires 3 values separated by spaces, could not parse %r' % val
             )
 
     def validate(self):
@@ -769,7 +769,7 @@ class Cog(Redirectable):
 #           Use the builtin compile() instead of compiler, for Jython.
 #           Explicitly close files we opened, Jython likes this.
 # 20120205: Port to Python 3.  Lowest supported version is 2.6.
-# 20150104: --delimiters option added by Doug Hellmann.
+# 20150104: --markers option added by Doug Hellmann.
 # 20150104: -n ENCODING option added by Petr Gladkiy.
 # 20150107: Added --verbose to control what files get listed.
 # 20150111: Version 2.4
