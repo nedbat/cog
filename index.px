@@ -24,14 +24,15 @@
 <what when='20090625T202912'>Removed handyxml, files are now at pypi.</what>
 <what when='20120205T141000'>Python 3 is supported!</what>
 <what when='20120227T192300'>Polish up Cog 2.3</what>
+<what when='20150111T203100'>Version 2.4</what>
 </history>
 
 <docinfo>An older version of this document is also available in
 <a href='code/cog/index_ru.html'>Russian</a>.
 </docinfo>
 
-<p>Cog is a code generation tool.  It lets you use pieces of Python code
-as generators in your source files to generate whatever code you need.</p>
+<p>Cog is a file generation tool.  It lets you use pieces of Python code
+as generators in your source files to generate whatever text you need.</p>
 
 <p>The sections below are:</p>
 
@@ -80,7 +81,7 @@ void DoLastThing();
 ...
 ]]></code>
 
-<p>Lines with triple square brackets are delimiter lines.
+<p>Lines with triple square brackets are marker lines.
 The lines between <b>[[[cog</b> and <b>]]]</b> are the generator Python code.
 The lines between <b>]]]</b> and <b>[[[end]]]</b> are the output from
 the generator.</p>
@@ -122,7 +123,7 @@ of the code could be entered literally) were lost as the code generation
 tasks became more complex, and the generation process needed more logic.
 </p>
 
-<p>Cog lets you use the full power of Python for code generation,
+<p>Cog lets you use the full power of Python for text generation,
 without a templating system dumbing down your tools for you.</p>
 
 
@@ -130,7 +131,7 @@ without a templating system dumbing down your tools for you.</p>
 
 <h1>Installation</h1>
 
-<p>Cog requires Python 2.6, 2.7, 3.2, or Jython 2.5.</p>
+<p>Cog requires Python 2.6, 2.7, 3.3, 3.4, or Jython 2.5.</p>
 
 <p>Cog is installed with a standard Python distutils script:</p>
 
@@ -228,6 +229,9 @@ line:</p>
 <p>You can also use this form to simply import a module.  The top-level
 statements in the module can generate the code.</p>
 
+<p>If you have special requirements for the syntax of your file, you can use
+the --markers option to define new markers.</p>
+
 <p>If there are multiple generators in the same file, they are executed
 with the same globals dictionary, so it is as if they were all one Python
 module.</p>
@@ -309,7 +313,7 @@ cog - generate code with inlined Python code.
 
 cog [OPTIONS] [INFILE | @FILELIST] ...
 
-INFILE is the name of an input file.
+INFILE is the name of an input file, '-' will read from stdin.
 FILELIST is the name of a text file containing file names or
     other @FILELISTs.
 
@@ -319,6 +323,7 @@ OPTIONS:
     -D name=val Define a global string available to your generator code.
     -e          Warn if a file has no cog code in it.
     -I PATH     Add PATH to the list of directories for data files and modules.
+    -n ENCODING Use ENCODING when reading and writing files.
     -o OUTNAME  Write the output to OUTNAME.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
@@ -326,8 +331,15 @@ OPTIONS:
     -w CMD      Use CMD if the output file needs to be made writable.
                     A %s in the CMD will be filled with the filename.
     -x          Excise all the generated output without running the generators.
-    -z          The [[[end]]] marker can be omitted, and is assumed at eof.
+    -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
+    --verbosity=VERBOSITY
+                Control the amount of output. 2 (the default) lists all files,
+                1 lists only changed files, 0 lists no files.
+    --markers='START END END-OUTPUT'
+                The patterns surrounding cog inline instructions. Should
+                include three values separated by spaces, the start, end,
+                and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
     -h          Print this help.
 ]]></code>
 
@@ -490,6 +502,19 @@ This is line 2 //(generated)
 
 
 <h2>Miscellaneous</h2>
+
+<p>The -n option lets you tell cog what encoding to use when reading and
+    writing files.</p>
+
+<p>The --verbose option lets you control how much cog should chatter about the
+    files it is cogging.  --verbose=2 is the default: cog will name every file
+    it considers, and whether it has changed.  --verbose=1 will only name the
+    changed files. --verbose=0 won't mention any files at all.</p>
+
+<p>The --markers option lets you control the syntax of the marker lines.  The
+    value must be a string with two spaces in it.  The three markers are the
+    three pieces separated by the spaces.  The default value for markers is
+    "[[cog ]]] [[[end]]]".</p>
 
 <p>The -x flag tells cog to delete the old generated output without running
 the generators.  This lets you remove all the generated output from a source
