@@ -456,16 +456,16 @@ class CogOptionsTests(TestCase):
         p.parseArgs(['-erz'])
         self.assertEqual(o, p)
 
-    def testDelimiters(self):
+    def testMarkers(self):
         o = CogOptions()
-        o._parse_delimiters('a b c')
+        o._parse_markers('a b c')
         self.assertEqual('a', o.sBeginSpec)
         self.assertEqual('b', o.sEndSpec)
         self.assertEqual('c', o.sEndOutput)
 
-    def testDelimiterSwitch(self):
+    def testMarkersSwitch(self):
         o = CogOptions()
-        o.parseArgs(['--delimiter', 'a b c'])
+        o.parseArgs(['--markers', 'a b c'])
         self.assertEqual('a', o.sBeginSpec)
         self.assertEqual('b', o.sEndSpec)
         self.assertEqual('c', o.sEndOutput)
@@ -843,11 +843,11 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         with self.assertRaises(CogUsageError):
             self.cog.callableMain(['argv0', '-D', 'fooey', 'cog.txt'])
 
-    def testBadDelimiters(self):
+    def testBadMarkers(self):
         with self.assertRaises(CogUsageError):
-            self.cog.callableMain(['argv0', '--delimiters=X'])
+            self.cog.callableMain(['argv0', '--markers=X'])
         with self.assertRaises(CogUsageError):
-            self.cog.callableMain(['argv0', '--delimiters=A B C D'])
+            self.cog.callableMain(['argv0', '--markers=A B C D'])
 
 
 class TestFileHandling(TestCaseWithTempDir):
@@ -2028,9 +2028,9 @@ class ChecksumTests(TestCaseWithTempDir):
         self.assertEqual(argv, orig_argv)
 
 
-class CustomDelimiterTests(TestCaseWithTempDir):
+class CustomMarkerTests(TestCaseWithTempDir):
 
-    def testCustomerDelimiters(self):
+    def testCustomerMarkers(self):
         d = {
             'test.cog': """\
                 //{{
@@ -2051,13 +2051,13 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--delimiters={{ }} {{end}}',
+            '--markers={{ }} {{end}}',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')
 
-    def testTrulyWackyDelimiters(self):
-        # Make sure the delimiters are properly re-escaped.
+    def testTrulyWackyMarkers(self):
+        # Make sure the markers are properly re-escaped.
         d = {
             'test.cog': """\
                 //**(
@@ -2078,12 +2078,12 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--delimiters=**( **) **(end)**',
+            '--markers=**( **) **(end)**',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')
 
-    def testChangeJustOneDelimiter(self):
+    def testChangeJustOneMarker(self):
         d = {
             'test.cog': """\
                 //**(
@@ -2104,7 +2104,7 @@ class CustomDelimiterTests(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain([
             'argv0', '-r',
-            '--delimiters=**( ]]] [[[end]]]',
+            '--markers=**( ]]] [[[end]]]',
             'test.cog'
         ])
         self.assertFilesSame('test.cog', 'test.out')
