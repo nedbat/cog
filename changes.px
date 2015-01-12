@@ -8,6 +8,7 @@
 <what when='20090520T061826'>Started the 2.2 list.</what>
 <what when='20090625T211136'>2.2</what>
 <what when='20120205T162700'>2.3</what>
+<what when='20150111T202900'>2.4</what>
 </history>
 
 <docinfo>An older version of this document is also available in
@@ -16,7 +17,21 @@
 
 <p>These are changes to Cog over time.</p>
 
-<h2>Version 2.3</h2>
+<h2>Version 2.4, January 11 2015</h2>
+
+<ul>
+    <li>A --markers option lets you control the three markers that
+        separate the cog code and result from the rest of the file. Thanks,
+        Doug Hellman.</li>
+
+    <li>A -n=ENCODING option that lets you specify the encoding for the input
+        and output files. Thanks, Petr Gladkiy.</li>
+
+    <li>A --verbose option that lets you control how much chatter is in the
+        output while cogging.</li>
+</ul>
+
+<h2>Version 2.3, February 27 2012</h2>
 
 <ul>
 <li>Python 3 is now supported.  Older Pythons (2.5 and below) no longer are.</li>
