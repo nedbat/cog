@@ -2,7 +2,7 @@
 """ Setup.py for Cog
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2012, Ned Batchelder.
+    Copyright 2004-2015, Ned Batchelder.
 """
 
 try:
@@ -24,7 +24,7 @@ else:
 
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '2.3',
+    version = '2.4b1',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
