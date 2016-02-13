@@ -17,12 +17,19 @@
 
 <p>These are changes to Cog over time.</p>
 
+<h2>Version 2.5, February 13 2016</h2>
+
+<ul>
+    <li>When specifying an output file with -o, directories will be created as
+        needed to write the file. Thanks, Jean-François Giraud.</li>
+</ul>
+
 <h2>Version 2.4, January 11 2015</h2>
 
 <ul>
     <li>A --markers option lets you control the three markers that
         separate the cog code and result from the rest of the file. Thanks,
-        Doug Hellman.</li>
+        Doug Hellmann.</li>
 
     <li>A -n=ENCODING option that lets you specify the encoding for the input
         and output files. Thanks, Petr Gladkiy.</li>
