@@ -363,6 +363,9 @@ class Cog(Redirectable):
                 opts['newline'] = "\n"
             else:
                 mode = "wb"
+        fdir = os.path.dirname(fname)
+        if os.path.dirname(fdir) and not os.path.exists(fdir):
+            os.makedirs(fdir)
         return open(fname, mode, **opts)
 
     def openInputFile(self, fname):
