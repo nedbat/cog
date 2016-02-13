@@ -912,8 +912,8 @@ class TestFileHandling(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        self.cog.callableMain(['argv0', '-o', 'test.cogged', 'test.cog'])
-        self.assertFilesSame('test.cogged', 'test.out')
+        self.cog.callableMain(['argv0', '-o', 'in/a/dir/test.cogged', 'test.cog'])
+        self.assertFilesSame('in/a/dir/test.cogged', 'test.out')
 
     def testAtFile(self):
         d = {
@@ -1045,15 +1045,15 @@ class TestFileHandling(TestCaseWithTempDir):
 
             'cogfiles.txt': """\
                 # Please run cog
-                both.cog -o both.one -s ' // ONE' -D one=x
-                both.cog -o both.two -s ' // TWO' -D two=x
+                both.cog -o in/a/dir/both.one -s ' // ONE' -D one=x
+                both.cog -o in/a/dir/both.two -s ' // TWO' -D two=x
                 """
             }
 
         makeFiles(d)
         self.cog.callableMain(['argv0', '@cogfiles.txt'])
-        self.assertFilesSame('both.one', 'one.out')
-        self.assertFilesSame('both.two', 'two.out')
+        self.assertFilesSame('in/a/dir/both.one', 'one.out')
+        self.assertFilesSame('in/a/dir/both.two', 'two.out')
 
     def testAtFileWithBadArgCombo(self):
         d = {
