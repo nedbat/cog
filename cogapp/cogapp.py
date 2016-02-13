@@ -1,7 +1,8 @@
+# coding: utf8
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2015, Ned Batchelder.
+    Copyright 2004-2016, Ned Batchelder.
 """
 
 from __future__ import absolute_import, print_function
@@ -11,7 +12,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.4'     # History at the end of the file.
+__version__ = '2.5'     # History at the end of the file.
 
 usage = """\
 cog - generate code with inlined Python code.
@@ -776,3 +777,4 @@ class Cog(Redirectable):
 # 20150104: -n ENCODING option added by Petr Gladkiy.
 # 20150107: Added --verbose to control what files get listed.
 # 20150111: Version 2.4
+# 20160213: v2.5: -o makes needed directories, thanks Jean-François Giraud.

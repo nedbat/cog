@@ -5,4 +5,5 @@ Contributions have been made by:
 Alexander Belchenko
 Blake Winton
 Doug Hellmann
+Jean-François Giraud
 Petr Gladkiy 
