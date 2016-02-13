@@ -12,6 +12,9 @@ clean:
 	-rm -f .coverage .coverage.* coverage.xml
 	-rm -rf cogapp.egg-info htmlcov
 
+sterile: clean
+	-rm -rf .tox*
+
 install:
 	python setup.py install
 
