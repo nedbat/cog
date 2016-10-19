@@ -12,7 +12,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.5'     # History at the end of the file.
+__version__ = '2.5.1'   # History at the end of the file.
 
 usage = """\
 cog - generate code with inlined Python code.
@@ -778,3 +778,4 @@ class Cog(Redirectable):
 # 20150107: Added --verbose to control what files get listed.
 # 20150111: Version 2.4
 # 20160213: v2.5: -o makes needed directories, thanks Jean-François Giraud.
+# 20161019: Added a LICENSE.txt file.
