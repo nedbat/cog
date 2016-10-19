@@ -1,3 +1,4 @@
 include README.txt
+include LICENSE.txt
 recursive-include scripts *.py
 recursive-include cogapp *.py
