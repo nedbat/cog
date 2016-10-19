@@ -9,6 +9,7 @@
 <what when='20090625T211136'>2.2</what>
 <what when='20120205T162700'>2.3</what>
 <what when='20150111T202900'>2.4</what>
+<what when='20161019T192100'>2.5.1</what>
 </history>
 
 <docinfo>An older version of this document is also available in
@@ -16,6 +17,12 @@
 </docinfo>
 
 <p>These are changes to Cog over time.</p>
+
+<h2>Version 2.5.1, October 19 2016</h2>
+
+<ul>
+    <li>Corrected a long-standing oversight: added a LICENSE.txt file.</li>
+</ul>
 
 <h2>Version 2.5, February 13 2016</h2>
 
