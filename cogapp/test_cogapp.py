@@ -6,14 +6,21 @@
 
 from __future__ import absolute_import
 
-import os, os.path, random, re, shutil, stat, sys, tempfile
+import os
+import os.path
+import random
+import re
+import shutil
+import stat
+import sys
+import tempfile
 
 from .backward import StringIO, to_bytes, b, TestCase
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
 from .cogapp import usage, __version__
-from .whiteutils import reindentBlock
 from .makefiles import *
+from .whiteutils import reindentBlock
 
 
 class CogTestsInMemory(TestCase):
