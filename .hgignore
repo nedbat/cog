@@ -18,3 +18,4 @@ MANIFEST
 setuptools-*.egg
 cogapp.egg-info
 .tox
+.pytest_cache
