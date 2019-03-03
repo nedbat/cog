@@ -1,18 +1,18 @@
 """ Test the cogapp.makefiles modules
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2015, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
 from __future__ import absolute_import
 
-import unittest
 import shutil, os, random, tempfile
 
 from . import makefiles
+from .backward import TestCase
 
 
-class SimpleTests(unittest.TestCase):
+class SimpleTests(TestCase):
 
     def setUp(self):
         # Create a temporary directory.

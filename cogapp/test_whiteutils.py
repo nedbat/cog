@@ -1,17 +1,16 @@
 """ Test the cogapp.whiteutils module.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2015, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
 from __future__ import absolute_import
 
-import unittest
-
+from .backward import TestCase
 from .whiteutils import *
 
 
-class WhitePrefixTests(unittest.TestCase):
+class WhitePrefixTests(TestCase):
     """ Test cases for cogapp.whiteutils.
     """
     def testSingleLine(self):
@@ -42,7 +41,7 @@ class WhitePrefixTests(unittest.TestCase):
         self.assertEqual(whitePrefix(['     x',' x',' x']), ' ')
 
 
-class ReindentBlockTests(unittest.TestCase):
+class ReindentBlockTests(TestCase):
     """ Test cases for cogapp.reindentBlock.
     """
     def testNonTermLine(self):
@@ -76,7 +75,7 @@ class ReindentBlockTests(unittest.TestCase):
             )
 
 
-class CommonPrefixTests(unittest.TestCase):
+class CommonPrefixTests(TestCase):
     """ Test cases for cogapp.commonPrefix.
     """
     def testDegenerateCases(self):
