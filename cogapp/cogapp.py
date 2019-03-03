@@ -555,7 +555,7 @@ class Cog(Redirectable):
 
 
     # A regex for non-empty lines, used by suffixLines.
-    reNonEmptyLines = re.compile("^\s*\S+.*$", re.MULTILINE)
+    reNonEmptyLines = re.compile(r"^\s*\S+.*$", re.MULTILINE)
 
     def suffixLines(self, text):
         """ Add suffixes to the lines in text, if our options desire it.
