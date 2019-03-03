@@ -131,7 +131,7 @@ without a templating system dumbing down your tools for you.</p>
 
 <h1>Installation</h1>
 
-<p>Cog requires Python 2.6, 2.7, 3.3, 3.4, 3.5, 3.6, or Jython 2.5.</p>
+<p>Cog requires Python 2.7, 3.4, 3.5, 3.6, or Jython 2.5.</p>
 
 <p>Cog is installed with a standard Python distutils script:</p>
 
