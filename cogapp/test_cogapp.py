@@ -8,12 +8,7 @@ from __future__ import absolute_import
 
 import os, os.path, random, re, shutil, stat, sys, tempfile
 
-# Use unittest2 if it's available, otherwise unittest.  This gives us
-# back-ported features for 2.6.
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 from .backward import StringIO, to_bytes, b
 from .cogapp import Cog, CogOptions, CogGenerator
