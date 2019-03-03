@@ -2,25 +2,10 @@
 """ Setup.py for Cog
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2016, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
-extra_options = {}
-try:
-    # For building on Windows, need to fix the tar file after it's made.
-    # Install https://bitbucket.org/ned/fixtar, then this will work.
-    from setuptools_fixtar import fixtar
-except ImportError:
-    pass
-else:
-    extra_options['cmdclass'] = {
-        'fixtar': fixtar.FixtarCommand,
-    }
+from setuptools import setup
 
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
@@ -60,6 +45,4 @@ setup(
     scripts = [
         'scripts/cog.py',
         ],
-
-    **extra_options
     )
