@@ -14,15 +14,10 @@ clean:
 
 sterile: clean
 	-rm -rf .tox*
+	-rm -rf .pytest_cache
 
-install:
-	python setup.py install
-
-test: install
-	python scripts/test_cog.py
-
-cover: install
-	python scripts/test_cog.py --cover
+test:
+	tox
 
 kit:
 	python setup.py sdist --formats=gztar
