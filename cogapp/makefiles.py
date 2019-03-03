@@ -1,15 +1,16 @@
 """ Dictionary-to-filetree functions, to create test files for testing.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2015, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
 from __future__ import absolute_import
-import os.path
-from .whiteutils import reindentBlock
-from .backward import string_types, bytes_types
 
-__version__ = '1.0.20040126'
+import os.path
+
+from .backward import string_types, bytes_types
+from .whiteutils import reindentBlock
+
 __all__ = ['makeFiles', 'removeFiles']
 
 def makeFiles(d, basedir='.'):

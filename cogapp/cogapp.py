@@ -2,12 +2,21 @@
 """ Cog code generation tool.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2016, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
 from __future__ import absolute_import, print_function
 
-import copy, getopt, hashlib, imp, os, re, shlex, sys, traceback
+import copy
+import getopt
+import hashlib
+import imp
+import os
+import re
+import shlex
+import sys
+import traceback
+
 from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']

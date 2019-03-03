@@ -6,7 +6,10 @@
 
 from __future__ import absolute_import
 
-import shutil, os, random, tempfile
+import shutil
+import os
+import random
+import tempfile
 
 from . import makefiles
 from .backward import TestCase

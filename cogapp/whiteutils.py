@@ -1,11 +1,13 @@
 """ Indentation utilities for Cog.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2015, Ned Batchelder.
+    Copyright 2004-2019, Ned Batchelder.
 """
 
 from __future__ import absolute_import
+
 import re
+
 from .backward import string_types, bytes_types, to_bytes, b
 
 def whitePrefix(strings):
