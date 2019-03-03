@@ -42,22 +42,3 @@ def removeFiles(d, basedir='.'):
             removeFiles(contents, child)
             if not os.listdir(child):
                 os.rmdir(child)
-
-if __name__ == '__main__':      #pragma: no cover
-    # Try it a little.
-    d = {
-        'test_makefiles': {
-            'hey.txt': """\
-                        This is hey.txt.
-                        It's very simple.
-                        """,
-            'subdir': {
-                'fooey': """\
-                            # Fooey
-                                Kablooey
-                            Ew.
-                            """
-            }
-        }
-    }
-    makeFiles(d)
