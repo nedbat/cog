@@ -71,15 +71,15 @@ class CogTestsInMemory(TestCase):
     def testPrefix(self):
         infile = """\
             Some text.
-            //[[[cog cog.outl(str(math.sqrt(2)))]]]
+            //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
             //[[[end]]]
             epilogue.
             """
 
         outfile = """\
             Some text.
-            //[[[cog cog.outl(str(math.sqrt(2)))]]]
-            1.41421356237
+            //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
+            1.4142135623
             //[[[end]]]
             epilogue.
             """
