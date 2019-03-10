@@ -1,5 +1,5 @@
 # coding: utf8
-""" Cog code generation tool.
+""" Cog content generation tool.
     http://nedbatchelder.com/code/cog
 
     Copyright 2004-2019, Ned Batchelder.
