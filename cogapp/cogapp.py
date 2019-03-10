@@ -42,7 +42,7 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
-    -p STRING   Prefix the generator source with STRING. Useful to insert an
+    -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
     -U          Write the output with Unix newlines (only LF line-endings).
     -w CMD      Use CMD if the output file needs to be made writable.
@@ -146,7 +146,7 @@ class CogGenerator(Redirectable):
             return ''
 
         # In Python 2.2, the last line has to end in a newline.
-        intext = "import cog\n" + self.options.sPrefix + '\n' + intext + "\n"
+        intext = "import cog\n" + self.options.sPrologue + '\n' + intext + "\n"
         code = compile(intext, str(fname), 'exec')
 
         # Make sure the "cog" module has our state.
@@ -239,7 +239,7 @@ class CogOptions:
         self.sEndOutput = '[[[end]]]'
         self.sEncoding = "utf-8"
         self.verbosity = 2
-        self.sPrefix = ''
+        self.sPrologue = ''
 
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -295,7 +295,7 @@ class CogOptions:
             elif o == '-s':
                 self.sSuffix = a
             elif o == '-p':
-                self.sPrefix = a
+                self.sPrologue = a
             elif o == '-U':
                 self.bNewlines = True
             elif o == '-v':

@@ -68,7 +68,7 @@ class CogTestsInMemory(TestCase):
 
         self.assertEqual(Cog().processString(infile), outfile)
 
-    def testPrefix(self):
+    def testPrologue(self):
         infile = """\
             Some text.
             //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
@@ -85,7 +85,7 @@ class CogTestsInMemory(TestCase):
             """
 
         cog = Cog()
-        cog.options.sPrefix = 'import math'
+        cog.options.sPrologue = 'import math'
         self.assertEqual(cog.processString(infile), outfile)
 
     def testEmptyCog(self):
