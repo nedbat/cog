@@ -23,6 +23,8 @@
 <ul>
     <li>Dropped support for Pythons 2.6, 3.3, and 3.4.</li>
 
+    <li>Cog can now be run (again?) as just "cog" on the command line.</li>
+
     <li>Moved development to GitHub.</li>
 </ul>
 

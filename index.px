@@ -309,6 +309,7 @@ outputting again with cog.out().</dd>
 </p>
 
 <code><![CDATA[
+$ cog -h
 cog - generate content with inlined Python code.
 
 cog [OPTIONS] [INFILE | @FILELIST] ...
@@ -343,11 +344,8 @@ OPTIONS:
     -h          Print this help.
 ]]></code>
 
-<p>In addition to running cog as a command on the command line:</p>
-
-<code>$ cog [options] [arguments]</code>
-
-<p>you can also invoke it as a module with the Python interpreter:</p>
+<p>In addition to running cog as a command on the command line, you can also
+invoke it as a module with the Python interpreter:</p>
 
 <code>$ python -m cogapp [options] [arguments]</code>
 
