@@ -68,6 +68,26 @@ class CogTestsInMemory(TestCase):
 
         self.assertEqual(Cog().processString(infile), outfile)
 
+    def testPrefix(self):
+        infile = """\
+            Some text.
+            //[[[cog cog.outl(str(math.sqrt(2)))]]]
+            //[[[end]]]
+            epilogue.
+            """
+
+        outfile = """\
+            Some text.
+            //[[[cog cog.outl(str(math.sqrt(2)))]]]
+            1.41421356237
+            //[[[end]]]
+            epilogue.
+            """
+
+        cog = Cog()
+        cog.options.sPrefix = 'import math'
+        self.assertEqual(cog.processString(infile), outfile)
+
     def testEmptyCog(self):
         # The cog clause can be totally empty.  Not sure why you'd want it,
         # but it works.

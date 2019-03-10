@@ -42,6 +42,8 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
+    -p STRING   Prefix the generator source with STRING. Useful to insert an
+                import line. Example: -p "import math"
     -U          Write the output with Unix newlines (only LF line-endings).
     -w CMD      Use CMD if the output file needs to be made writable.
                     A %s in the CMD will be filled with the filename.
@@ -110,10 +112,11 @@ class Redirectable:
 class CogGenerator(Redirectable):
     """ A generator pulled from a source file.
     """
-    def __init__(self):
+    def __init__(self, options=None):
         Redirectable.__init__(self)
         self.markers = []
         self.lines = []
+        self.options = options or CogOptions()
 
     def parseMarker(self, l):
         self.markers.append(l)
@@ -143,7 +146,7 @@ class CogGenerator(Redirectable):
             return ''
 
         # In Python 2.2, the last line has to end in a newline.
-        intext = "import cog\n" + intext + "\n"
+        intext = "import cog\n" + self.options.sPrefix + '\n' + intext + "\n"
         code = compile(intext, str(fname), 'exec')
 
         # Make sure the "cog" module has our state.
@@ -236,6 +239,7 @@ class CogOptions:
         self.sEndOutput = '[[[end]]]'
         self.sEncoding = "utf-8"
         self.verbosity = 2
+        self.sPrefix = ''
 
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -258,7 +262,7 @@ class CogOptions:
         try:
             opts, self.args = getopt.getopt(
                 argv,
-                'cdD:eI:n:o:rs:Uvw:xz',
+                'cdD:eI:n:o:rs:p:Uvw:xz',
                 [
                     'markers=',
                     'verbosity=',
@@ -290,6 +294,8 @@ class CogOptions:
                 self.bReplace = True
             elif o == '-s':
                 self.sSuffix = a
+            elif o == '-p':
+                self.sPrefix = a
             elif o == '-U':
                 self.bNewlines = True
             elif o == '-v':
@@ -440,7 +446,7 @@ class Cog(Redirectable):
                     fOut.write(l)
 
                 # l is the begin spec
-                gen = CogGenerator()
+                gen = CogGenerator(options=self.options)
                 gen.setOutput(stdout=self.stdout)
                 gen.parseMarker(l)
                 firstLineNum = fIn.linenumber()
