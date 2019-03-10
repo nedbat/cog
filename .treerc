@@ -3,5 +3,6 @@ ignore =
     .treerc
     .tox
     .coverage*
+    htmlcov
     build
     *.egg *.egg-info
