@@ -309,7 +309,7 @@ outputting again with cog.out().</dd>
 </p>
 
 <code><![CDATA[
-cog - generate code with inlined Python code.
+cog - generate content with inlined Python code.
 
 cog [OPTIONS] [INFILE | @FILELIST] ...
 
@@ -521,7 +521,7 @@ the generators.  This lets you remove all the generated output from a source
 file.</p>
 
 <p>The -d flag tells cog to delete the generators from the output file.  This lets
-you generate code in a public file but not have to show the generator to your customers.</p>
+you generate content in a public file but not have to show the generator to your customers.</p>
 
 <p>The -U flag causes the output file to use pure Unix newlines rather than the
 platform's native line endings.  You can use this on Windows to produce Unix-style

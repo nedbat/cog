@@ -21,10 +21,10 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError']
 
-__version__ = '2.5.1'   # History at the end of the file.
+__version__ = '3.0.0'
 
 usage = """\
-cog - generate code with inlined Python code.
+cog - generate content with inlined Python code.
 
 cog [OPTIONS] [INFILE | @FILELIST] ...
 

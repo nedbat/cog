@@ -1,4 +1,4 @@
-Cog code generation tool.
+Cog content generation tool.
 
 See http://nedbatchelder.com/code/cog for details.
 
