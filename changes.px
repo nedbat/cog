@@ -18,6 +18,15 @@
 
 <p>These are changes to Cog over time.</p>
 
+<h2>Version 3.0.0</h2>
+
+<ul>
+    <li>Dropped support for Pythons 2.6, 3.3, and 3.4.</li>
+
+    <li>Moved development to GitHub.</li>
+</ul>
+
+
 <h2>Version 2.5.1, October 19 2016</h2>
 
 <ul>
