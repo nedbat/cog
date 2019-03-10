@@ -48,4 +48,10 @@ setup(
     scripts = [
         'scripts/cog.py',
         ],
+
+    entry_points={
+        'console_scripts': [
+            'cog = cogapp:main',
+            ],
+        },
     )

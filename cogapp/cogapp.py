@@ -19,7 +19,7 @@ import traceback
 
 from .backward import PY3, StringIO, string_types, to_bytes
 
-__all__ = ['Cog', 'CogUsageError']
+__all__ = ['Cog', 'CogUsageError', 'main']
 
 __version__ = '3.0.0'
 
@@ -735,6 +735,11 @@ class Cog(Redirectable):
         except:
             traceback.print_exc(None, self.stderr)
             return 1
+
+def main():
+    """Main function for entry_points to use."""
+    return Cog().main(sys.argv)
+
 
 # History:
 # 20040210: First public version.
