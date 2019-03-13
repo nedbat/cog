@@ -1708,7 +1708,6 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertEqual(output, "--[[[cog cog.outl('Wow') ]]]\nWow\n--[[[end]]]\n")
         self.assertEqual(outerr, "")
 
-
     def testSuffixOutputLines(self):
         d = {
             'test.cog': """\
@@ -1773,6 +1772,29 @@ class CogTestsInFiles(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-z', '-r', '-s', r' /\n*+([)]><', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
+
+    def testPrologue(self):
+        d = {
+            'test.cog': """\
+                Some text.
+                //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
+                //[[[end]]]
+                epilogue.
+                """,
+
+            'test.out': """\
+                Some text.
+                //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
+                1.4142135623
+                //[[[end]]]
+                epilogue.
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-r', '-p', 'import math', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        cog = Cog()
 
 
 class WritabilityTests(TestCaseWithTempDir):
