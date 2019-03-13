@@ -3,6 +3,7 @@ Cog was written by Ned Batchelder (ned@nedbatchelder.com).
 Contributions have been made by:
 
 Alexander Belchenko
+Anders Hovmöller
 Blake Winton
 Doug Hellmann
 Jean-François Giraud

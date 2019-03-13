@@ -40,10 +40,10 @@ OPTIONS:
     -I PATH     Add PATH to the list of directories for data files and modules.
     -n ENCODING Use ENCODING when reading and writing files.
     -o OUTNAME  Write the output to OUTNAME.
-    -r          Replace the input file with the output.
-    -s STRING   Suffix all generated output lines with STRING.
     -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
+    -r          Replace the input file with the output.
+    -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).
     -w CMD      Use CMD if the output file needs to be made writable.
                     A %s in the CMD will be filled with the filename.

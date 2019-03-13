@@ -326,6 +326,8 @@ OPTIONS:
     -I PATH     Add PATH to the list of directories for data files and modules.
     -n ENCODING Use ENCODING when reading and writing files.
     -o OUTNAME  Write the output to OUTNAME.
+    -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
+                import line. Example: -p "import math"
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).
@@ -526,6 +528,9 @@ platform's native line endings.  You can use this on Windows to produce Unix-sty
 output files.</p>
 
 <p>The -I flag adds a directory to the path used to find Python modules.</p>
+
+<p>The -p option specifies Python text to prepend to embdedded generator source,
+which can keep common imports out of source files.</p>
 
 <p>The -z flag lets you omit the [[[end]]] marker line, and it will be assumed at the
 end of the file.</p>
