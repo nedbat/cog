@@ -68,26 +68,6 @@ class CogTestsInMemory(TestCase):
 
         self.assertEqual(Cog().processString(infile), outfile)
 
-    def testPrologue(self):
-        infile = """\
-            Some text.
-            //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
-            //[[[end]]]
-            epilogue.
-            """
-
-        outfile = """\
-            Some text.
-            //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
-            1.4142135623
-            //[[[end]]]
-            epilogue.
-            """
-
-        cog = Cog()
-        cog.options.sPrologue = 'import math'
-        self.assertEqual(cog.processString(infile), outfile)
-
     def testEmptyCog(self):
         # The cog clause can be totally empty.  Not sure why you'd want it,
         # but it works.
@@ -1728,7 +1708,6 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertEqual(output, "--[[[cog cog.outl('Wow') ]]]\nWow\n--[[[end]]]\n")
         self.assertEqual(outerr, "")
 
-
     def testSuffixOutputLines(self):
         d = {
             'test.cog': """\
@@ -1793,6 +1772,29 @@ class CogTestsInFiles(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-z', '-r', '-s', r' /\n*+([)]><', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
+
+    def testPrologue(self):
+        d = {
+            'test.cog': """\
+                Some text.
+                //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
+                //[[[end]]]
+                epilogue.
+                """,
+
+            'test.out': """\
+                Some text.
+                //[[[cog cog.outl(str(math.sqrt(2))[:12])]]]
+                1.4142135623
+                //[[[end]]]
+                epilogue.
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-r', '-p', 'import math', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        cog = Cog()
 
 
 class WritabilityTests(TestCaseWithTempDir):
