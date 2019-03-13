@@ -137,7 +137,7 @@ class CogGenerator(Redirectable):
 
         return reindentBlock(self.lines, '')
 
-    def evaluate(self, cog, globals, fname='cog generator'):
+    def evaluate(self, cog, globals, fname):
         # figure out the right whitespace prefix for the output
         prefOut = whitePrefix(self.markers)
 
