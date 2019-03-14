@@ -18,7 +18,7 @@ import tempfile
 from .backward import StringIO, to_bytes, b, TestCase
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError
-from .cogapp import usage, __version__
+from .cogapp import usage, __version__, main
 from .makefiles import *
 from .whiteutils import reindentBlock
 
@@ -845,6 +845,24 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             self.cog.callableMain(['argv0', '--markers=X'])
         with self.assertRaises(CogUsageError):
             self.cog.callableMain(['argv0', '--markers=A B C D'])
+
+
+class TestMain(TestCaseWithTempDir):
+    def setUp(self):
+        self.old_argv = sys.argv[:]
+        self.old_stderr = sys.stderr
+        sys.stderr = StringIO()
+
+    def tearDown(self):
+        sys.stderr = self.old_stderr
+        sys.argv = self.old_argv
+
+    def test_main_function(self):
+        sys.argv = ["argv0", "-XYZ"]
+        ret = main()
+        self.assertEqual(ret, 2)
+        stderr = sys.stderr.getvalue()
+        self.assertEqual(stderr, 'option -X not recognized\n(for help use -?)\n')
 
 
 class TestFileHandling(TestCaseWithTempDir):
