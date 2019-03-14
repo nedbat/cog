@@ -145,9 +145,10 @@ class CogGenerator(Redirectable):
         if not intext:
             return ''
 
-        # In Python 2.2, the last line has to end in a newline.
-        intext = "import cog\n" + self.options.sPrologue + '\n' + intext + "\n"
-        code = compile(intext, str(fname), 'exec')
+        prologue = "import cog\n"
+        if self.options.sPrologue:
+            prologue += self.options.sPrologue + '\n'
+        code = compile(prologue + intext, str(fname), 'exec')
 
         # Make sure the "cog" module has our state.
         cog.cogmodule.msg = self.msg
