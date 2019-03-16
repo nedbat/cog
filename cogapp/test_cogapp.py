@@ -146,19 +146,23 @@ class CogTestsInMemory(TestCase):
     def testCogOutDedent(self):
         infile = """\
             //[[[cog
-            cog.out("This is line one\\n")
+            cog.out("This is the first line\\n")
             cog.out('''
-                This is line two
+                This is dedent=True
             ''', dedent=True, trimblanklines=True)
             cog.out('''
-                This is line three
+                This is dedent=False
             ''', dedent=False, trimblanklines=True)
-            cog.out("This is line four\\n")
+            cog.out('''
+                This is dedent=default
+            ''', trimblanklines=True)
+            cog.out("This is the last line\\n")
             //]]]
-            This is line one
-            This is line two
-                This is line three
-            This is line four
+            This is the first line
+            This is dedent=True
+                This is dedent=False
+                This is dedent=default
+            This is the last line
             //[[[end]]]
             """
 
