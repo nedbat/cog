@@ -23,6 +23,10 @@
 <ul>
     <li>Dropped support for Pythons 2.6, 3.3, and 3.4.</li>
 
+    <li>Errors occurring during content generation now print accurate
+        tracebacks, showing the correct filename, line number, and source
+        line.</li>
+
     <li>Cog can now be run (again?) as just "cog" on the command line.</li>
 
     <li>The -p PROLOGUE option was added to specify Python text to prepend to

@@ -11,6 +11,7 @@ import copy
 import getopt
 import hashlib
 import imp
+import linecache
 import os
 import re
 import shlex
@@ -87,6 +88,12 @@ class CogGeneratedError(CogError):
     """
     pass    #pragma: no cover
 
+class CogUserException(CogError):
+    """ An exception caught when running a user's cog generator.
+        The argument is the traceback message to print.
+    """
+    pass    #pragma: no cover
+
 class Redirectable:
     """ An object with its own stdout and stderr files.
     """
@@ -157,7 +164,17 @@ class CogGenerator(Redirectable):
         cog.cogmodule.error = self.error
 
         self.outstring = ''
-        eval(code, globals)
+        try:
+            eval(code, globals)
+        except CogError:
+            raise
+        except:
+            typ, err, tb = sys.exc_info()
+            frames = (tuple(fr) for fr in traceback.extract_tb(tb.tb_next))
+            frames = find_cog_source(frames, prologue)
+            msg = "".join(traceback.format_list(frames))
+            msg += "{}: {}".format(typ.__name__, err)
+            raise CogUserException(msg)
 
         # We need to make sure that the last line in the output
         # ends with a newline, or it will be joined to the
@@ -519,7 +536,7 @@ class Cog(Redirectable):
                 # supposed to generate code.
                 hasher = hashlib.md5()
                 if not self.options.bNoGenerate:
-                    sFile = "%s+%d" % (sFileIn, firstLineNum)
+                    sFile = "<cog %s:%d>" % (sFileIn, firstLineNum)
                     sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
                     sGen = self.suffixLines(sGen)
                     hasher.update(to_bytes(sGen))
@@ -736,12 +753,42 @@ class Cog(Redirectable):
         except CogGeneratedError as err:
             self.prerr("Error: %s" % err)
             return 3
+        except CogUserException as err:
+            self.prerr("Traceback (most recent call last):")
+            self.prerr(err.args[0])
+            return 4
         except CogError as err:
             self.prerr(err)
             return 1
-        except:
-            traceback.print_exc(None, self.stderr)
-            return 1
+
+
+def find_cog_source(frame_summary, prologue):
+    """Find cog source lines in a frame summary list, for printing tracebacks.
+
+    Arguments:
+        frame_summary: a list of 4-item tuples, as returned by traceback.extract_tb.
+        prologue: the text of the code prologue.
+
+    Returns
+        A list of 4-item tuples, updated to correct the cog entries.
+
+    """
+    prolines = prologue.splitlines()
+    for filename, lineno, funcname, source in frame_summary:
+        if not source:
+            m = re.search(r"^<cog ([^:]+):(\d+)>$", filename)
+            if m:
+                if lineno <= len(prolines):
+                    filename = '<prologue>'
+                    source = prolines[lineno-1]
+                    lineno -= 1     # Because "import cog" is the first line in the prologue
+                else:
+                    filename, coglineno = m.groups()
+                    coglineno = int(coglineno)
+                    lineno += coglineno - len(prolines)
+                    source = linecache.getline(filename, lineno).strip()
+        yield filename, lineno, funcname, source
+
 
 def main():
     """Main function for entry_points to use."""

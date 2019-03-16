@@ -14,10 +14,11 @@ import shutil
 import stat
 import sys
 import tempfile
+import textwrap
 
-from .backward import StringIO, to_bytes, b, TestCase
+from .backward import StringIO, to_bytes, b, TestCase, PY3
 from .cogapp import Cog, CogOptions, CogGenerator
-from .cogapp import CogError, CogUsageError, CogGeneratedError
+from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
 from .cogapp import usage, __version__, main
 from .makefiles import *
 from .whiteutils import reindentBlock
@@ -391,7 +392,7 @@ class CogTestsInMemory(TestCase):
             [[[end]]]
             """
         infile = reindentBlock(infile)
-        with self.assertRaisesRegex(AssertionError, "Oops"):
+        with self.assertRaisesRegex(CogUserException, "AssertionError: Oops"):
             Cog().processString(infile)
 
     def testCogPrevious(self):
@@ -849,6 +850,7 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
 
 class TestMain(TestCaseWithTempDir):
     def setUp(self):
+        super(TestMain, self).setUp()
         self.old_argv = sys.argv[:]
         self.old_stderr = sys.stderr
         sys.stderr = StringIO()
@@ -856,13 +858,82 @@ class TestMain(TestCaseWithTempDir):
     def tearDown(self):
         sys.stderr = self.old_stderr
         sys.argv = self.old_argv
+        sys.modules.pop('mycode', None)
+        super(TestMain, self).tearDown()
 
     def test_main_function(self):
-        sys.argv = ["argv0", "-XYZ"]
+        sys.argv = ["argv0", "-Z"]
         ret = main()
         self.assertEqual(ret, 2)
         stderr = sys.stderr.getvalue()
-        self.assertEqual(stderr, 'option -X not recognized\n(for help use -?)\n')
+        self.assertEqual(stderr, 'option -Z not recognized\n(for help use -?)\n')
+
+    files = {
+        'test.cog': """\
+            //[[[cog
+            def func():
+                import mycode
+                mycode.boom()
+            //]]]
+            //[[[end]]]
+            -----
+            //[[[cog
+            func()
+            //]]]
+            //[[[end]]]
+            """,
+
+        'mycode.py': """\
+            def boom():
+                [][0]
+            """,
+        }
+
+    def test_error_report(self):
+        self.check_error_report()
+
+    def test_error_report_with_prologue(self):
+        self.check_error_report("-p", "#1\n#2")
+
+    def check_error_report(self, *args):
+        """Check that the error report is right."""
+        makeFiles(self.files)
+        sys.argv = ["argv0"] + list(args) + ["-r", "test.cog"]
+        main()
+        expected = textwrap.dedent("""\
+            Traceback (most recent call last):
+              File "test.cog", line 9, in <module>
+                func()
+              File "test.cog", line 4, in func
+                mycode.boom()
+              File "MYCODE", line 2, in boom
+                [][0]
+            IndexError: list index out of range
+            """)
+        if PY3:
+            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
+        else:
+            expected = expected.replace("MYCODE", "mycode.py")
+        assert expected == sys.stderr.getvalue()
+
+    def test_error_in_prologue(self):
+        makeFiles(self.files)
+        sys.argv = ["argv0", "-p", "import mycode; mycode.boom()", "-r", "test.cog"]
+        main()
+        expected = textwrap.dedent("""\
+            Traceback (most recent call last):
+              File "<prologue>", line 1, in <module>
+                import mycode; mycode.boom()
+              File "MYCODE", line 2, in boom
+                [][0]
+            IndexError: list index out of range
+            """)
+        if PY3:
+            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
+        else:
+            expected = expected.replace("MYCODE", "mycode.py")
+        assert expected == sys.stderr.getvalue()
+
 
 
 class TestFileHandling(TestCaseWithTempDir):
@@ -1351,7 +1422,8 @@ class CogIncludeTests(TestCaseWithImports):
     def testNeedIncludePath(self):
         # Try it without the -I, to see that an ImportError happens.
         makeFiles(self.dincludes)
-        with self.assertRaises(ImportError):
+        msg = "(ImportError|ModuleNotFoundError): No module named '?mymodule'?"
+        with self.assertRaisesRegex(CogUserException, msg):
             self.cog.callableMain(['argv0', '-r', 'test.cog'])
 
     def testIncludePath(self):
