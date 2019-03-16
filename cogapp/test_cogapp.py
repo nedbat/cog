@@ -148,20 +148,26 @@ class CogTestsInMemory(TestCase):
             //[[[cog
             cog.out("This is the first line\\n")
             cog.out('''
-                This is dedent=True
+                This is dedent=True 1
+                 This is dedent=True 2
             ''', dedent=True, trimblanklines=True)
             cog.out('''
-                This is dedent=False
+                This is dedent=False 1
+                 This is dedent=False 2
             ''', dedent=False, trimblanklines=True)
             cog.out('''
-                This is dedent=default
+                This is dedent=default 1
+                 This is dedent=default 2
             ''', trimblanklines=True)
             cog.out("This is the last line\\n")
             //]]]
             This is the first line
-            This is dedent=True
-                This is dedent=False
-                This is dedent=default
+            This is dedent=True 1
+             This is dedent=True 2
+                This is dedent=False 1
+                 This is dedent=False 2
+                This is dedent=default 1
+                 This is dedent=default 2
             This is the last line
             //[[[end]]]
             """
