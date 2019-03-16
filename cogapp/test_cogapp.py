@@ -1287,7 +1287,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
     """
 
     def setUp(self):
-        TestCaseWithTempDir.setUp(self)
+        super(TestCaseWithImports, self).setUp()
         self.sysmodulekeys = list(sys.modules)
 
     def tearDown(self):
@@ -1298,7 +1298,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
             ]
         for modname in modstoscrub:
             del sys.modules[modname]
-        TestCaseWithTempDir.tearDown(self)
+        super(TestCaseWithImports, self).tearDown()
 
 
 class CogIncludeTests(TestCaseWithImports):
@@ -1848,7 +1848,7 @@ class WritabilityTests(TestCaseWithTempDir):
         cmd_w_asterisk = 'chmod +w *'
 
     def setUp(self):
-        TestCaseWithTempDir.setUp(self)
+        super(WritabilityTests, self).setUp()
         makeFiles(self.d)
         self.testcog = os.path.join(self.tempdir, 'test.cog')
         os.chmod(self.testcog, stat.S_IREAD)   # Make the file readonly.
@@ -1856,7 +1856,7 @@ class WritabilityTests(TestCaseWithTempDir):
 
     def tearDown(self):
         os.chmod(self.testcog, stat.S_IWRITE)   # Make the file writable again.
-        TestCaseWithTempDir.tearDown(self)
+        super(WritabilityTests, self).tearDown()
 
     def testReadonlyNoCommand(self):
         with self.assertRaisesRegex(CogError, "Can't overwrite test.cog"):
