@@ -14,7 +14,7 @@ clean:
 
 sterile: clean
 	-rm -rf .tox*
-	-rm -rf .pytest_cache
+	-rm -rf .pytest_cache .mutmut-cache
 
 test:
 	tox
