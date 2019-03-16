@@ -14,7 +14,6 @@ import shutil
 import stat
 import sys
 import tempfile
-import textwrap
 
 from .backward import StringIO, to_bytes, b, TestCase, PY3
 from .cogapp import Cog, CogOptions, CogGenerator
@@ -900,7 +899,7 @@ class TestMain(TestCaseWithTempDir):
         makeFiles(self.files)
         sys.argv = ["argv0"] + list(args) + ["-r", "test.cog"]
         main()
-        expected = textwrap.dedent("""\
+        expected = reindentBlock("""\
             Traceback (most recent call last):
               File "test.cog", line 9, in <module>
                 func()
@@ -920,7 +919,7 @@ class TestMain(TestCaseWithTempDir):
         makeFiles(self.files)
         sys.argv = ["argv0", "-p", "import mycode; mycode.boom()", "-r", "test.cog"]
         main()
-        expected = textwrap.dedent("""\
+        expected = reindentBlock("""\
             Traceback (most recent call last):
               File "<prologue>", line 1, in <module>
                 import mycode; mycode.boom()
