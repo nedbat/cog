@@ -292,6 +292,7 @@ class CogTestsInMemory(TestCase):
                 cog.outl("x")
                 cog.outl()
                 cog.outl("y")
+                cog.out()   # Also optional, a complete no-op.
                 cog.outl(trimblanklines=True)
                 cog.outl("z")
             ]]]
