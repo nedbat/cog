@@ -1812,7 +1812,6 @@ class CogTestsInFiles(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', '-p', 'import math', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
-        cog = Cog()
 
 
 class WritabilityTests(TestCaseWithTempDir):
