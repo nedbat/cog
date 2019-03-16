@@ -143,6 +143,28 @@ class CogTestsInMemory(TestCase):
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), infile)
 
+    def testCogOutDedent(self):
+        infile = """\
+            //[[[cog
+            cog.out("This is line one\\n")
+            cog.out('''
+                This is line two
+            ''', dedent=True, trimblanklines=True)
+            cog.out('''
+                This is line three
+            ''', dedent=False, trimblanklines=True)
+            cog.out("This is line four\\n")
+            //]]]
+            This is line one
+            This is line two
+                This is line three
+            This is line four
+            //[[[end]]]
+            """
+
+        infile = reindentBlock(infile)
+        self.assertEqual(Cog().processString(infile), infile)
+
     def test22EndOfLine(self):
         # In Python 2.2, this cog file was not parsing because the
         # last line is indented but didn't end with a newline.
