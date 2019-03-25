@@ -2,11 +2,11 @@
 Cog
 ===
 
-|  |ci-status|
-
 Cog content generation tool.
 
-
+|  |license| |versions| |status|
+|  |ci-status|
+|  |kit| |format|
 
 See http://nedbatchelder.com/code/cog for details.
 
@@ -19,3 +19,18 @@ To run the tests::
 .. |ci-status| image:: https://travis-ci.com/nedbat/cog.svg?branch=master
     :target: https://travis-ci.com/nedbat/cog
     :alt: Build status
+.. |kit| image:: https://badge.fury.io/py/cogapp.svg
+    :target: https://pypi.org/project/cogapp/
+    :alt: PyPI status
+.. |format| image:: https://img.shields.io/pypi/format/cogapp.svg
+    :target: https://pypi.org/project/cogapp/
+    :alt: Kit format
+.. |license| image:: https://img.shields.io/pypi/l/cogapp.svg
+    :target: https://pypi.org/project/cogapp/
+    :alt: License
+.. |versions| image:: https://img.shields.io/pypi/pyversions/cogapp.svg
+    :target: https://pypi.org/project/cogapp/
+    :alt: Python versions supported
+.. |status| image:: https://img.shields.io/pypi/status/cogapp.svg
+    :target: https://pypi.org/project/cogapp/
+    :alt: Package stability
