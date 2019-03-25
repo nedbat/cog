@@ -1,5 +1,7 @@
 # Makefile for cog work.
 
+.PHONY: clean sterile test kit pypi publish
+
 clean:
 	-rm -rf build
 	-rm -rf dist
