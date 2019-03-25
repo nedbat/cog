@@ -5,7 +5,7 @@ Cog
 Cog content generation tool.
 
 |  |license| |versions| |status|
-|  |ci-status|
+|  |ci-status| |win-ci-status|
 |  |kit| |format|
 
 See http://nedbatchelder.com/code/cog for details.
@@ -19,6 +19,9 @@ To run the tests::
 .. |ci-status| image:: https://travis-ci.com/nedbat/cog.svg?branch=master
     :target: https://travis-ci.com/nedbat/cog
     :alt: Build status
+.. |win-ci-status| image:: https://ci.appveyor.com/api/projects/status/hqq7x2vawnci7v7d/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/nedbat/cog
+    :alt: Windows build status
 .. |kit| image:: https://badge.fury.io/py/cogapp.svg
     :target: https://pypi.org/project/cogapp/
     :alt: PyPI status

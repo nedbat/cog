@@ -1,0 +1,42 @@
+# Appveyor, continuous integration for Windows
+# https://ci.appveyor.com/project/nedbat/cog
+
+version: '{branch}-{build}'
+
+shallow_clone: true
+
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
+
+build: false
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+      PYTHON_VERSION: "2.7.15"
+      PYTHON_ARCH: "32"
+      TOXENV: "py27"
+
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: "3.5.4"
+      PYTHON_ARCH: "32"
+      TOXENV: "py35"
+
+    - PYTHON: "C:\\Python36"
+      PYTHON_VERSION: "3.6.6"
+      PYTHON_ARCH: "32"
+      TOXENV: "py36"
+
+    - PYTHON: "C:\\Python37"
+      PYTHON_VERSION: "3.7.2"
+      PYTHON_ARCH: "32"
+      TOXENV: "py37"
+
+init:
+  - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
+
+install:
+  - "%PYTHON%/Scripts/pip.exe install -r requirements.pip"
+
+test_script:
+  - "%PYTHON%/Scripts/tox"
