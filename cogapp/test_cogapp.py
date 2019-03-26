@@ -1347,7 +1347,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 //]]]
                 // Unicode: \xe1\x88\xb4 (U+1234)
                 //[[[end]]]
-                """,
+                """.replace(b"\n", os.linesep.encode()),
             }
 
         makeFiles(d, bytes=True)
@@ -1373,7 +1373,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 //]]]
                 \xd1\xfa\xe5\xf8\xfc \xe5\xf9\xb8 \xfd\xf2\xe8\xf5 \xec\xff\xe3\xea\xe8\xf5 \xf4\xf0\xe0\xed\xf6\xf3\xe7\xf1\xea\xe8\xf5 \xe1\xf3\xeb\xee\xea \xe4\xe0 \xe2\xfb\xef\xe5\xe9 \xf7\xe0\xfe
                 //[[[end]]]
-                """,
+                """.replace(b"\n", os.linesep.encode()),
             }
 
         makeFiles(d, bytes=True)
