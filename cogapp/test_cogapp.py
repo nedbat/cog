@@ -1350,7 +1350,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """),
             }
 
-        makeFiles(d)
+        makeFiles(d, bytes=True)
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
@@ -1376,7 +1376,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """),
             }
 
-        makeFiles(d)
+        makeFiles(d, bytes=True)
         self.cog.callableMain(['argv0', '-n', 'cp1251', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()

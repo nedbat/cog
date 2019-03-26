@@ -13,14 +13,15 @@ from .whiteutils import reindentBlock
 
 __all__ = ['makeFiles', 'removeFiles']
 
-def makeFiles(d, basedir='.'):
+def makeFiles(d, basedir='.', bytes=False):
     """ Create files from the dictionary `d`, in the directory named by `basedir`.
+        If `bytes` is true, then treat bytestrings as bytes, else as text.
     """
     for name, contents in d.items():
         child = os.path.join(basedir, name)
         if isinstance(contents, string_types):
             mode = 'w'
-            if isinstance(contents, bytes_types):
+            if bytes and isinstance(contents, bytes_types):
                 mode += "b"
             f = open(child, mode)
             contents = reindentBlock(contents)
