@@ -8,7 +8,7 @@ from __future__ import absolute_import
 
 import re
 
-from .backward import string_types, bytes_types, to_bytes, b
+from .backward import string_types, bytes_types, to_bytes
 
 def whitePrefix(strings):
     """ Determine the whitespace prefix common to all non-blank lines
@@ -42,7 +42,7 @@ def reindentBlock(lines, newIndent=''):
     """
     sep, nothing = '\n', ''
     if isinstance(lines, bytes_types):
-        sep, nothing = b('\n'), b('')
+        sep, nothing = b'\n', b''
     if isinstance(lines, string_types):
         lines = lines.split(sep)
     oldIndent = whitePrefix(lines)

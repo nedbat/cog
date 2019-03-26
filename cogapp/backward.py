@@ -8,15 +8,11 @@ PY3 = sys.version_info[0] == 3
 if PY3:
     string_types = (str,bytes)
     bytes_types = (bytes,)
-    def b(s):
-        return s.encode("latin-1")
     def to_bytes(s):
         return s.encode('utf8')
 else:
     string_types = (basestring,)
     bytes_types = (str,)
-    def b(s):
-        return s
     def to_bytes(s):
         return s
 
