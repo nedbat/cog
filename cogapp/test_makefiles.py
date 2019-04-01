@@ -61,7 +61,7 @@ class SimpleTests(TestCase):
             'top2.txt': "hello",
             'sub': {
                  'sub1.txt': "inside",
-                 'sub2.txt': "inside2"
+                 'sub2.txt': "inside2",
                  },
             }
 
@@ -82,13 +82,14 @@ class SimpleTests(TestCase):
 
     def testDedent(self):
         fname = 'dedent.txt'
-        d = { fname: """\
-                    This is dedent.txt
-                    \tTabbed in.
-                      spaced in.
-                    OK.
-                    """
-              }
+        d = {
+            fname: """\
+                This is dedent.txt
+                \tTabbed in.
+                  spaced in.
+                OK.
+                """,
+            }
         makefiles.makeFiles(d, self.tempdir)
         fcont = open(os.path.join(self.tempdir, fname))
         assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
