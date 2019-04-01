@@ -35,6 +35,10 @@
     <li>Wildcards in command line arguments will be expanded by cog to help on
         Windows.  Thanks, Hugh Perkins.</li>
 
+    <li>When using implicitly imported "cog", a new module is made for each run.
+        This is important when using the cog API multi-threaded.  Thanks, Daniel
+        Murdin.</li>
+
     <li>Moved development to GitHub.</li>
 </ul>
 

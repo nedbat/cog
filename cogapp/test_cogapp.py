@@ -14,6 +14,7 @@ import shutil
 import stat
 import sys
 import tempfile
+import threading
 
 from .backward import StringIO, to_bytes, TestCase, PY3
 from .cogapp import Cog, CogOptions, CogGenerator
@@ -1995,6 +1996,42 @@ class CogTestsInFiles(TestCaseWithTempDir):
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', '-p', 'import math', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
+
+    def testThreads(self):
+        # Test that the implictly imported cog module is actually different for
+        # different threads.
+        numthreads = 20
+
+        d = {}
+        for i in range(numthreads):
+            d['f{}.cog'.format(i)] = (
+                "x\n" * i +
+                "[[[cog\n" +
+                "assert cog.firstLineNum == int(FIRST) == {}\n".format(i+1) +
+                "]]]\n" +
+                "[[[end]]]\n"
+                )
+        makeFiles(d)
+
+        results = []
+
+        def thread_main(num):
+            try:
+                ret = Cog().main(
+                    ['cog.py', '-r', '-D', 'FIRST={}'.format(num+1), 'f{}.cog'.format(num)]
+                    )
+                assert ret == 0
+            except Exception as exc:
+                results.append(exc)
+            else:
+                results.append(None)
+
+        ts = [threading.Thread(target=thread_main, args=(i,)) for i in range(numthreads)]
+        for t in ts:
+            t.start()
+        for t in ts:
+            t.join()
+        assert results == [None] * numthreads
 
 
 class WritabilityTests(TestCaseWithTempDir):
