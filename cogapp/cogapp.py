@@ -680,8 +680,12 @@ class Cog(Redirectable):
             self.restoreIncludePath()
 
     def processWildcards(self, sFile):
-        for sMatchingFile in glob.glob(sFile):
-            self.processOneFile(sMatchingFile)
+        files = glob.glob(sFile)
+        if files:
+            for sMatchingFile in files:
+                self.processOneFile(sMatchingFile)
+        else:
+            self.processOneFile(sFile)
 
     def processFileList(self, sFileList):
         """ Process the files in a file list.
