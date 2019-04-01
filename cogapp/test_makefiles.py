@@ -71,6 +71,32 @@ class SimpleTests(TestCase):
         makefiles.removeFiles(d, self.tempdir)
         self.checkFilesDontExist(d, self.tempdir)
 
+    def testOverlapping(self):
+        d1 = {
+            'top1.txt': "howdy",
+            'sub': {
+                 'sub1.txt': "inside",
+                 },
+            }
+
+        d2 = {
+            'top2.txt': "hello",
+            'sub': {
+                 'sub2.txt': "inside2",
+                 },
+            }
+
+        self.checkFilesDontExist(d1, self.tempdir)
+        self.checkFilesDontExist(d2, self.tempdir)
+        makefiles.makeFiles(d1, self.tempdir)
+        makefiles.makeFiles(d2, self.tempdir)
+        self.checkFilesExist(d1, self.tempdir)
+        self.checkFilesExist(d2, self.tempdir)
+        makefiles.removeFiles(d1, self.tempdir)
+        makefiles.removeFiles(d2, self.tempdir)
+        self.checkFilesDontExist(d1, self.tempdir)
+        self.checkFilesDontExist(d2, self.tempdir)
+
     def testContents(self):
         fname = 'bar.txt'
         cont0 = "I am bar.txt"
