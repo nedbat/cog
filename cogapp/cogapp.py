@@ -153,7 +153,7 @@ class CogGenerator(Redirectable):
         if not intext:
             return ''
 
-        prologue = "import cog\n"
+        prologue = "import " + cog.cogmodulename + " as cog\n"
         if self.options.sPrologue:
             prologue += self.options.sPrologue + '\n'
         code = compile(prologue + intext, str(fname), 'exec')
@@ -359,6 +359,7 @@ class Cog(Redirectable):
         Redirectable.__init__(self)
         self.options = CogOptions()
         self._fixEndOutputPatterns()
+        self.cogmodulename = "cog"
         self.installCogModule()
 
     def _fixEndOutputPatterns(self):
@@ -384,7 +385,6 @@ class Cog(Redirectable):
         """
         self.cogmodule = imp.new_module('cog')
         self.cogmodule.path = []
-        sys.modules['cog'] = self.cogmodule
 
     def openOutputFile(self, fname):
         """ Open an output file, taking all the details into account.
@@ -438,6 +438,10 @@ class Cog(Redirectable):
 
             self.cogmodule.inFile = sFileIn
             self.cogmodule.outFile = sFileOut
+            self.cogmodulename = 'cog_' + hashlib.md5(sFileOut.encode()).hexdigest()
+            sys.modules[self.cogmodulename] = self.cogmodule
+            # if "import cog" explicitly done in code by user, note threading will cause clashes. 
+            sys.modules['cog'] = self.cogmodule
 
             # The globals dict we'll use for this file.
             if globals is None:
