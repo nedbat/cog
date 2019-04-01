@@ -22,7 +22,7 @@ test:
 	tox
 
 kit:
-	python setup.py sdist
+	python setup.py sdist bdist_wheel
 	twine check dist/*
 
 pypi:
