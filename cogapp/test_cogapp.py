@@ -1014,6 +1014,16 @@ class TestFileHandling(TestCaseWithTempDir):
                 //[[[end]]]
                 """,
 
+            'test2.cog': """\
+                // This is my C++ file.
+                //[[[cog
+                fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+                for fn in fnames:
+                    cog.outl("void %s();" % fn)
+                //]]]
+                //[[[end]]]
+                """,
+
             'test.out': """\
                 // This is my C++ file.
                 //[[[cog
@@ -1026,11 +1036,33 @@ class TestFileHandling(TestCaseWithTempDir):
                 void DoLastThing();
                 //[[[end]]]
                 """,
+
+            'not_this_one.cog': """\
+                // This is my C++ file.
+                //[[[cog
+                fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+                for fn in fnames:
+                    cog.outl("void %s();" % fn)
+                //]]]
+                //[[[end]]]
+                """,
+
+            'not_this_one.out': """\
+                // This is my C++ file.
+                //[[[cog
+                fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+                for fn in fnames:
+                    cog.outl("void %s();" % fn)
+                //]]]
+                //[[[end]]]
+                """,
             }
 
         makeFiles(d)
         self.cog.callableMain(['argv0', '-r', 't*.cog'])
         self.assertFilesSame('test.cog', 'test.out')
+        self.assertFilesSame('test2.cog', 'test.out')
+        self.assertFilesSame('not_this_one.cog', 'not_this_one.out')
         output = self.output.getvalue()
         self.assertIn("(changed)", output)
 
