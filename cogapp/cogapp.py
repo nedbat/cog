@@ -438,7 +438,7 @@ class Cog(Redirectable):
 
             self.cogmodule.inFile = sFileIn
             self.cogmodule.outFile = sFileOut
-            self.cogmodulename = 'cog_' + hashlib.md5(sFileOut).hexdigest()
+            self.cogmodulename = 'cog_' + hashlib.md5(sFileOut.encode()).hexdigest()
             sys.modules[self.cogmodulename] = self.cogmodule
             # if "import cog" explicitly done in code by user, note threading will cause clashes. 
             sys.modules['cog'] = self.cogmodule
