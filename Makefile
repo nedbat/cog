@@ -29,5 +29,5 @@ pypi:
 
 WEBHOME = ~/web/stellated/pages/code/cog
 
-publish: 
+publish:
 	cp -v *.px $(WEBHOME)
