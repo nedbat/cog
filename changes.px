@@ -32,6 +32,9 @@
     <li>The -p PROLOGUE option was added to specify Python text to prepend to
         embedded code.</li>
 
+    <li>Wildcards in command line arguments will be expanded by cog to help on
+        Windows.</li>
+
     <li>Moved development to GitHub.</li>
 </ul>
 
