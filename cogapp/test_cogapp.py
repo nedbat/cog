@@ -143,6 +143,21 @@ class CogTestsInMemory(TestCase):
         infile = reindentBlock(infile)
         self.assertEqual(Cog().processString(infile), infile)
 
+    def testTrimBlankLinesWithLastPartial(self):
+        infile = """\
+            //[[[cog
+            cog.out("This is line one\\n", trimblanklines=True)
+            cog.out("\\nLine two\\nLine three", trimblanklines=True)
+            //]]]
+            This is line one
+            Line two
+            Line three
+            //[[[end]]]
+            """
+
+        infile = reindentBlock(infile)
+        self.assertEqual(Cog().processString(infile), infile)
+
     def testCogOutDedent(self):
         infile = """\
             //[[[cog
