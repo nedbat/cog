@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function
 
 import copy
 import getopt
+import glob
 import hashlib
 import imp
 import linecache
@@ -678,6 +679,14 @@ class Cog(Redirectable):
         finally:
             self.restoreIncludePath()
 
+    def processWildcards(self, sFile):
+        files = glob.glob(sFile)
+        if files:
+            for sMatchingFile in files:
+                self.processOneFile(sMatchingFile)
+        else:
+            self.processOneFile(sFile)
+
     def processFileList(self, sFileList):
         """ Process the files in a file list.
         """
@@ -709,7 +718,7 @@ class Cog(Redirectable):
                 raise CogUsageError("Can't use -o with @file")
             self.processFileList(args[0][1:])
         else:
-            self.processOneFile(args[0])
+            self.processWildcards(args[0])
 
         self.options = saved_options
 
