@@ -10,6 +10,9 @@ Cog content generation tool.
 
 See http://nedbatchelder.com/code/cog for details.
 
+Code repository and issue tracker are at
+`GitHub <https://github.com/nedbat/cog>`_.
+
 To run the tests::
 
     $ pip install -r requirements.pip

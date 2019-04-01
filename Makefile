@@ -1,6 +1,6 @@
 # Makefile for cog work.
 
-.PHONY: clean sterile test kit pypi publish
+.PHONY: clean sterile test kit pypi testpypi publish
 
 clean:
 	-rm -rf build
@@ -27,6 +27,9 @@ kit:
 
 pypi:
 	twine upload dist/*
+
+testpypi:
+	twine upload --repository testpypi dist/*
 
 WEBHOME = ~/web/stellated/pages/code/cog
 

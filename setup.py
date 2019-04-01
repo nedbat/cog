@@ -7,6 +7,9 @@
 
 from setuptools import setup
 
+with open("README.rst") as readme:
+    long_description = readme.read()
+
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
     version = '3.0.0',
@@ -16,13 +19,14 @@ setup(
     description =
         'Cog: A content generator for executing Python snippets in source files.',
 
-    long_description = '''\
-        Docs at `http://nedbatchelder.com/code/cog <http://nedbatchelder.com/code/cog>`_.
-
-        Code repository and issue tracker are at
-        `GitHub <https://github.com/nedbat/cog>`_.
-        ''',
+    long_description = long_description,
     long_description_content_type = 'text/x-rst',
+
+    project_urls={
+        'Documentation': 'http://nedbatchelder.com/code/cog',
+        'Code': 'http://github.com/nedbat/cog',
+        'Issues': 'https://github.com/nedbat/cog/issues',
+    },
 
     classifiers = [
         "Development Status :: 5 - Production/Stable",
