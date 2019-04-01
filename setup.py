@@ -20,8 +20,9 @@ setup(
         Docs at `http://nedbatchelder.com/code/cog <http://nedbatchelder.com/code/cog>`_.
 
         Code repository and issue tracker are at
-        `GitHub <https://github.com/nedbat/cog`_.
+        `GitHub <https://github.com/nedbat/cog>`_.
         ''',
+    long_description_content_type = 'text/x-rst',
 
     classifiers = [
         "Development Status :: 5 - Production/Stable",

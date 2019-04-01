@@ -22,10 +22,11 @@ test:
 	tox
 
 kit:
-	python setup.py sdist --formats=gztar
+	python setup.py sdist
+	twine check dist/*
 
 pypi:
-	python setup.py register
+	twine upload dist/*
 
 WEBHOME = ~/web/stellated/pages/code/cog
 
