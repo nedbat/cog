@@ -6,6 +6,6 @@ source = cogapp
 
 [report]
 exclude_lines =
-    #pragma: no cover
+    pragma: no cover
     raise CogInternalError\(
 precision = 2

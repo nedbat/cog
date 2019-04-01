@@ -77,23 +77,23 @@ class CogError(Exception):
 class CogUsageError(CogError):
     """ An error in usage of command-line arguments in cog.
     """
-    pass    #pragma: no cover
+    pass
 
 class CogInternalError(CogError):
     """ An error in the coding of Cog. Should never happen.
     """
-    pass    #pragma: no cover
+    pass
 
 class CogGeneratedError(CogError):
     """ An error raised by a user's cog generator.
     """
-    pass    #pragma: no cover
+    pass
 
 class CogUserException(CogError):
     """ An exception caught when running a user's cog generator.
         The argument is the traceback message to print.
     """
-    pass    #pragma: no cover
+    pass
 
 class Redirectable:
     """ An object with its own stdout and stderr files.
