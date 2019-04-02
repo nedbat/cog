@@ -1,8 +1,0 @@
-+ Decide about min Python version: 2.3
-- Add a check for min Python version
-+ Double-check whether we still need the True, False = 1, 0 thingy.
-- Print nicer tracebacks from Python errors in generators.
-+ Honor existing linebreak characters in the source files.
-    Well, actually, just made it possible to do \n on windows!
-+ Change from .cmd files to Makefile.
-- Test for real on Mac and Linux.
