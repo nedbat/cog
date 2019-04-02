@@ -134,25 +134,13 @@ without a templating system dumbing down your tools for you.</p>
 
 <p>Cog requires Python 2.7, 3.5, 3.6, 3.7, 3.8, or Jython 2.5.</p>
 
-<p>Cog is installed with a standard Python distutils script:</p>
-
-<ol>
-<li>Download Cog from the <a href='http://pypi.python.org/pypi/cogapp'>Python Package Index</a>.
-</li>
-
-<li>Unpack the distribution archive somewhere.</li>
-
-<li>Run the setup.py script that was unpacked:
+<p>Cog is installed in the usual way, except the name is "cogapp", not "cog":</p>
 
 <code><![CDATA[
-$ python setup.py install
+$ pip install cogapp
 ]]></code>
 
-</li>
-
-</ol>
-
-<p>You should now have cog.py in your Python scripts directory.</p>
+<p>You should now have a "cog" command, or cog.py in your Python scripts directory.</p>
 
 <h2>License</h2>
 
