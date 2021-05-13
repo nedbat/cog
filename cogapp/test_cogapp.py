@@ -2021,7 +2021,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
                     ['cog.py', '-r', '-D', 'FIRST={}'.format(num+1), 'f{}.cog'.format(num)]
                     )
                 assert ret == 0
-            except Exception as exc:
+            except Exception as exc:    # pragma: no cover (only happens on test failure)
                 results.append(exc)
             else:
                 results.append(None)
