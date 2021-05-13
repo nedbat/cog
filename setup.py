@@ -2,7 +2,7 @@
 """ Setup.py for Cog
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2019, Ned Batchelder.
+    Copyright 2004-2021, Ned Batchelder.
 """
 
 from setuptools import setup
@@ -26,6 +26,7 @@ setup(
         'Documentation': 'http://nedbatchelder.com/code/cog',
         'Code': 'http://github.com/nedbat/cog',
         'Issues': 'https://github.com/nedbat/cog/issues',
+        'Funding': 'https://github.com/users/nedbat/sponsorship',
     },
 
     classifiers = [
@@ -39,10 +40,12 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Software Development :: Code Generators",
         ],
 
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
 
     license = 'MIT',
 
