@@ -11,7 +11,6 @@ import copy
 import getopt
 import glob
 import hashlib
-import imp
 import linecache
 import os
 import re
@@ -360,7 +359,7 @@ class Cog(Redirectable):
         self.options = CogOptions()
         self._fixEndOutputPatterns()
         self.cogmodulename = "cog"
-        self.installCogModule()
+        self.createCogModule()
 
     def _fixEndOutputPatterns(self):
         end_output = re.escape(self.options.sEndOutput)
@@ -379,11 +378,14 @@ class Cog(Redirectable):
     def isEndOutputLine(self, s):
         return self.options.sEndOutput in s
 
-    def installCogModule(self):
-        """ Magic mumbo-jumbo so that imported Python modules
+    def createCogModule(self):
+        """ Make a cog "module" object so that imported Python modules
             can say "import cog" and get our state.
         """
-        self.cogmodule = imp.new_module('cog')
+        class DummyModule(object):
+            """Modules don't have to be anything special, just an object will do."""
+            pass
+        self.cogmodule = DummyModule()
         self.cogmodule.path = []
 
     def openOutputFile(self, fname):
@@ -440,7 +442,7 @@ class Cog(Redirectable):
             self.cogmodule.outFile = sFileOut
             self.cogmodulename = 'cog_' + hashlib.md5(sFileOut.encode()).hexdigest()
             sys.modules[self.cogmodulename] = self.cogmodule
-            # if "import cog" explicitly done in code by user, note threading will cause clashes. 
+            # if "import cog" explicitly done in code by user, note threading will cause clashes.
             sys.modules['cog'] = self.cogmodule
 
             # The globals dict we'll use for this file.
