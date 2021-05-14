@@ -303,7 +303,7 @@ class CogOptions:
             elif o == '-e':
                 self.bWarnEmpty = True
             elif o == '-I':
-                self.addToIncludePath(a)
+                self.addToIncludePath(os.path.abspath(a))
             elif o == '-n':
                 self.sEncoding = a
             elif o == '-o':

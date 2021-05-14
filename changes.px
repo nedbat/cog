@@ -19,6 +19,14 @@
 
 <p>These are changes to Cog over time.</p>
 
+<h2>Unreleased</h2>
+
+<ul>
+    <li>Fix a problem with Python 3.8.10 and 3.9.5 that require absolute
+        paths in sys.path (issue #16).</li>
+</ul>
+
+
 <h2>Version 3.0.0, April 2 2019</h2>
 
 <ul>
