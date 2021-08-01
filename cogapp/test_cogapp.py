@@ -1998,7 +1998,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertFilesSame('test.cog', 'test.out')
 
     def testThreads(self):
-        # Test that the implictly imported cog module is actually different for
+        # Test that the implicitly imported cog module is actually different for
         # different threads.
         numthreads = 20
 
