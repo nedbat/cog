@@ -11,6 +11,7 @@
 <what when='20150111T202900'>2.4</what>
 <what when='20161019T192100'>2.5.1</what>
 <what when='20190402T063900'>3.0.0</what>
+<what when='20210831T172000'>3.1.0</what>
 </history>
 
 <docinfo>An older version of this document is also available in
@@ -19,11 +20,14 @@
 
 <p>These are changes to Cog over time.</p>
 
-<h2>Unreleased</h2>
+<h2>Version 3.1.0, August 31 2021</h2>
 
 <ul>
     <li>Fix a problem with Python 3.8.10 and 3.9.5 that require absolute
-        paths in sys.path (issue #16).</li>
+        paths in sys.path
+        (<a href="https://github.com/nedbat/cog/issues/16">issue #16</a>).</li>
+
+    <li>Python 3.9 and 3.10 are supported.</li>
 </ul>
 
 

@@ -12,7 +12,7 @@ with open("README.rst") as readme:
 
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '3.0.0',
+    version = '3.1.0',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',
@@ -27,6 +27,7 @@ setup(
         'Code': 'http://github.com/nedbat/cog',
         'Issues': 'https://github.com/nedbat/cog/issues',
         'Funding': 'https://github.com/users/nedbat/sponsorship',
+        'Twitter': 'https://twitter.com/nedbat',
     },
 
     classifiers = [
