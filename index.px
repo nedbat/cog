@@ -26,6 +26,7 @@
 <what when='20120227T192300'>Polish up Cog 2.3</what>
 <what when='20150111T203100'>Version 2.4</what>
 <what when='20190402T063800'>Version 3.0.0</what>
+<what when='20211107T112100'>Version 3.2.0</what>
 </history>
 
 <docinfo>An older version of this document is also available in
@@ -86,6 +87,9 @@ void DoLastThing();
 The lines between <b>[[[cog</b> and <b>]]]</b> are the generator Python code.
 The lines between <b>]]]</b> and <b>[[[end]]]</b> are the output from
 the generator.</p>
+
+<p>Output is written with <b>cog.outl</b>, or if you use the <b>-P</b> option,
+normal <b>print()</b> calls.</p>
 
 <p>When cog runs, it discards the last generated Python output,
 executes the generator Python code,
@@ -317,6 +321,7 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
+    -P          Use print() instead of outl for code output.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).

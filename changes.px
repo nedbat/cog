@@ -20,6 +20,14 @@
 
 <p>These are changes to Cog over time.</p>
 
+<h2>Version 3.2.0, November 7 2021</h2>
+
+<ul>
+    <li>Added the <b>-P</b> option to use print() instead of cog.outl() for code
+        output.</li>
+</ul>
+
+
 <h2>Version 3.1.0, August 31 2021</h2>
 
 <ul>

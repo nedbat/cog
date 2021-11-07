@@ -12,7 +12,7 @@ with open("README.rst") as readme:
 
 setup(
     name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '3.1.0',
+    version = '3.2.0',
     url = 'http://nedbatchelder.com/code/cog',
     author = 'Ned Batchelder',
     author_email = 'ned@nedbatchelder.com',

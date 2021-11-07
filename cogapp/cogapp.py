@@ -22,7 +22,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError', 'main']
 
-__version__ = '3.1.0'
+__version__ = '3.2.0'
 
 usage = """\
 cog - generate content with inlined Python code.
@@ -43,6 +43,7 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
+    -P          Use print() instead of outl for code output.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).
@@ -163,6 +164,10 @@ class CogGenerator(Redirectable):
         cog.cogmodule.outl = self.outl
         cog.cogmodule.error = self.error
 
+        real_stdout = sys.stdout
+        if self.options.bPrintOutput:
+            sys.stdout = captured_stdout = StringIO()
+
         self.outstring = ''
         try:
             eval(code, globals)
@@ -175,6 +180,11 @@ class CogGenerator(Redirectable):
             msg = "".join(traceback.format_list(frames))
             msg += "{}: {}".format(typ.__name__, err)
             raise CogUserException(msg)
+        finally:
+            sys.stdout = real_stdout
+
+        if self.options.bPrintOutput:
+            self.outstring = captured_stdout.getvalue()
 
         # We need to make sure that the last line in the output
         # ends with a newline, or it will be joined to the
@@ -258,6 +268,7 @@ class CogOptions:
         self.sEncoding = "utf-8"
         self.verbosity = 2
         self.sPrologue = ''
+        self.bPrintOutput = False
 
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -280,7 +291,7 @@ class CogOptions:
         try:
             opts, self.args = getopt.getopt(
                 argv,
-                'cdD:eI:n:o:rs:p:Uvw:xz',
+                'cdD:eI:n:o:rs:p:PUvw:xz',
                 [
                     'markers=',
                     'verbosity=',
@@ -314,6 +325,8 @@ class CogOptions:
                 self.sSuffix = a
             elif o == '-p':
                 self.sPrologue = a
+            elif o == '-P':
+                self.bPrintOutput = True
             elif o == '-U':
                 self.bNewlines = True
             elif o == '-v':

@@ -1018,6 +1018,38 @@ class TestFileHandling(TestCaseWithTempDir):
         output = self.output.getvalue()
         self.assertIn("(changed)", output)
 
+    def testPrintOutput(self):
+        d = {
+            'test.cog': """\
+                // This is my C++ file.
+                //[[[cog
+                fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+                for fn in fnames:
+                    print("void %s();" % fn)
+                //]]]
+                //[[[end]]]
+                """,
+
+            'test.out': """\
+                // This is my C++ file.
+                //[[[cog
+                fnames = ['DoSomething', 'DoAnotherThing', 'DoLastThing']
+                for fn in fnames:
+                    print("void %s();" % fn)
+                //]]]
+                void DoSomething();
+                void DoAnotherThing();
+                void DoLastThing();
+                //[[[end]]]
+                """,
+            }
+
+        makeFiles(d)
+        self.cog.callableMain(['argv0', '-rP', 'test.cog'])
+        self.assertFilesSame('test.cog', 'test.out')
+        output = self.output.getvalue()
+        self.assertIn("(changed)", output)
+
     def testWildcards(self):
         d = {
             'test.cog': """\
