@@ -26,7 +26,7 @@ test:			## Run the test suite.
 	tox
 
 kit:			## Build distribution kits.
-	python setup.py sdist bdist_wheel
+	python -m build
 	twine check dist/*
 
 pypi:			## Upload kits to PyPI.
