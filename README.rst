@@ -2,11 +2,10 @@
 Cog
 ===
 
-Cog content generation tool.
+Cog content generation tool. Small bits of computation for static files.
 
 |  |license| |versions| |status|
-|  |ci-status| |win-ci-status|
-|  |kit| |format|
+|  |ci-status| |kit| |format|
 
 See http://nedbatchelder.com/code/cog for details.
 
@@ -19,13 +18,10 @@ To run the tests::
     $ tox
 
 
-.. |ci-status| image:: https://travis-ci.com/nedbat/cog.svg?branch=master
-    :target: https://travis-ci.com/nedbat/cog
-    :alt: Build status
-.. |win-ci-status| image:: https://ci.appveyor.com/api/projects/status/hqq7x2vawnci7v7d/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/nedbat/cog
-    :alt: Windows build status
-.. |kit| image:: https://badge.fury.io/py/cogapp.svg
+.. |ci-status| image:: https://github.com/nedbat/cog/actions/workflows/ci.yml/badge.svg?branch=master&event=push
+    :target: https://github.com/nedbat/cog/actions/workflows/ci.yml
+    :alt: CI status
+.. |kit| image:: https://img.shields.io/pypi/v/cogapp.svg
     :target: https://pypi.org/project/cogapp/
     :alt: PyPI status
 .. |format| image:: https://img.shields.io/pypi/format/cogapp.svg

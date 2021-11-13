@@ -9,3 +9,12 @@ exclude_lines =
     pragma: no cover
     raise CogInternalError\(
 precision = 2
+
+[html]
+title = Cog coverage
+
+[paths]
+source =
+    cogapp
+    # GitHub Actions uses a few different home dir styles
+    */cog/cogapp
