@@ -20,6 +20,14 @@
 
 <p>These are changes to Cog over time.</p>
 
+<h2>Version 3.3.0, November 19 2021</h2>
+
+<ul>
+    <li>Added the <b>--check</b> option to check whether files would change if
+        run again, for use in continuous integration scenarios.</li>
+</ul>
+
+
 <h2>Version 3.2.0, November 7 2021</h2>
 
 <ul>

@@ -321,7 +321,7 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
-    -P          Use print() instead of outl for code output.
+    -P          Use print() instead of cog.outl() for code output.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).
@@ -330,13 +330,14 @@ OPTIONS:
     -x          Excise all the generated output without running the generators.
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
-    --verbosity=VERBOSITY
-                Control the amount of output. 2 (the default) lists all files,
-                1 lists only changed files, 0 lists no files.
+    --check     Check that the files would not change if run again.
     --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
                 include three values separated by spaces, the start, end,
                 and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
+    --verbosity=VERBOSITY
+                Control the amount of output. 2 (the default) lists all files,
+                1 lists only changed files, 0 lists no files.
     -h          Print this help.
 ]]></code>
 
@@ -455,6 +456,13 @@ a checksum:</p>
 <p>If the generated code is edited by a misguided developer, the next time cog
 is run, the checksum won't match, and cog will stop to avoid overwriting the
 edited code.</p>
+
+
+<h2>Continuous integration</h2>
+
+<p>You can use the --check option to run cog just to check that the files would
+not change if run again.  This is useful in continuous integration to check that
+your files have been updated properly.</p>
 
 
 <h2>Output line suffixes</h2>

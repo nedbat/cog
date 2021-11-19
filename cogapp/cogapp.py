@@ -52,13 +52,14 @@ OPTIONS:
     -x          Excise all the generated output without running the generators.
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
-    --verbosity=VERBOSITY
-                Control the amount of output. 2 (the default) lists all files,
-                1 lists only changed files, 0 lists no files.
+    --check     Check that the files would not change if run again.
     --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
                 include three values separated by spaces, the start, end,
                 and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
+    --verbosity=VERBOSITY
+                Control the amount of output. 2 (the default) lists all files,
+                1 lists only changed files, 0 lists no files.
     -h          Print this help.
 """
 
@@ -92,6 +93,11 @@ class CogGeneratedError(CogError):
 class CogUserException(CogError):
     """ An exception caught when running a user's cog generator.
         The argument is the traceback message to print.
+    """
+    pass
+
+class CogCheckFailed(CogError):
+    """ A --check failed.
     """
     pass
 
@@ -269,6 +275,7 @@ class CogOptions:
         self.verbosity = 2
         self.sPrologue = ''
         self.bPrintOutput = False
+        self.bCheck = False
 
     def __eq__(self, other):
         """ Comparison operator for tests to use.
@@ -293,6 +300,7 @@ class CogOptions:
                 argv,
                 'cdD:eI:n:o:rs:p:PUvw:xz',
                 [
+                    'check',
                     'markers=',
                     'verbosity=',
                 ]
@@ -337,6 +345,8 @@ class CogOptions:
                 self.bNoGenerate = True
             elif o == '-z':
                 self.bEofCanBeEnd = True
+            elif o == '--check':
+                self.bCheck = True
             elif o == '--markers':
                 self._parse_markers(a)
             elif o == '--verbosity':
@@ -373,6 +383,7 @@ class Cog(Redirectable):
         self._fixEndOutputPatterns()
         self.cogmodulename = "cog"
         self.createCogModule()
+        self.bCheckFailed = False
 
     def _fixEndOutputPatterns(self):
         end_output = re.escape(self.options.sEndOutput)
@@ -667,11 +678,12 @@ class Cog(Redirectable):
             # How we process the file depends on where the output is going.
             if self.options.sOutputName:
                 self.processFile(sFile, self.options.sOutputName, sFile)
-            elif self.options.bReplace:
+            elif self.options.bReplace or self.options.bCheck:
                 # We want to replace the cog file with the output,
                 # but only if they differ.
+                verb = "Cogging" if self.options.bReplace else "Checking"
                 if self.options.verbosity >= 2:
-                    self.prout("Cogging %s" % sFile, end="")
+                    self.prout("%s %s" % (verb, sFile), end="")
                     bNeedNewline = True
 
                 try:
@@ -682,10 +694,14 @@ class Cog(Redirectable):
                     if sOldText != sNewText:
                         if self.options.verbosity >= 1:
                             if self.options.verbosity < 2:
-                                self.prout("Cogging %s" % sFile, end="")
+                                self.prout("%s %s" % (verb, sFile), end="")
                             self.prout("  (changed)")
                             bNeedNewline = False
-                        self.replaceFile(sFile, sNewText)
+                        if self.options.bReplace:
+                            self.replaceFile(sFile, sNewText)
+                        else:
+                            assert self.options.bCheck
+                            self.bCheckFailed = True
                 finally:
                     # The try-finally block is so we can print a partial line
                     # with the name of the file, and print (changed) on the
@@ -767,6 +783,9 @@ class Cog(Redirectable):
         else:
             raise CogUsageError("No files to process")
 
+        if self.bCheckFailed:
+            raise CogCheckFailed("Check failed")
+
     def main(self, argv):
         """ Handle the command-line execution for cog.
         """
@@ -785,6 +804,9 @@ class Cog(Redirectable):
             self.prerr("Traceback (most recent call last):")
             self.prerr(err.args[0])
             return 4
+        except CogCheckFailed as err:
+            self.prerr(err)
+            return 5
         except CogError as err:
             self.prerr(err)
             return 1
