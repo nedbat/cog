@@ -2,7 +2,7 @@
 """ Cog content generation tool.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2019, Ned Batchelder.
+    Copyright 2004-2021, Ned Batchelder.
 """
 
 from __future__ import absolute_import, print_function
