@@ -36,6 +36,8 @@
 <p>Cog is a file generation tool.  It lets you use pieces of Python code
 as generators in your source files to generate whatever text you need.</p>
 
+<p>This page describes version 3.3.0, released November 19, 2021.</p>
+
 <p>The sections below are:</p>
 
 <h1links/>
@@ -301,6 +303,17 @@ outputting again with cog.out().</dd>
 <p>Cog is a command-line utility which takes arguments in standard form.
 </p>
 
+<!-- {{{cog
+    # Re-run this with `make cogdoc`
+    import sys
+    from cogapp import Cog
+    print("<code><![CDATA[")
+    print("$ cog -h")
+    cog = Cog()
+    cog.setOutput(stdout=sys.stdout, stderr=sys.stdout)
+    cog.main(["cog", "-h"])
+    print("]]></code>")
+}}} -->
 <code><![CDATA[
 $ cog -h
 cog - generate content with inlined Python code.
@@ -340,6 +353,7 @@ OPTIONS:
                 1 lists only changed files, 0 lists no files.
     -h          Print this help.
 ]]></code>
+<!-- {{{end}}} (checksum: a38eb10823ef24c42abe4bafcb4c4d54) -->
 
 <p>In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:</p>

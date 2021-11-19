@@ -35,6 +35,11 @@ pypi:			## Upload kits to PyPI.
 testpypi:		## Upload kits to test PyPI
 	twine upload --repository testpypi dist/*
 
+cogdoc:
+	# Normally I'd put this in a comment in index.px, but the
+	# quoting/escaping would be impossible.
+	python -m cogapp -crP --markers='{{{cog }}} {{{end}}}' index.px
+
 WEBHOME = ~/web/stellated/pages/code/cog
 
 publish:		## Move doc page to nedbat.com home.
