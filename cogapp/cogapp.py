@@ -43,7 +43,7 @@ OPTIONS:
     -o OUTNAME  Write the output to OUTNAME.
     -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
-    -P          Use print() instead of outl for code output.
+    -P          Use print() instead of cog.outl() for code output.
     -r          Replace the input file with the output.
     -s STRING   Suffix all generated output lines with STRING.
     -U          Write the output with Unix newlines (only LF line-endings).
