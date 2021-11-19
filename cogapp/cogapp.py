@@ -776,7 +776,7 @@ class Cog(Redirectable):
             return 0
         except CogUsageError as err:
             self.prerr(err)
-            self.prerr("(for help use -?)")
+            self.prerr("(for help use -h)")
             return 2
         except CogGeneratedError as err:
             self.prerr("Error: %s" % err)

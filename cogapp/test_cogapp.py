@@ -914,7 +914,7 @@ class TestMain(TestCaseWithTempDir):
         ret = main()
         self.assertEqual(ret, 2)
         stderr = sys.stderr.getvalue()
-        self.assertEqual(stderr, 'option -Z not recognized\n(for help use -?)\n')
+        self.assertEqual(stderr, 'option -Z not recognized\n(for help use -h)\n')
 
     files = {
         'test.cog': """\
