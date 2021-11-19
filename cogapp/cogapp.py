@@ -22,7 +22,7 @@ from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError', 'main']
 
-__version__ = '3.2.0'
+__version__ = '3.3.0'
 
 usage = """\
 cog - generate content with inlined Python code.
