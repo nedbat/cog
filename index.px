@@ -546,7 +546,7 @@ output files.</p>
 
 <p>The -I flag adds a directory to the path used to find Python modules.</p>
 
-<p>The -p option specifies Python text to prepend to embdedded generator source,
+<p>The -p option specifies Python text to prepend to embedded generator source,
 which can keep common imports out of source files.</p>
 
 <p>The -z flag lets you omit the [[[end]]] marker line, and it will be assumed at the
