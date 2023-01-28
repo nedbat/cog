@@ -11,16 +11,15 @@ with open("README.rst") as readme:
     long_description = readme.read()
 
 setup(
-    name = 'cogapp',    # Because there's already a Cog in pypi!  :(
-    version = '3.3.0',
-    url = 'http://nedbatchelder.com/code/cog',
-    author = 'Ned Batchelder',
-    author_email = 'ned@nedbatchelder.com',
-    description =
-        'Cog: A content generator for executing Python snippets in source files.',
+    name='cogapp',      # Because there's already a Cog in pypi!  :(
+    version='3.3.0',
+    url='http://nedbatchelder.com/code/cog',
+    author='Ned Batchelder',
+    author_email='ned@nedbatchelder.com',
+    description='Cog: A content generator for executing Python snippets in source files.',
 
-    long_description = long_description,
-    long_description_content_type = 'text/x-rst',
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
 
     project_urls={
         'Documentation': 'http://nedbatchelder.com/code/cog',
@@ -30,7 +29,7 @@ setup(
         'Twitter': 'https://twitter.com/nedbat',
     },
 
-    classifiers = [
+    classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: Developers",
@@ -42,23 +41,23 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Topic :: Software Development :: Code Generators",
-        ],
+    ],
 
     python_requires=">=3.7",
 
-    license = 'MIT',
+    license='MIT',
 
-    packages = [
+    packages=[
         'cogapp',
-        ],
+    ],
 
-    scripts = [
+    scripts=[
         'scripts/cog.py',
-        ],
+    ],
 
     entry_points={
         'console_scripts': [
             'cog = cogapp:main',
-            ],
-        },
-    )
+        ],
+    },
+)
