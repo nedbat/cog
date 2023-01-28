@@ -8,6 +8,13 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   tests:
     name: "Python ${{ matrix.python }} on ${{ matrix.os }}"
