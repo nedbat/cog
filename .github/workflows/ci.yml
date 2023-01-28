@@ -23,17 +23,11 @@ jobs:
         python:
           # When changing this list, be sure to check the [gh-actions] list in
           # tox.ini so that tox will run properly.
-          - "2.7"
-          - "3.5"
-          - "3.6"
           - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
-        exclude:
-          # Windows 2.7 doesn't work because Microsoft removed stuff we needed.
-          - os: windows-latest
-            python: "2.7"
+          - "3.11"
 
     steps:
       - name: "Check out the repo"

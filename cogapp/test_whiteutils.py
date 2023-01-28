@@ -4,9 +4,8 @@
     Copyright 2004-2019, Ned Batchelder.
 """
 
-from __future__ import absolute_import
+from unittest import TestCase
 
-from .backward import TestCase
 from .whiteutils import *
 
 

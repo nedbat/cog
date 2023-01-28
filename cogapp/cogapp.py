@@ -5,20 +5,17 @@
     Copyright 2004-2021, Ned Batchelder.
 """
 
-from __future__ import absolute_import, print_function
-
 import copy
 import getopt
 import glob
 import hashlib
+import io
 import linecache
 import os
 import re
 import shlex
 import sys
 import traceback
-
-from .backward import PY3, StringIO, string_types, to_bytes
 
 __all__ = ['Cog', 'CogUsageError', 'main']
 
@@ -172,7 +169,7 @@ class CogGenerator(Redirectable):
 
         real_stdout = sys.stdout
         if self.options.bPrintOutput:
-            sys.stdout = captured_stdout = StringIO()
+            sys.stdout = captured_stdout = io.StringIO()
 
         self.outstring = ''
         try:
@@ -417,13 +414,9 @@ class Cog(Redirectable):
         """
         opts = {}
         mode = "w"
-        if PY3:
-            opts['encoding'] = self.options.sEncoding
+        opts['encoding'] = self.options.sEncoding
         if self.options.bNewlines:
-            if PY3:
-                opts['newline'] = "\n"
-            else:
-                mode = "wb"
+            opts['newline'] = "\n"
         fdir = os.path.dirname(fname)
         if os.path.dirname(fdir) and not os.path.exists(fdir):
             os.makedirs(fdir)
@@ -434,10 +427,7 @@ class Cog(Redirectable):
         if fname == "-":
             return sys.stdin
         else:
-            opts = {}
-            if PY3:
-                opts['encoding'] = self.options.sEncoding
-            return open(fname, "r", **opts)
+            return open(fname, "r", encoding=self.options.sEncoding)
 
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """ Process an input file object to an output file object.
@@ -448,11 +438,11 @@ class Cog(Redirectable):
         sFileOut = fname or ''
         fInToClose = fOutToClose = None
         # Convert filenames to files.
-        if isinstance(fIn, string_types):
+        if isinstance(fIn, (bytes, str)):
             # Open the input file.
             sFileIn = fIn
             fIn = fInToClose = self.openInputFile(fIn)
-        if isinstance(fOut, string_types):
+        if isinstance(fOut, (bytes, str)):
             # Open the output file.
             sFileOut = fOut
             fOut = fOutToClose = self.openOutputFile(fOut)
@@ -551,7 +541,7 @@ class Cog(Redirectable):
                         raise CogError("Unexpected '%s'" % self.options.sEndSpec,
                             file=sFileIn, line=fIn.linenumber())
                     previous += l
-                    hasher.update(to_bytes(l))
+                    hasher.update(l.encode("utf-8"))
                     l = fIn.readline()
                 curHash = hasher.hexdigest()
 
@@ -570,7 +560,7 @@ class Cog(Redirectable):
                     sFile = "<cog %s:%d>" % (sFileIn, firstLineNum)
                     sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
                     sGen = self.suffixLines(sGen)
-                    hasher.update(to_bytes(sGen))
+                    hasher.update(sGen.encode("utf-8"))
                     fOut.write(sGen)
                 newHash = hasher.hexdigest()
 
@@ -626,8 +616,8 @@ class Cog(Redirectable):
         """ Process sInput as the text to cog.
             Return the cogged output as a string.
         """
-        fOld = StringIO(sInput)
-        fNew = StringIO()
+        fOld = io.StringIO(sInput)
+        fNew = io.StringIO()
         self.processFile(fOld, fNew, fname=fname)
         return fNew.getvalue()
 

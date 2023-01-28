@@ -4,15 +4,13 @@
     Copyright 2004-2019, Ned Batchelder.
 """
 
-from __future__ import absolute_import
-
 import shutil
 import os
 import random
 import tempfile
+from unittest import TestCase
 
 from . import makefiles
-from .backward import TestCase
 
 
 class SimpleTests(TestCase):

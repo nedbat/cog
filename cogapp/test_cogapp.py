@@ -4,8 +4,7 @@
     Copyright 2004-2021, Ned Batchelder.
 """
 
-from __future__ import absolute_import
-
+import io
 import os
 import os.path
 import random
@@ -15,8 +14,8 @@ import stat
 import sys
 import tempfile
 import threading
+from unittest import TestCase
 
-from .backward import StringIO, to_bytes, TestCase, PY3
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
 from .cogapp import usage, __version__, main
@@ -404,7 +403,7 @@ class CogTestsInMemory(TestCase):
             last line
             """
         with self.assertRaisesRegex(CogError, r"^infile.txt\(2\): Cog code markers inverted$"):
-             Cog().processString(reindentBlock(infile), "infile.txt")
+            Cog().processString(reindentBlock(infile), "infile.txt")
 
     def testSharingGlobals(self):
         infile = """\
@@ -769,7 +768,7 @@ class TestCaseWithTempDir(TestCase):
         """
         # Create a cog engine, and catch its output.
         self.cog = Cog()
-        self.output = StringIO()
+        self.output = io.StringIO()
         self.cog.setOutput(stdout=self.output, stderr=self.output)
 
     def setUp(self):
@@ -797,7 +796,7 @@ class TestCaseWithTempDir(TestCase):
             sFileContent = f.read()
         finally:
             f.close()
-        self.assertEqual(sFileContent, to_bytes(sContent))
+        self.assertEqual(sFileContent, sContent.encode("utf-8"))
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):
@@ -901,7 +900,7 @@ class TestMain(TestCaseWithTempDir):
         super(TestMain, self).setUp()
         self.old_argv = sys.argv[:]
         self.old_stderr = sys.stderr
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
 
     def tearDown(self):
         sys.stderr = self.old_stderr
@@ -958,10 +957,7 @@ class TestMain(TestCaseWithTempDir):
                 [][0]
             IndexError: list index out of range
             """)
-        if PY3:
-            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
-        else:
-            expected = expected.replace("MYCODE", "mycode.py")
+        expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
         assert expected == sys.stderr.getvalue()
 
     def test_error_in_prologue(self):
@@ -976,10 +972,7 @@ class TestMain(TestCaseWithTempDir):
                 [][0]
             IndexError: list index out of range
             """)
-        if PY3:
-            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
-        else:
-            expected = expected.replace("MYCODE", "mycode.py")
+        expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
         assert expected == sys.stderr.getvalue()
 
 
@@ -1462,7 +1455,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """.replace(b"\n", os.linesep.encode()),
             }
 
-        makeFiles(d, bytes=True)
+        makeFiles(d)
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
@@ -1488,7 +1481,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """.replace(b"\n", os.linesep.encode()),
             }
 
-        makeFiles(d, bytes=True)
+        makeFiles(d)
         self.cog.callableMain(['argv0', '-n', 'cp1251', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
@@ -1865,7 +1858,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.main(['argv0', '-c', '-r', "cog1.txt"])
         self.assertEqual(self.output.getvalue(), "Cogging cog1.txt\n")
@@ -1919,7 +1912,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.callableMain(['argv0', 'test.cog'])
         output = self.output.getvalue()
@@ -1928,13 +1921,13 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertEqual(outerr, "")
 
     def testReadFromStdin(self):
-        stdin = StringIO("--[[[cog cog.outl('Wow') ]]]\n--[[[end]]]\n")
+        stdin = io.StringIO("--[[[cog cog.outl('Wow') ]]]\n--[[[end]]]\n")
         def restore_stdin(old_stdin):
             sys.stdin = old_stdin
         self.addCleanup(restore_stdin, sys.stdin)
         sys.stdin = stdin
 
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.callableMain(['argv0', '-'])
         output = self.output.getvalue()
