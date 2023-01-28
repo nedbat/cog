@@ -1,5 +1,5 @@
 build
 coverage
 tox
-tox-gh-actions
+tox-gh
 twine
