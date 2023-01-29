@@ -2,11 +2,11 @@
 
 .PHONY: help clean sterile test kit pypi testpypi publish
 
-help:		## Show this help.
+help:			## Show this help.
 	@echo "Available targets:"
 	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | sort | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
 
-clean:		## Remove artifacts of test execution, installation, etc.
+clean:			## Remove artifacts of test execution, installation, etc.
 	-rm -rf build
 	-rm -rf dist
 	-rm -f MANIFEST
@@ -17,6 +17,7 @@ clean:		## Remove artifacts of test execution, installation, etc.
 	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
 	-rm -f .coverage .coverage.* coverage.xml
 	-rm -rf cogapp.egg-info htmlcov
+	-rm -rf docs/_build
 
 sterile: clean		## Remove all non-controlled content.
 	-rm -rf .tox*
