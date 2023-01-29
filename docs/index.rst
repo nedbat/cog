@@ -112,6 +112,8 @@ not "cog":
 You should now have a "cog" command, or cog.py in your Python scripts
 directory.
 
+See the :ref:`changelog <changes>` for the history of changes.
+
 Cog is distributed under the `MIT license`_.  Use it to spread goodness through
 the world.
 
@@ -124,6 +126,7 @@ More
 .. toctree::
    :maxdepth: 1
 
+   changes
    design
    source
    module
