@@ -1,5 +1,6 @@
 build
 coverage
+Sphinx
 tox
 tox-gh
 twine
