@@ -37,7 +37,7 @@ testpypi:		## Upload kits to test PyPI
 cogdoc:
 	# Normally I'd put this in a comment in index.px, but the
 	# quoting/escaping would be impossible.
-	python -m cogapp -crP --markers='{{{cog }}} {{{end}}}' index.px
+	python -m cogapp -crP --markers='{{{cog }}} {{{end}}}' docs/running.rst
 
 WEBHOME = ~/web/stellated/pages/code/cog
 

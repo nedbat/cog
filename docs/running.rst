@@ -3,20 +3,25 @@ Running cog
 
 Cog is a command-line utility which takes arguments in standard form.
 
-..
-    <!-- {{{cog
-        # Re-run this with `make cogdoc`
-        import sys
-        from cogapp import Cog
-        print("<code><![CDATA[")
-        print("$ cog -h")
-        cog = Cog()
-        cog.setOutput(stdout=sys.stdout, stderr=sys.stdout)
-        cog.main(["cog", "-h"])
-        print("]]></code>")
-    }}} -->
+.. {{{cog
+    # Re-run this with `make cogdoc`
+    # Here we use unconventional markers so the docs can use [[[ without
+    # getting tangled up in the cog processing.
 
-.. code-block::
+    import io
+    import textwrap
+    from cogapp import Cog
+
+    print("\n.. code-block:: text\n")
+    outf = io.StringIO()
+    print("$ cog -h", file=outf)
+    cog = Cog()
+    cog.setOutput(stdout=outf, stderr=outf)
+    cog.main(["cog", "-h"])
+    print(textwrap.indent(outf.getvalue(), "    "))
+.. }}}
+
+.. code-block:: text
 
     $ cog -h
     cog - generate content with inlined Python code.
@@ -56,8 +61,7 @@ Cog is a command-line utility which takes arguments in standard form.
                     1 lists only changed files, 0 lists no files.
         -h          Print this help.
 
-..
-    <!-- {{{end}}} (checksum: a38eb10823ef24c42abe4bafcb4c4d54) -->
+.. {{{end}}} (checksum: 080c447cae828556b45cfbd09e2f48cf)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:
