@@ -23,6 +23,9 @@ Unreleased
 
 - Dropped support for Python 2.7, 3.5, and 3.6, and added 3.11.
 
+- Removed the ``cog.py`` installed file.  Use the ``cog`` command, or ``python
+  -m cogapp`` to run cog.
+
 3.3.0 – November 19 2021
 ------------------------
 

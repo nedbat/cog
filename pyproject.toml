@@ -42,11 +42,11 @@ cog = "cogapp:main"
 "Funding" = "https://github.com/users/nedbat/sponsorship"
 "Twitter" = "https://twitter.com/nedbat"
 
-[tool.pytest]
+[tool.pytest.ini_options]
 addopts = "-q -rfe"
-
-[tool.setuptools.dynamic]
-version.attr = "cogapp.cogapp.__version__"
 
 [tool.setuptools]
 packages = ["cogapp"]
+
+[tool.setuptools.dynamic]
+version.attr = "cogapp.cogapp.__version__"

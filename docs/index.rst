@@ -109,8 +109,7 @@ not "cog":
 
     $ python -m pip install cogapp
 
-You should now have a "cog" command, or cog.py in your Python scripts
-directory.
+You should now have a "cog" command you can run.
 
 See the :ref:`changelog <changes>` for the history of changes.
 

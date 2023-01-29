@@ -10,7 +10,6 @@ include tox.ini
 recursive-include cogapp *.py
 recursive-include docs Makefile *.py *.rst
 recursive-include docs/_static *
-recursive-include scripts *.py
 recursive-include success *
 
 prune doc/_build
