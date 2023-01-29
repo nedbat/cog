@@ -1,4 +1,16 @@
-include README.rst
+include .coveragerc
+include .editorconfig
+include CHANGELOG.rst
 include LICENSE.txt
-recursive-include scripts *.py
+include Makefile
+include README.rst
+include requirements.pip
+include tox.ini
+
 recursive-include cogapp *.py
+recursive-include docs Makefile *.py *.rst
+recursive-include docs/_static *
+recursive-include scripts *.py
+recursive-include success *
+
+prune doc/_build

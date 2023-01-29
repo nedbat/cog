@@ -1,4 +1,5 @@
 build
+check-manifest
 coverage
 Sphinx
 tox

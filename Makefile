@@ -43,3 +43,9 @@ WEBHOME = ~/web/stellated/pages/code/cog
 
 publish:		## Move doc page to nedbat.com home.
 	cp -v *.px $(WEBHOME)
+
+check_release: _check_manifest ## Check that we are ready for a release
+	@echo "Release checks passed"
+
+_check_manifest:
+	python -m check_manifest
