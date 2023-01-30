@@ -26,7 +26,7 @@ dynamic = ["version"]
 cog = "cogapp:main"
 
 [project.urls]
-"Documentation" = "http://nedbatchelder.com/code/cog"
+"Documentation" = "https://cog.readthedocs.io/"
 "Code" = "http://github.com/nedbat/cog"
 "Issues" = "https://github.com/nedbat/cog/issues"
 "Funding" = "https://github.com/users/nedbat/sponsorship"
