@@ -1,6 +1,6 @@
 # Makefile for cog work.
 
-.PHONY: help clean sterile test kit pypi testpypi publish
+.PHONY: help clean sterile test
 
 help:			## Show this help.
 	@echo "Available targets:"
@@ -25,25 +25,31 @@ sterile: clean		## Remove all non-controlled content.
 test:			## Run the test suite.
 	tox
 
-kit:			## Build distribution kits.
-	python -m build
-	twine check dist/*
+# Docs
 
-pypi:			## Upload kits to PyPI.
-	twine upload --verbose dist/*
+.PHONY: cogdoc dochtml
 
-testpypi:		## Upload kits to test PyPI
-	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
-
-cogdoc:
+cogdoc:			## Run cog to keep the docs correct.
 	# Normally I'd put this in a comment in index.px, but the
 	# quoting/escaping would be impossible.
 	python -m cogapp -crP --markers='{{{cog }}} {{{end}}}' docs/running.rst
 
-WEBHOME = ~/web/stellated/pages/code/cog
+dochtml:		## Build local docs.
+	$(MAKE) -C docs html
 
-publish:		## Move doc page to nedbat.com home.
-	cp -v *.px $(WEBHOME)
+# Release
+
+.PHONY: dist pypi testpypi check_release
+
+dist:			## Build distribution artifacts.
+	python -m build
+	twine check dist/*
+
+pypi:			## Upload distributions to PyPI.
+	twine upload --verbose dist/*
+
+testpypi:		## Upload distributions to test PyPI
+	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
 
 check_release: _check_manifest ## Check that we are ready for a release
 	@echo "Release checks passed"
