@@ -19,7 +19,7 @@ import traceback
 
 __all__ = ['Cog', 'CogUsageError', 'main']
 
-__version__ = '3.3.0'
+__version__ = "4.0.0.dev1"
 
 usage = """\
 cog - generate content with inlined Python code.

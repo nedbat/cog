@@ -30,10 +30,10 @@ kit:			## Build distribution kits.
 	twine check dist/*
 
 pypi:			## Upload kits to PyPI.
-	twine upload dist/*
+	twine upload --verbose dist/*
 
 testpypi:		## Upload kits to test PyPI
-	twine upload --repository testpypi dist/*
+	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
 
 cogdoc:
 	# Normally I'd put this in a comment in index.px, but the
