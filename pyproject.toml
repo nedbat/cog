@@ -40,7 +40,7 @@ cog = "cogapp:main"
 "Code" = "http://github.com/nedbat/cog"
 "Issues" = "https://github.com/nedbat/cog/issues"
 "Funding" = "https://github.com/users/nedbat/sponsorship"
-"Twitter" = "https://twitter.com/nedbat"
+"Mastodon" = "https://hachyderm.io/@nedbat"
 
 [tool.pytest.ini_options]
 addopts = "-q -rfe"
