@@ -1,8 +1,7 @@
-# coding: utf8
 """ Cog content generation tool.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2021, Ned Batchelder.
+    Copyright 2004-2023, Ned Batchelder.
 """
 
 import copy
@@ -16,8 +15,6 @@ import re
 import shlex
 import sys
 import traceback
-
-__all__ = ['Cog', 'CogUsageError', 'main']
 
 __version__ = "4.0.0.dev2"
 
@@ -61,7 +58,7 @@ OPTIONS:
 """
 
 # Other package modules
-from .whiteutils import *
+from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 
 class CogError(Exception):
     """ Any exception raised by Cog.

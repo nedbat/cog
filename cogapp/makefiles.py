@@ -8,7 +8,6 @@ import os.path
 
 from .whiteutils import reindentBlock
 
-__all__ = ['makeFiles', 'removeFiles']
 
 def makeFiles(d, basedir='.'):
     """ Create files from the dictionary `d`, in the directory named by `basedir`.

@@ -19,7 +19,7 @@ from unittest import TestCase
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
 from .cogapp import usage, __version__, main
-from .makefiles import *
+from .makefiles import makeFiles
 from .whiteutils import reindentBlock
 
 

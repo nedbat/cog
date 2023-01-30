@@ -6,7 +6,7 @@
 
 from unittest import TestCase
 
-from .whiteutils import *
+from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 
 
 class WhitePrefixTests(TestCase):
