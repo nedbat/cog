@@ -1,7 +1,4 @@
 """ Test cogapp.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2021, Ned Batchelder.
 """
 
 import io

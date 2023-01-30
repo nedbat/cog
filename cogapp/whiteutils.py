@@ -1,7 +1,4 @@
 """ Indentation utilities for Cog.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
 
 import re

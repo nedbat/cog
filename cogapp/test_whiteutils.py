@@ -1,7 +1,4 @@
 """ Test the cogapp.whiteutils module.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
 
 from unittest import TestCase

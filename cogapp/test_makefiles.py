@@ -1,7 +1,4 @@
 """ Test the cogapp.makefiles modules
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
 
 import shutil
