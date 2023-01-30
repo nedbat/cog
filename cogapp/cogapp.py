@@ -28,7 +28,7 @@ cog [OPTIONS] [INFILE | @FILELIST] ...
 
 INFILE is the name of an input file, '-' will read from stdin.
 FILELIST is the name of a text file containing file names or
-    other @FILELISTs.
+other @FILELISTs.
 
 OPTIONS:
     -c          Checksum the output to protect it against accidental change.
