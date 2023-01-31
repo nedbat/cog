@@ -894,7 +894,7 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
 
 class TestMain(TestCaseWithTempDir):
     def setUp(self):
-        super(TestMain, self).setUp()
+        super().setUp()
         self.old_argv = sys.argv[:]
         self.old_stderr = sys.stderr
         sys.stderr = io.StringIO()
@@ -903,7 +903,7 @@ class TestMain(TestCaseWithTempDir):
         sys.stderr = self.old_stderr
         sys.argv = self.old_argv
         sys.modules.pop('mycode', None)
-        super(TestMain, self).tearDown()
+        super().tearDown()
 
     def test_main_function(self):
         sys.argv = ["argv0", "-Z"]
@@ -1492,7 +1492,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
     """
 
     def setUp(self):
-        super(TestCaseWithImports, self).setUp()
+        super().setUp()
         self.sysmodulekeys = list(sys.modules)
 
     def tearDown(self):
@@ -1503,7 +1503,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
             ]
         for modname in modstoscrub:
             del sys.modules[modname]
-        super(TestCaseWithImports, self).tearDown()
+        super().tearDown()
 
 
 class CogIncludeTests(TestCaseWithImports):
@@ -2026,10 +2026,10 @@ class CogTestsInFiles(TestCaseWithTempDir):
 
         d = {}
         for i in range(numthreads):
-            d['f{}.cog'.format(i)] = (
+            d[f'f{i}.cog'] = (
                 "x\n" * i +
                 "[[[cog\n" +
-                "assert cog.firstLineNum == int(FIRST) == {}\n".format(i+1) +
+                f"assert cog.firstLineNum == int(FIRST) == {i+1}\n" +
                 "]]]\n" +
                 "[[[end]]]\n"
                 )
@@ -2040,7 +2040,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         def thread_main(num):
             try:
                 ret = Cog().main(
-                    ['cog.py', '-r', '-D', 'FIRST={}'.format(num+1), 'f{}.cog'.format(num)]
+                    ['cog.py', '-r', '-D', f'FIRST={num+1}', f'f{num}.cog']
                     )
                 assert ret == 0
             except Exception as exc:    # pragma: no cover (only happens on test failure)
@@ -2212,7 +2212,7 @@ class WritabilityTests(TestCaseWithTempDir):
         cmd_w_asterisk = 'chmod +w *'
 
     def setUp(self):
-        super(WritabilityTests, self).setUp()
+        super().setUp()
         makeFiles(self.d)
         self.testcog = os.path.join(self.tempdir, 'test.cog')
         os.chmod(self.testcog, stat.S_IREAD)   # Make the file readonly.
@@ -2220,7 +2220,7 @@ class WritabilityTests(TestCaseWithTempDir):
 
     def tearDown(self):
         os.chmod(self.testcog, stat.S_IWRITE)   # Make the file writable again.
-        super(WritabilityTests, self).tearDown()
+        super().tearDown()
 
     def testReadonlyNoCommand(self):
         with self.assertRaisesRegex(CogError, "^Can't overwrite test.cog$"):

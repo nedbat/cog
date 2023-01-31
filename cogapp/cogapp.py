@@ -419,7 +419,7 @@ class Cog(Redirectable):
         if fname == "-":
             return sys.stdin
         else:
-            return open(fname, "r", encoding=self.options.sEncoding)
+            return open(fname, encoding=self.options.sEncoding)
 
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """ Process an input file object to an output file object.
