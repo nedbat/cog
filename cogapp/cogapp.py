@@ -12,6 +12,7 @@ import re
 import shlex
 import sys
 import traceback
+import types
 
 from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 
@@ -396,10 +397,7 @@ class Cog(Redirectable):
         """ Make a cog "module" object so that imported Python modules
             can say "import cog" and get our state.
         """
-        class DummyModule:
-            """Modules don't have to be anything special, just an object will do."""
-            pass
-        self.cogmodule = DummyModule()
+        self.cogmodule = types.SimpleNamespace()
         self.cogmodule.path = []
 
     def openOutputFile(self, fname):
