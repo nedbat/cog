@@ -13,6 +13,8 @@ import shlex
 import sys
 import traceback
 
+from .whiteutils import commonPrefix, reindentBlock, whitePrefix
+
 __version__ = "4.0.0.dev2"
 
 usage = """\
@@ -53,9 +55,6 @@ OPTIONS:
                 1 lists only changed files, 0 lists no files.
     -h          Print this help.
 """
-
-# Other package modules
-from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 
 class CogError(Exception):
     """ Any exception raised by Cog.
@@ -349,7 +348,7 @@ class CogOptions:
 
     def _parse_markers(self, val):
         try:
-            self.sBeginSpec, self.sEndSpec, self.sEndOutput = val.split(' ')
+            self.sBeginSpec, self.sEndSpec, self.sEndOutput = val.split(" ")
         except ValueError:
             raise CogUsageError(
                 f"--markers requires 3 values separated by spaces, could not parse {val!r}"
@@ -378,11 +377,11 @@ class Cog(Redirectable):
 
     def _fixEndOutputPatterns(self):
         end_output = re.escape(self.options.sEndOutput)
-        self.reEndOutput = re.compile(end_output + r'(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))')
-        self.sEndFormat = self.options.sEndOutput + ' (checksum: %s)'
+        self.reEndOutput = re.compile(end_output + r"(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))")
+        self.sEndFormat = self.options.sEndOutput + " (checksum: %s)"
 
     def showWarning(self, msg):
-        self.prout("Warning: "+msg)
+        self.prout(f"Warning: {msg}")
 
     def isBeginSpecLine(self, s):
         return self.options.sBeginSpec in s
@@ -410,14 +409,15 @@ class Cog(Redirectable):
         mode = "w"
         opts['encoding'] = self.options.sEncoding
         if self.options.bNewlines:
-            opts['newline'] = "\n"
+            opts["newline"] = "\n"
         fdir = os.path.dirname(fname)
         if os.path.dirname(fdir) and not os.path.exists(fdir):
             os.makedirs(fdir)
         return open(fname, mode, **opts)
 
     def openInputFile(self, fname):
-        """ Open an input file. """
+        """ Open an input file.
+        """
         if fname == "-":
             return sys.stdin
         else:
@@ -585,7 +585,7 @@ class Cog(Redirectable):
                 hashMatch = self.reEndOutput.search(l)
                 if self.options.bHashOutput:
                     if hashMatch:
-                        oldHash = hashMatch.groupdict()['hash']
+                        oldHash = hashMatch['hash']
                         if oldHash != curHash:
                             raise CogError("Output has been edited! Delete old checksum to unprotect.",
                                 file=sFileIn, line=fIn.linenumber())
@@ -599,7 +599,7 @@ class Cog(Redirectable):
                     # We don't want hashes output, so if there was one, get rid of
                     # it.
                     if hashMatch:
-                        l = l.replace(hashMatch.groupdict()['hashsect'], '', 1)
+                        l = l.replace(hashMatch['hashsect'], '', 1)
 
                 if not self.options.bDeleteCode:
                     fOut.write(l)
