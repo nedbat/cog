@@ -62,9 +62,9 @@ class CogError(Exception):
     """
     def __init__(self, msg, file='', line=0):
         if file:
-            Exception.__init__(self, f"{file}({line}): {msg}")
+            super().__init__(f"{file}({line}): {msg}")
         else:
-            Exception.__init__(self, msg)
+            super().__init__(msg)
 
 class CogUsageError(CogError):
     """ An error in usage of command-line arguments in cog.
@@ -118,7 +118,7 @@ class CogGenerator(Redirectable):
     """ A generator pulled from a source file.
     """
     def __init__(self, options=None):
-        Redirectable.__init__(self)
+        super().__init__()
         self.markers = []
         self.lines = []
         self.options = options or CogOptions()
@@ -369,7 +369,7 @@ class Cog(Redirectable):
     """ The Cog engine.
     """
     def __init__(self):
-        Redirectable.__init__(self)
+        super().__init__()
         self.options = CogOptions()
         self._fixEndOutputPatterns()
         self.cogmodulename = "cog"
