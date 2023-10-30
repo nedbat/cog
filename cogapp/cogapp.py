@@ -2,6 +2,7 @@
 """
 
 import copy
+import functools
 import getopt
 import glob
 import hashlib
@@ -56,6 +57,13 @@ OPTIONS:
                 1 lists only changed files, 0 lists no files.
     -h          Print this help.
 """
+
+# Support FIPS mode where possible (Python >= 3.9). We don't use MD5 for security.
+md5 = (
+    functools.partial(hashlib.md5, usedforsecurity=False)
+    if sys.version_info >= (3, 9)
+    else hashlib.md5
+)
 
 class CogError(Exception):
     """ Any exception raised by Cog.
@@ -446,7 +454,7 @@ class Cog(Redirectable):
 
             self.cogmodule.inFile = sFileIn
             self.cogmodule.outFile = sFileOut
-            self.cogmodulename = 'cog_' + hashlib.md5(sFileOut.encode()).hexdigest()
+            self.cogmodulename = 'cog_' + md5(sFileOut.encode()).hexdigest()
             sys.modules[self.cogmodulename] = self.cogmodule
             # if "import cog" explicitly done in code by user, note threading will cause clashes.
             sys.modules['cog'] = self.cogmodule
@@ -536,7 +544,7 @@ class Cog(Redirectable):
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
                 previous = ""
-                hasher = hashlib.md5()
+                hasher = md5()
                 while l and not self.isEndOutputLine(l):
                     if self.isBeginSpecLine(l):
                         raise CogError(
@@ -568,7 +576,7 @@ class Cog(Redirectable):
 
                 # Write the output of the spec to be the new output if we're
                 # supposed to generate code.
-                hasher = hashlib.md5()
+                hasher = md5()
                 if not self.options.bNoGenerate:
                     sFile = f"<cog {sFileIn}:{firstLineNum}>"
                     sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
