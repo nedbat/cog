@@ -87,7 +87,11 @@ with an ``@``:
 
     $ cog @files_to_cog.txt
 
-These @-files can be nested, and each line can contain switches as well as a
+File names in the list file are relative to the current directory. You can also
+use ``&files_to_cog.txt`` and the file names will be relative to the location
+of the list file.
+
+These list files can be nested, and each line can contain switches as well as a
 file to process.  For example, you can create a file cogfiles.txt:
 
 .. code-block:: text

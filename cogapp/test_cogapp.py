@@ -808,15 +808,14 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
             self.cog.callableMain(['argv0', '-j'])
 
     def testNoDashOAndAtFile(self):
-        d = {
-            'cogfiles.txt': """\
-                # Please run cog
-                """
-            }
-
-        makeFiles(d)
+        makeFiles({"cogfiles.txt": "# Please run cog"})
         with self.assertRaisesRegex(CogUsageError, r"^Can't use -o with @file$"):
             self.cog.callableMain(['argv0', '-o', 'foo', '@cogfiles.txt'])
+
+    def testNoDashOAndAmpFile(self):
+        makeFiles({"cogfiles.txt": "# Please run cog"})
+        with self.assertRaisesRegex(CogUsageError, r"^Can't use -o with &file$"):
+            self.cog.callableMain(['argv0', '-o', 'foo', '&cogfiles.txt'])
 
     def testDashV(self):
         self.assertEqual(self.cog.main(['argv0', '-v']), 0)
@@ -1345,6 +1344,41 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertFilesSame('one 1.cog', 'one.out')
         self.assertFilesSame('subdir/subback.cog', 'subback.out')
         self.assertFilesSame('subdir/subfwd.cog', 'subfwd.out')
+
+    def testAmpFile(self):
+        d = {
+            'code': {
+                'files_to_cog': """\
+                    # A locally resolved file name.
+                    test.cog
+                    """,
+
+                'test.cog': """\
+                    //[[[cog
+                        import myampsubmodule
+                    //]]]
+                    //[[[end]]]
+                    """,
+
+                'test.out': """\
+                    //[[[cog
+                        import myampsubmodule
+                    //]]]
+                    Hello from myampsubmodule
+                    //[[[end]]]
+                    """,
+
+                'myampsubmodule.py': """\
+                    import cog
+                    cog.outl("Hello from myampsubmodule")
+                    """
+                }
+            }
+
+        makeFiles(d)
+        print(os.path.abspath("code/test.out"))
+        self.cog.callableMain(['argv0', '-r', '&code/files_to_cog'])
+        self.assertFilesSame('code/test.cog', 'code/test.out')
 
     def run_with_verbosity(self, verbosity):
         d = {
