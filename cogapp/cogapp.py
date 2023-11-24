@@ -22,11 +22,15 @@ __version__ = "4.0.0.dev2"
 usage = """\
 cog - generate content with inlined Python code.
 
-cog [OPTIONS] [INFILE | @FILELIST] ...
+cog [OPTIONS] [INFILE | @FILELIST | &FILELIST] ...
 
 INFILE is the name of an input file, '-' will read from stdin.
 FILELIST is the name of a text file containing file names or
-other @FILELISTs.
+other @FILELISTs.  
+    For @FILELIST, paths in the file list are relative to
+        the working directory where cog was called.
+    For &FILELIST, paths in the file list are relative to
+        the file list.
 
 OPTIONS:
     -c          Checksum the output to protect it against accidental change.
@@ -764,6 +768,14 @@ class Cog(Redirectable):
             if self.options.sOutputName:
                 raise CogUsageError("Can't use -o with @file")
             self.processFileList(args[0][1:])
+        elif args[0][0] == '&':
+            if self.options.sOutputName:
+                raise CogUsageError("Can't use -o with @file")
+            saved_cwd = os.getcwd()
+            file_list = args[0][1:]
+            os.chdir(os.path.dirname(file_list))
+            self.processFileList(os.path.basename(file_list))
+            os.chdir(saved_cwd)
         else:
             self.processWildcards(args[0])
 
