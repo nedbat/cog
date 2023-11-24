@@ -14,7 +14,7 @@ import traceback
 import types
 
 from .whiteutils import commonPrefix, reindentBlock, whitePrefix
-from .utils import NumberedFileReader, Redirectable, md5
+from .utils import NumberedFileReader, Redirectable, change_dir, md5
 
 __version__ = "4.0.0.dev2"
 
@@ -724,12 +724,10 @@ class Cog(Redirectable):
             self.processFileList(args[0][1:])
         elif args[0][0] == '&':
             if self.options.sOutputName:
-                raise CogUsageError("Can't use -o with @file")
-            saved_cwd = os.getcwd()
+                raise CogUsageError("Can't use -o with &file")
             file_list = args[0][1:]
-            os.chdir(os.path.dirname(file_list))
-            self.processFileList(os.path.basename(file_list))
-            os.chdir(saved_cwd)
+            with change_dir(os.path.dirname(file_list)):
+                self.processFileList(os.path.basename(file_list))
         else:
             self.processWildcards(args[0])
 

@@ -1,8 +1,10 @@
 """ Utilities for cog.
 """
 
+import contextlib
 import functools
 import hashlib
+import os
 import sys
 
 
@@ -51,3 +53,19 @@ class NumberedFileReader:
 
     def linenumber(self):
         return self.n
+
+
+@contextlib.contextmanager
+def change_dir(new_dir):
+    """Change directory, and then change back.
+
+    Use as a context manager, it will return to the original
+    directory at the end of the block.
+
+    """
+    old_dir = os.getcwd()
+    os.chdir(str(new_dir))
+    try:
+        yield
+    finally:
+        os.chdir(old_dir)
