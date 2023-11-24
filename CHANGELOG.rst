@@ -26,6 +26,10 @@ Unreleased
 - Removed the ``cog.py`` installed file.  Use the ``cog`` command, or ``python
   -m cogapp`` to run cog.
 
+- Support FIPS mode computers by marking our MD5 use as not related to
+  security.  Thanks, Ryan Santos.
+
+
 3.3.0 – November 19 2021
 ------------------------
 
