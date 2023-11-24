@@ -23,7 +23,7 @@ sterile: clean		## Remove all non-controlled content.
 	-rm -rf .tox*
 
 test:			## Run the test suite.
-	tox
+	tox -q
 
 # Docs
 
