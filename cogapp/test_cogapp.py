@@ -782,18 +782,17 @@ class TestCaseWithTempDir(TestCase):
         shutil.rmtree(self.tempdir)
 
     def assertFilesSame(self, sFName1, sFName2):
-        text1 = open(os.path.join(self.tempdir, sFName1), 'rb').read()
-        text2 = open(os.path.join(self.tempdir, sFName2), 'rb').read()
+        with open(os.path.join(self.tempdir, sFName1), 'rb') as f1:
+            text1 = f1.read()
+        with open(os.path.join(self.tempdir, sFName2), 'rb') as f2:
+            text2 = f2.read()
         self.assertEqual(text1, text2)
 
-    def assertFileContent(self, sFName, sContent):
-        sAbsName = os.path.join(self.tempdir, sFName)
-        f = open(sAbsName, 'rb')
-        try:
-            sFileContent = f.read()
-        finally:
-            f.close()
-        self.assertEqual(sFileContent, sContent.encode("utf-8"))
+    def assertFileContent(self, fname, content):
+        absname = os.path.join(self.tempdir, fname)
+        with open(absname, 'rb') as f:
+            file_content = f.read()
+        self.assertEqual(file_content, content.encode("utf-8"))
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):

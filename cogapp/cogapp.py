@@ -650,7 +650,8 @@ class Cog(Redirectable):
             if self.options.sMakeWritableCmd:
                 # Use an external command to make the file writable.
                 cmd = self.options.sMakeWritableCmd.replace('%s', sOldPath)
-                self.stdout.write(os.popen(cmd).read())
+                with os.popen(cmd) as cmdout:
+                    self.stdout.write(cmdout.read())
                 if not os.access(sOldPath, os.W_OK):
                     raise CogError(f"Couldn't make {sOldPath} writable")
             else:
