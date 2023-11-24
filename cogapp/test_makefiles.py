@@ -1,18 +1,13 @@
 """ Test the cogapp.makefiles modules
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
-
-from __future__ import absolute_import
 
 import shutil
 import os
 import random
 import tempfile
+from unittest import TestCase
 
 from . import makefiles
-from .backward import TestCase
 
 
 class SimpleTests(TestCase):
@@ -102,9 +97,8 @@ class SimpleTests(TestCase):
         cont0 = "I am bar.txt"
         d = { fname: cont0 }
         makefiles.makeFiles(d, self.tempdir)
-        fcont1 = open(os.path.join(self.tempdir, fname))
-        assert(fcont1.read() == cont0)
-        fcont1.close()
+        with open(os.path.join(self.tempdir, fname)) as fcont1:
+            assert(fcont1.read() == cont0)
 
     def testDedent(self):
         fname = 'dedent.txt'
@@ -117,6 +111,5 @@ class SimpleTests(TestCase):
                 """,
             }
         makefiles.makeFiles(d, self.tempdir)
-        fcont = open(os.path.join(self.tempdir, fname))
-        assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")
-        fcont.close()
+        with open(os.path.join(self.tempdir, fname)) as fcont:
+            assert(fcont.read() == "This is dedent.txt\n\tTabbed in.\n  spaced in.\nOK.\n")

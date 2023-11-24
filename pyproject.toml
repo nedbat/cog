@@ -1,0 +1,47 @@
+[project]
+name = "cogapp"
+description = "Cog: A content generator for executing Python snippets in source files."
+readme = "README.rst"
+authors = [
+    {name = "Ned Batchelder", email = "ned@nedbatchelder.com"},
+]
+license.text = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Code Generators",
+]
+requires-python = ">= 3.7"
+dynamic = ["version"]
+
+[project.scripts]
+cog = "cogapp:main"
+
+[project.urls]
+"Documentation" = "https://cog.readthedocs.io/"
+"Code" = "http://github.com/nedbat/cog"
+"Issues" = "https://github.com/nedbat/cog/issues"
+"Funding" = "https://github.com/users/nedbat/sponsorship"
+"Mastodon" = "https://hachyderm.io/@nedbat"
+
+[tool.pytest.ini_options]
+addopts = "-q -rfe"
+
+[tool.setuptools]
+packages = ["cogapp"]
+
+[tool.setuptools.dynamic]
+version.attr = "cogapp.cogapp.__version__"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

@@ -7,7 +7,9 @@ Cog content generation tool. Small bits of computation for static files.
 |  |license| |versions| |status|
 |  |ci-status| |kit| |format|
 
-See http://nedbatchelder.com/code/cog for details.
+See the `cog docs`_ for details.
+
+.. _cog docs: https://cog.readthedocs.io/en/latest/
 
 Code repository and issue tracker are at
 `GitHub <https://github.com/nedbat/cog>`_.

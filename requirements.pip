@@ -1,5 +1,7 @@
 build
+check-manifest
 coverage
+Sphinx
 tox
-tox-gh-actions
+tox-gh
 twine

@@ -1,13 +1,9 @@
 """ Test the cogapp.whiteutils module.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
 
-from __future__ import absolute_import
+from unittest import TestCase
 
-from .backward import TestCase
-from .whiteutils import *
+from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 
 
 class WhitePrefixTests(TestCase):

@@ -1,14 +1,8 @@
 """ Indentation utilities for Cog.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2019, Ned Batchelder.
 """
-
-from __future__ import absolute_import
 
 import re
 
-from .backward import string_types, bytes_types, to_bytes
 
 def whitePrefix(strings):
     """ Determine the whitespace prefix common to all non-blank lines
@@ -22,8 +16,8 @@ def whitePrefix(strings):
     # Find initial whitespace chunk in the first line.
     # This is the best prefix we can hope for.
     pat = r'\s*'
-    if isinstance(strings[0], bytes_types):
-        pat = to_bytes(pat)
+    if isinstance(strings[0], bytes):
+        pat = pat.encode("utf-8")
     prefix = re.match(pat, strings[0]).group(0)
 
     # Loop over the other strings, keeping only as much of
@@ -41,9 +35,9 @@ def reindentBlock(lines, newIndent=''):
         Re-indent using newIndent, and return it as a single string.
     """
     sep, nothing = '\n', ''
-    if isinstance(lines, bytes_types):
+    if isinstance(lines, bytes):
         sep, nothing = b'\n', b''
-    if isinstance(lines, string_types):
+    if isinstance(lines, (bytes, str)):
         lines = lines.split(sep)
     oldIndent = whitePrefix(lines)
     outLines = []

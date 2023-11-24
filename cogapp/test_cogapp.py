@@ -1,11 +1,7 @@
 """ Test cogapp.
-    http://nedbatchelder.com/code/cog
-
-    Copyright 2004-2021, Ned Batchelder.
 """
 
-from __future__ import absolute_import
-
+import io
 import os
 import os.path
 import random
@@ -15,12 +11,12 @@ import stat
 import sys
 import tempfile
 import threading
+from unittest import TestCase
 
-from .backward import StringIO, to_bytes, TestCase, PY3
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
 from .cogapp import usage, __version__, main
-from .makefiles import *
+from .makefiles import makeFiles
 from .whiteutils import reindentBlock
 
 
@@ -404,7 +400,7 @@ class CogTestsInMemory(TestCase):
             last line
             """
         with self.assertRaisesRegex(CogError, r"^infile.txt\(2\): Cog code markers inverted$"):
-             Cog().processString(reindentBlock(infile), "infile.txt")
+            Cog().processString(reindentBlock(infile), "infile.txt")
 
     def testSharingGlobals(self):
         infile = """\
@@ -769,7 +765,7 @@ class TestCaseWithTempDir(TestCase):
         """
         # Create a cog engine, and catch its output.
         self.cog = Cog()
-        self.output = StringIO()
+        self.output = io.StringIO()
         self.cog.setOutput(stdout=self.output, stderr=self.output)
 
     def setUp(self):
@@ -786,18 +782,17 @@ class TestCaseWithTempDir(TestCase):
         shutil.rmtree(self.tempdir)
 
     def assertFilesSame(self, sFName1, sFName2):
-        text1 = open(os.path.join(self.tempdir, sFName1), 'rb').read()
-        text2 = open(os.path.join(self.tempdir, sFName2), 'rb').read()
+        with open(os.path.join(self.tempdir, sFName1), 'rb') as f1:
+            text1 = f1.read()
+        with open(os.path.join(self.tempdir, sFName2), 'rb') as f2:
+            text2 = f2.read()
         self.assertEqual(text1, text2)
 
-    def assertFileContent(self, sFName, sContent):
-        sAbsName = os.path.join(self.tempdir, sFName)
-        f = open(sAbsName, 'rb')
-        try:
-            sFileContent = f.read()
-        finally:
-            f.close()
-        self.assertEqual(sFileContent, to_bytes(sContent))
+    def assertFileContent(self, fname, content):
+        absname = os.path.join(self.tempdir, fname)
+        with open(absname, 'rb') as f:
+            file_content = f.read()
+        self.assertEqual(file_content, content.encode("utf-8"))
 
 
 class ArgumentHandlingTests(TestCaseWithTempDir):
@@ -898,16 +893,16 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
 
 class TestMain(TestCaseWithTempDir):
     def setUp(self):
-        super(TestMain, self).setUp()
+        super().setUp()
         self.old_argv = sys.argv[:]
         self.old_stderr = sys.stderr
-        sys.stderr = StringIO()
+        sys.stderr = io.StringIO()
 
     def tearDown(self):
         sys.stderr = self.old_stderr
         sys.argv = self.old_argv
         sys.modules.pop('mycode', None)
-        super(TestMain, self).tearDown()
+        super().tearDown()
 
     def test_main_function(self):
         sys.argv = ["argv0", "-Z"]
@@ -958,10 +953,7 @@ class TestMain(TestCaseWithTempDir):
                 [][0]
             IndexError: list index out of range
             """)
-        if PY3:
-            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
-        else:
-            expected = expected.replace("MYCODE", "mycode.py")
+        expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
         assert expected == sys.stderr.getvalue()
 
     def test_error_in_prologue(self):
@@ -976,10 +968,7 @@ class TestMain(TestCaseWithTempDir):
                 [][0]
             IndexError: list index out of range
             """)
-        if PY3:
-            expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
-        else:
-            expected = expected.replace("MYCODE", "mycode.py")
+        expected = expected.replace("MYCODE", os.path.abspath("mycode.py"))
         assert expected == sys.stderr.getvalue()
 
 
@@ -1462,7 +1451,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """.replace(b"\n", os.linesep.encode()),
             }
 
-        makeFiles(d, bytes=True)
+        makeFiles(d)
         self.cog.callableMain(['argv0', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
@@ -1488,7 +1477,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
                 """.replace(b"\n", os.linesep.encode()),
             }
 
-        makeFiles(d, bytes=True)
+        makeFiles(d)
         self.cog.callableMain(['argv0', '-n', 'cp1251', '-r', 'test.cog'])
         self.assertFilesSame('test.cog', 'test.out')
         output = self.output.getvalue()
@@ -1502,7 +1491,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
     """
 
     def setUp(self):
-        super(TestCaseWithImports, self).setUp()
+        super().setUp()
         self.sysmodulekeys = list(sys.modules)
 
     def tearDown(self):
@@ -1513,7 +1502,7 @@ class TestCaseWithImports(TestCaseWithTempDir):
             ]
         for modname in modstoscrub:
             del sys.modules[modname]
-        super(TestCaseWithImports, self).tearDown()
+        super().tearDown()
 
 
 class CogIncludeTests(TestCaseWithImports):
@@ -1865,7 +1854,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.main(['argv0', '-c', '-r', "cog1.txt"])
         self.assertEqual(self.output.getvalue(), "Cogging cog1.txt\n")
@@ -1919,7 +1908,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             }
 
         makeFiles(d)
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.callableMain(['argv0', 'test.cog'])
         output = self.output.getvalue()
@@ -1928,13 +1917,13 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.assertEqual(outerr, "")
 
     def testReadFromStdin(self):
-        stdin = StringIO("--[[[cog cog.outl('Wow') ]]]\n--[[[end]]]\n")
+        stdin = io.StringIO("--[[[cog cog.outl('Wow') ]]]\n--[[[end]]]\n")
         def restore_stdin(old_stdin):
             sys.stdin = old_stdin
         self.addCleanup(restore_stdin, sys.stdin)
         sys.stdin = stdin
 
-        stderr = StringIO()
+        stderr = io.StringIO()
         self.cog.setOutput(stderr=stderr)
         self.cog.callableMain(['argv0', '-'])
         output = self.output.getvalue()
@@ -2036,10 +2025,10 @@ class CogTestsInFiles(TestCaseWithTempDir):
 
         d = {}
         for i in range(numthreads):
-            d['f{}.cog'.format(i)] = (
+            d[f'f{i}.cog'] = (
                 "x\n" * i +
                 "[[[cog\n" +
-                "assert cog.firstLineNum == int(FIRST) == {}\n".format(i+1) +
+                f"assert cog.firstLineNum == int(FIRST) == {i+1}\n" +
                 "]]]\n" +
                 "[[[end]]]\n"
                 )
@@ -2050,7 +2039,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         def thread_main(num):
             try:
                 ret = Cog().main(
-                    ['cog.py', '-r', '-D', 'FIRST={}'.format(num+1), 'f{}.cog'.format(num)]
+                    ['cog.py', '-r', '-D', f'FIRST={num+1}', f'f{num}.cog']
                     )
                 assert ret == 0
             except Exception as exc:    # pragma: no cover (only happens on test failure)
@@ -2222,7 +2211,7 @@ class WritabilityTests(TestCaseWithTempDir):
         cmd_w_asterisk = 'chmod +w *'
 
     def setUp(self):
-        super(WritabilityTests, self).setUp()
+        super().setUp()
         makeFiles(self.d)
         self.testcog = os.path.join(self.tempdir, 'test.cog')
         os.chmod(self.testcog, stat.S_IREAD)   # Make the file readonly.
@@ -2230,7 +2219,7 @@ class WritabilityTests(TestCaseWithTempDir):
 
     def tearDown(self):
         os.chmod(self.testcog, stat.S_IWRITE)   # Make the file writable again.
-        super(WritabilityTests, self).tearDown()
+        super().tearDown()
 
     def testReadonlyNoCommand(self):
         with self.assertRaisesRegex(CogError, "^Can't overwrite test.cog$"):
