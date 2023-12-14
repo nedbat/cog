@@ -5,8 +5,10 @@ Contributions have been made by:
 Alexander Belchenko
 Anders Hovmöller
 Blake Winton
-Doug Hellmann
 Daniel Murdin
+Doug Hellmann
 Hugh Perkins
 Jean-François Giraud
 Petr Gladkiy
+Phil Kirkpatrick
+Ryan Santos
