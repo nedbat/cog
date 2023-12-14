@@ -107,7 +107,7 @@ not "cog":
 
 .. code-block:: bash
 
-    $ python -m pip install cogapp
+    $ python3 -m pip install cogapp
 
 You should now have a "cog" command you can run.
 

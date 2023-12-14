@@ -116,7 +116,7 @@ Unreleased
 
 - An input file name of "-" will read input from standard in.
 
-- Cog can now be run with "python -m cogapp [args]".
+- Cog can now be run with "python3 -m cogapp [args]".
 
 - All files are assumed to be encoded with UTF-8.
 

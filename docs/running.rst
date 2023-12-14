@@ -68,7 +68,7 @@ invoke it as a module with the Python interpreter:
 
 .. code-block:: bash
 
-    $ python -m cogapp [options] [arguments]
+    $ python3 -m cogapp [options] [arguments]
 
 Note that the Python module is called "cogapp".
 
