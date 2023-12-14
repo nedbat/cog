@@ -34,6 +34,8 @@ Unreleased
 - Support FIPS mode computers by marking our MD5 use as not related to
   security.  Thanks, Ryan Santos.
 
+- Docs have moved to https://cog.readthedocs.io
+
 
 3.3.0 – November 19 2021
 ------------------------
