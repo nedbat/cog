@@ -26,11 +26,15 @@ Cog is a command-line utility which takes arguments in standard form.
     $ cog -h
     cog - generate content with inlined Python code.
 
-    cog [OPTIONS] [INFILE | @FILELIST] ...
+    cog [OPTIONS] [INFILE | @FILELIST | &FILELIST] ...
 
     INFILE is the name of an input file, '-' will read from stdin.
     FILELIST is the name of a text file containing file names or
     other @FILELISTs.
+
+    For @FILELIST, paths in the file list are relative to the working
+    directory where cog was called.  For &FILELIST, paths in the file
+    list are relative to the file list location.
 
     OPTIONS:
         -c          Checksum the output to protect it against accidental change.
@@ -61,7 +65,7 @@ Cog is a command-line utility which takes arguments in standard form.
                     1 lists only changed files, 0 lists no files.
         -h          Print this help.
 
-.. {{{end}}} (checksum: 0cb9cb7256c59fe7a433df17ce8669fa)
+.. {{{end}}} (checksum: 159e7d7aebb9dcc98f250d47879703dd)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:
