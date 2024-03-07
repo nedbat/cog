@@ -21,6 +21,7 @@ clean:			## Remove artifacts of test execution, installation, etc.
 
 sterile: clean		## Remove all non-controlled content.
 	-rm -rf .tox*
+	-rm -rf .*_cache
 
 test:			## Run the test suite.
 	tox -q
