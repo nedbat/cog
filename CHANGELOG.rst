@@ -23,13 +23,15 @@ Unreleased
 
 - Dropped support for Python 2.7, 3.5, and 3.6, and added 3.11 and 3.12.
 
+- Removed the ``cog.py`` installed file.  Use the ``cog`` command, or ``python
+  -m cogapp`` to run cog.
+
+- Processing long files has been made much faster.  Thanks, Panayiotis Gavriil.
+
 - Files listing other files to process can now be specified as
   ``&files_to_cog.txt`` to interpret the file names relative to the location of
   the list file.  The existing ``@files_to_cog.txt`` syntax interprets file
   names relative to the current working directory.  Thanks, Phil Kirkpatrick.
-
-- Removed the ``cog.py`` installed file.  Use the ``cog`` command, or ``python
-  -m cogapp`` to run cog.
 
 - Support FIPS mode computers by marking our MD5 use as not related to
   security.  Thanks, Ryan Santos.
