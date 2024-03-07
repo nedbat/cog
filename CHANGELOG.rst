@@ -18,8 +18,8 @@ Changelog
 
 These are changes to Cog over time.
 
-Unreleased
-----------
+3.4.1 – March 7 2024
+--------------------
 
 - Dropped support for Python 2.7, 3.5, and 3.6, and added 3.11 and 3.12.
 

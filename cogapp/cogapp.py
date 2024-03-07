@@ -16,7 +16,7 @@ import types
 from .whiteutils import commonPrefix, reindentBlock, whitePrefix
 from .utils import NumberedFileReader, Redirectable, change_dir, md5
 
-__version__ = "3.4.0"
+__version__ = "3.4.1"
 
 usage = """\
 cog - generate content with inlined Python code.
