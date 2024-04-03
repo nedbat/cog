@@ -5,7 +5,7 @@ Source files to be run through cog are mostly just plain text that will be
 passed through untouched.  The Python code in your source file is standard
 Python code.  Any way you want to use Python to generate text to go into your
 file is fine.  Each chunk of Python code (between the ``[[[cog`` and ``]]]``
-lines) is called a <em>generator</em> and is executed in sequence.
+lines) is called a *generator* and is executed in sequence.
 
 The output area for each generator (between the ``]]]`` and ``[[[end]]]``
 lines) is deleted, and the output of running the Python code is inserted in its
