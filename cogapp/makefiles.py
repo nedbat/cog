@@ -1,14 +1,12 @@
-""" Dictionary-to-filetree functions, to create test files for testing.
-"""
+"""Dictionary-to-filetree functions, to create test files for testing."""
 
 import os.path
 
 from .whiteutils import reindentBlock
 
 
-def makeFiles(d, basedir='.'):
-    """ Create files from the dictionary `d`, in the directory named by `basedir`.
-    """
+def makeFiles(d, basedir="."):
+    """Create files from the dictionary `d`, in the directory named by `basedir`."""
     for name, contents in d.items():
         child = os.path.join(basedir, name)
         if isinstance(contents, (bytes, str)):
@@ -22,9 +20,10 @@ def makeFiles(d, basedir='.'):
                 os.mkdir(child)
             makeFiles(contents, child)
 
-def removeFiles(d, basedir='.'):
-    """ Remove the files created by makeFiles.
-        Directories are removed if they are empty.
+
+def removeFiles(d, basedir="."):
+    """Remove the files created by makeFiles.
+    Directories are removed if they are empty.
     """
     for name, contents in d.items():
         child = os.path.join(basedir, name)

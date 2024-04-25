@@ -1,5 +1,4 @@
-""" Utilities for cog.
-"""
+"""Utilities for cog."""
 
 import contextlib
 import functools
@@ -17,15 +16,14 @@ md5 = (
 
 
 class Redirectable:
-    """ An object with its own stdout and stderr files.
-    """
+    """An object with its own stdout and stderr files."""
+
     def __init__(self):
         self.stdout = sys.stdout
         self.stderr = sys.stderr
 
     def setOutput(self, stdout=None, stderr=None):
-        """ Assign new files for standard out and/or standard error.
-        """
+        """Assign new files for standard out and/or standard error."""
         if stdout:
             self.stdout = stdout
         if stderr:
@@ -39,8 +37,8 @@ class Redirectable:
 
 
 class NumberedFileReader:
-    """ A decorator for files that counts the readline()'s called.
-    """
+    """A decorator for files that counts the readline()'s called."""
+
     def __init__(self, f):
         self.f = f
         self.n = 0
