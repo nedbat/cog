@@ -43,12 +43,12 @@ def reindentBlock(lines, newIndent=""):
         lines = lines.split(sep)
     oldIndent = whitePrefix(lines)
     outLines = []
-    for l in lines:
+    for line in lines:
         if oldIndent:
-            l = l.replace(oldIndent, nothing, 1)
-        if l and newIndent:
-            l = newIndent + l
-        outLines.append(l)
+            line = line.replace(oldIndent, nothing, 1)
+        if line and newIndent:
+            line = newIndent + line
+        outLines.append(line)
     return sep.join(outLines)
 
 

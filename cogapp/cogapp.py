@@ -114,11 +114,11 @@ class CogGenerator(Redirectable):
         self.lines = []
         self.options = options or CogOptions()
 
-    def parseMarker(self, l):
-        self.markers.append(l)
+    def parseMarker(self, line):
+        self.markers.append(line)
 
-    def parseLine(self, l):
-        self.lines.append(l.strip("\n"))
+    def parseLine(self, line):
+        self.lines.append(line.strip("\n"))
 
     def getCode(self):
         """Extract the executable Python code from the generator."""
@@ -127,8 +127,8 @@ class CogGenerator(Redirectable):
         # then remove it from all the lines.
         prefIn = commonPrefix(self.markers + self.lines)
         if prefIn:
-            self.markers = [l.replace(prefIn, "", 1) for l in self.markers]
-            self.lines = [l.replace(prefIn, "", 1) for l in self.lines]
+            self.markers = [line.replace(prefIn, "", 1) for line in self.markers]
+            self.lines = [line.replace(prefIn, "", 1) for line in self.lines]
 
         return reindentBlock(self.lines, "")
 
@@ -160,7 +160,7 @@ class CogGenerator(Redirectable):
             eval(code, globals)
         except CogError:
             raise
-        except:
+        except:  # noqa: E722 (we're just wrapping in CogUserException and rethrowing)
             typ, err, tb = sys.exc_info()
             frames = (tuple(fr) for fr in traceback.extract_tb(tb.tb_next))
             frames = find_cog_source(frames, prologue)
@@ -433,71 +433,71 @@ class Cog(Redirectable):
             globals.update(self.options.defines)
 
             # loop over generator chunks
-            l = fIn.readline()
-            while l:
+            line = fIn.readline()
+            while line:
                 # Find the next spec begin
-                while l and not self.isBeginSpecLine(l):
-                    if self.isEndSpecLine(l):
+                while line and not self.isBeginSpecLine(line):
+                    if self.isEndSpecLine(line):
                         raise CogError(
                             f"Unexpected {self.options.sEndSpec!r}",
                             file=sFileIn,
                             line=fIn.linenumber(),
                         )
-                    if self.isEndOutputLine(l):
+                    if self.isEndOutputLine(line):
                         raise CogError(
                             f"Unexpected {self.options.sEndOutput!r}",
                             file=sFileIn,
                             line=fIn.linenumber(),
                         )
-                    fOut.write(l)
-                    l = fIn.readline()
-                if not l:
+                    fOut.write(line)
+                    line = fIn.readline()
+                if not line:
                     break
                 if not self.options.bDeleteCode:
-                    fOut.write(l)
+                    fOut.write(line)
 
                 # l is the begin spec
                 gen = CogGenerator(options=self.options)
                 gen.setOutput(stdout=self.stdout)
-                gen.parseMarker(l)
+                gen.parseMarker(line)
                 firstLineNum = fIn.linenumber()
                 self.cogmodule.firstLineNum = firstLineNum
 
                 # If the spec begin is also a spec end, then process the single
                 # line of code inside.
-                if self.isEndSpecLine(l):
-                    beg = l.find(self.options.sBeginSpec)
-                    end = l.find(self.options.sEndSpec)
+                if self.isEndSpecLine(line):
+                    beg = line.find(self.options.sBeginSpec)
+                    end = line.find(self.options.sEndSpec)
                     if beg > end:
                         raise CogError(
                             "Cog code markers inverted", file=sFileIn, line=firstLineNum
                         )
                     else:
-                        sCode = l[beg + len(self.options.sBeginSpec) : end].strip()
+                        sCode = line[beg + len(self.options.sBeginSpec) : end].strip()
                         gen.parseLine(sCode)
                 else:
                     # Deal with an ordinary code block.
-                    l = fIn.readline()
+                    line = fIn.readline()
 
                     # Get all the lines in the spec
-                    while l and not self.isEndSpecLine(l):
-                        if self.isBeginSpecLine(l):
+                    while line and not self.isEndSpecLine(line):
+                        if self.isBeginSpecLine(line):
                             raise CogError(
                                 f"Unexpected {self.options.sBeginSpec!r}",
                                 file=sFileIn,
                                 line=fIn.linenumber(),
                             )
-                        if self.isEndOutputLine(l):
+                        if self.isEndOutputLine(line):
                             raise CogError(
                                 f"Unexpected {self.options.sEndOutput!r}",
                                 file=sFileIn,
                                 line=fIn.linenumber(),
                             )
                         if not self.options.bDeleteCode:
-                            fOut.write(l)
-                        gen.parseLine(l)
-                        l = fIn.readline()
-                    if not l:
+                            fOut.write(line)
+                        gen.parseLine(line)
+                        line = fIn.readline()
+                    if not line:
                         raise CogError(
                             "Cog block begun but never ended.",
                             file=sFileIn,
@@ -505,34 +505,34 @@ class Cog(Redirectable):
                         )
 
                     if not self.options.bDeleteCode:
-                        fOut.write(l)
-                    gen.parseMarker(l)
+                        fOut.write(line)
+                    gen.parseMarker(line)
 
-                l = fIn.readline()
+                line = fIn.readline()
 
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
                 previous = []
                 hasher = md5()
-                while l and not self.isEndOutputLine(l):
-                    if self.isBeginSpecLine(l):
+                while line and not self.isEndOutputLine(line):
+                    if self.isBeginSpecLine(line):
                         raise CogError(
                             f"Unexpected {self.options.sBeginSpec!r}",
                             file=sFileIn,
                             line=fIn.linenumber(),
                         )
-                    if self.isEndSpecLine(l):
+                    if self.isEndSpecLine(line):
                         raise CogError(
                             f"Unexpected {self.options.sEndSpec!r}",
                             file=sFileIn,
                             line=fIn.linenumber(),
                         )
-                    previous.append(l)
-                    hasher.update(l.encode("utf-8"))
-                    l = fIn.readline()
+                    previous.append(line)
+                    hasher.update(line.encode("utf-8"))
+                    line = fIn.readline()
                 curHash = hasher.hexdigest()
 
-                if not l and not self.options.bEofCanBeEnd:
+                if not line and not self.options.bEofCanBeEnd:
                     # We reached end of file before we found the end output line.
                     raise CogError(
                         f"Missing {self.options.sEndOutput!r} before end of file.",
@@ -557,7 +557,7 @@ class Cog(Redirectable):
                 bSawCog = True
 
                 # Write the ending output line
-                hashMatch = self.reEndOutput.search(l)
+                hashMatch = self.reEndOutput.search(line)
                 if self.options.bHashOutput:
                     if hashMatch:
                         oldHash = hashMatch["hash"]
@@ -568,20 +568,20 @@ class Cog(Redirectable):
                                 line=fIn.linenumber(),
                             )
                         # Create a new end line with the correct hash.
-                        endpieces = l.split(hashMatch.group(0), 1)
+                        endpieces = line.split(hashMatch.group(0), 1)
                     else:
                         # There was no old hash, but we want a new hash.
-                        endpieces = l.split(self.options.sEndOutput, 1)
-                    l = (self.sEndFormat % newHash).join(endpieces)
+                        endpieces = line.split(self.options.sEndOutput, 1)
+                    line = (self.sEndFormat % newHash).join(endpieces)
                 else:
                     # We don't want hashes output, so if there was one, get rid of
                     # it.
                     if hashMatch:
-                        l = l.replace(hashMatch["hashsect"], "", 1)
+                        line = line.replace(hashMatch["hashsect"], "", 1)
 
                 if not self.options.bDeleteCode:
-                    fOut.write(l)
-                l = fIn.readline()
+                    fOut.write(line)
+                line = fIn.readline()
 
             if not bSawCog and self.options.bWarnEmpty:
                 self.showWarning(f"no cog code found in {sFileIn}")
@@ -712,9 +712,9 @@ class Cog(Redirectable):
         flist = self.openInputFile(sFileList)
         lines = flist.readlines()
         flist.close()
-        for l in lines:
+        for line in lines:
             # Use shlex to parse the line like a shell.
-            lex = shlex.shlex(l, posix=True)
+            lex = shlex.shlex(line, posix=True)
             lex.whitespace_split = True
             lex.commenters = "#"
             # No escapes, so that backslash can be part of the path
