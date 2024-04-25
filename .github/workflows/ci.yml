@@ -16,6 +16,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chartboost/ruff-action@v1
+        with:
+          args: 'format --check'
+
   tests:
     name: "Python ${{ matrix.python }} on ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}-${{ matrix.os-version || 'latest' }}"
