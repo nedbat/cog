@@ -44,10 +44,10 @@ class NumberedFileReader:
         self.n = 0
 
     def readline(self):
-        l = self.f.readline()
-        if l:
+        line = self.f.readline()
+        if line:
             self.n += 1
-        return l
+        return line
 
     def linenumber(self):
         return self.n

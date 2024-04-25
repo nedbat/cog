@@ -4,3 +4,4 @@ repos:
   rev: v0.4.1
   hooks:
   - id: ruff-format
+  - id: ruff

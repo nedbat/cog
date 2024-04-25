@@ -26,7 +26,7 @@ class SimpleTests(TestCase):
     def checkFilesExist(self, d, dname):
         for fname in d.keys():
             assert self.exists(dname, fname)
-            if type(d[fname]) == type({}):
+            if isinstance(d[fname], dict):
                 self.checkFilesExist(d[fname], os.path.join(dname, fname))
 
     def checkFilesDontExist(self, d, dname):

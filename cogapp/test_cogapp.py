@@ -709,7 +709,7 @@ class CogGeneratorGetCodeTests(TestCase):
         # the functions we're going to use.
         self.gen = CogGenerator()
         self.m = self.gen.parseMarker
-        self.l = self.gen.parseLine
+        self.parseLine = self.gen.parseLine
 
     def testEmpty(self):
         self.m("// [[[cog")
@@ -718,40 +718,40 @@ class CogGeneratorGetCodeTests(TestCase):
 
     def testSimple(self):
         self.m("// [[[cog")
-        self.l('  print "hello"')
-        self.l('  print "bye"')
+        self.parseLine('  print "hello"')
+        self.parseLine('  print "bye"')
         self.m("// ]]]")
         self.assertEqual(self.gen.getCode(), 'print "hello"\nprint "bye"')
 
     def testCompressed1(self):
         # For a while, I supported compressed code blocks, but no longer.
         self.m('// [[[cog: print """')
-        self.l("// hello")
-        self.l("// bye")
+        self.parseLine("// hello")
+        self.parseLine("// bye")
         self.m('// """)]]]')
         self.assertEqual(self.gen.getCode(), "hello\nbye")
 
     def testCompressed2(self):
         # For a while, I supported compressed code blocks, but no longer.
         self.m('// [[[cog: print """')
-        self.l("hello")
-        self.l("bye")
+        self.parseLine("hello")
+        self.parseLine("bye")
         self.m('// """)]]]')
         self.assertEqual(self.gen.getCode(), "hello\nbye")
 
     def testCompressed3(self):
         # For a while, I supported compressed code blocks, but no longer.
         self.m("// [[[cog")
-        self.l('print """hello')
-        self.l("bye")
+        self.parseLine('print """hello')
+        self.parseLine("bye")
         self.m('// """)]]]')
         self.assertEqual(self.gen.getCode(), 'print """hello\nbye')
 
     def testCompressed4(self):
         # For a while, I supported compressed code blocks, but no longer.
         self.m('// [[[cog: print """')
-        self.l("hello")
-        self.l('bye""")')
+        self.parseLine("hello")
+        self.parseLine('bye""")')
         self.m("// ]]]")
         self.assertEqual(self.gen.getCode(), 'hello\nbye""")')
 
@@ -759,9 +759,9 @@ class CogGeneratorGetCodeTests(TestCase):
         # It's important to be able to use #if 0 to hide lines from a
         # C++ compiler.
         self.m("#if 0 //[[[cog")
-        self.l("\timport cog, sys")
-        self.l("")
-        self.l("\tprint sys.argv")
+        self.parseLine("\timport cog, sys")
+        self.parseLine("")
+        self.parseLine("\tprint sys.argv")
         self.m("#endif //]]]")
         self.assertEqual(self.gen.getCode(), "import cog, sys\n\nprint sys.argv")
 
