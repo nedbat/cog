@@ -141,8 +141,8 @@ class CogGenerator(Redirectable):
             return ""
 
         prologue = "import " + cog.cogmodulename + " as cog\n"
-        if self.options.sPrologue:
-            prologue += self.options.sPrologue + "\n"
+        if self.options.prologue:
+            prologue += self.options.prologue + "\n"
         code = compile(prologue + intext, str(fname), "exec")
 
         # Make sure the "cog" module has our state.
@@ -152,7 +152,7 @@ class CogGenerator(Redirectable):
         cog.cogmodule.error = self.error
 
         real_stdout = sys.stdout
-        if self.options.bPrintOutput:
+        if self.options.printOutput:
             sys.stdout = captured_stdout = io.StringIO()
 
         self.outstring = ""
@@ -170,7 +170,7 @@ class CogGenerator(Redirectable):
         finally:
             sys.stdout = real_stdout
 
-        if self.options.bPrintOutput:
+        if self.options.printOutput:
             self.outstring = captured_stdout.getvalue()
 
         # We need to make sure that the last line in the output
@@ -221,25 +221,25 @@ class CogOptions:
         self.args = []
         self.includePath = []
         self.defines = {}
-        self.bShowVersion = False
-        self.sMakeWritableCmd = None
-        self.bReplace = False
-        self.bNoGenerate = False
-        self.sOutputName = None
-        self.bWarnEmpty = False
-        self.bHashOutput = False
-        self.bDeleteCode = False
-        self.bEofCanBeEnd = False
-        self.sSuffix = None
-        self.bNewlines = False
-        self.sBeginSpec = "[[[cog"
-        self.sEndSpec = "]]]"
-        self.sEndOutput = "[[[end]]]"
-        self.sEncoding = "utf-8"
+        self.showVersion = False
+        self.makeWritableCmd = None
+        self.replace = False
+        self.noGenerate = False
+        self.outputName = None
+        self.warnEmpty = False
+        self.hashOutput = False
+        self.deleteCode = False
+        self.eofCanBeEnd = False
+        self.suffix = None
+        self.newlines = False
+        self.beginSpec = "[[[cog"
+        self.endSpec = "]]]"
+        self.endOutput = "[[[end]]]"
+        self.encoding = "utf-8"
         self.verbosity = 2
-        self.sPrologue = ""
-        self.bPrintOutput = False
-        self.bCheck = False
+        self.prologue = ""
+        self.printOutput = False
+        self.check = False
 
     def __eq__(self, other):
         """Comparison operator for tests to use."""
@@ -272,42 +272,42 @@ class CogOptions:
         # Handle the command line arguments.
         for o, a in opts:
             if o == "-c":
-                self.bHashOutput = True
+                self.hashOutput = True
             elif o == "-d":
-                self.bDeleteCode = True
+                self.deleteCode = True
             elif o == "-D":
                 if a.count("=") < 1:
                     raise CogUsageError("-D takes a name=value argument")
                 name, value = a.split("=", 1)
                 self.defines[name] = value
             elif o == "-e":
-                self.bWarnEmpty = True
+                self.warnEmpty = True
             elif o == "-I":
                 self.addToIncludePath(os.path.abspath(a))
             elif o == "-n":
-                self.sEncoding = a
+                self.encoding = a
             elif o == "-o":
-                self.sOutputName = a
+                self.outputName = a
             elif o == "-r":
-                self.bReplace = True
+                self.replace = True
             elif o == "-s":
-                self.sSuffix = a
+                self.suffix = a
             elif o == "-p":
-                self.sPrologue = a
+                self.prologue = a
             elif o == "-P":
-                self.bPrintOutput = True
+                self.printOutput = True
             elif o == "-U":
-                self.bNewlines = True
+                self.newlines = True
             elif o == "-v":
-                self.bShowVersion = True
+                self.showVersion = True
             elif o == "-w":
-                self.sMakeWritableCmd = a
+                self.makeWritableCmd = a
             elif o == "-x":
-                self.bNoGenerate = True
+                self.noGenerate = True
             elif o == "-z":
-                self.bEofCanBeEnd = True
+                self.eofCanBeEnd = True
             elif o == "--check":
-                self.bCheck = True
+                self.check = True
             elif o == "--markers":
                 self._parse_markers(a)
             elif o == "--verbosity":
@@ -319,7 +319,7 @@ class CogOptions:
 
     def _parse_markers(self, val):
         try:
-            self.sBeginSpec, self.sEndSpec, self.sEndOutput = val.split(" ")
+            self.beginSpec, self.endSpec, self.endOutput = val.split(" ")
         except ValueError:
             raise CogUsageError(
                 f"--markers requires 3 values separated by spaces, could not parse {val!r}"
@@ -327,12 +327,12 @@ class CogOptions:
 
     def validate(self):
         """Does nothing if everything is OK, raises CogError's if it's not."""
-        if self.bReplace and self.bDeleteCode:
+        if self.replace and self.deleteCode:
             raise CogUsageError(
                 "Can't use -d with -r (or you would delete all your source!)"
             )
 
-        if self.bReplace and self.sOutputName:
+        if self.replace and self.outputName:
             raise CogUsageError("Can't use -o with -r (they are opposites)")
 
 
@@ -345,26 +345,26 @@ class Cog(Redirectable):
         self._fixEndOutputPatterns()
         self.cogmodulename = "cog"
         self.createCogModule()
-        self.bCheckFailed = False
+        self.checkFailed = False
 
     def _fixEndOutputPatterns(self):
-        end_output = re.escape(self.options.sEndOutput)
+        end_output = re.escape(self.options.endOutput)
         self.reEndOutput = re.compile(
             end_output + r"(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))"
         )
-        self.sEndFormat = self.options.sEndOutput + " (checksum: %s)"
+        self.endFormat = self.options.endOutput + " (checksum: %s)"
 
     def showWarning(self, msg):
         self.prout(f"Warning: {msg}")
 
     def isBeginSpecLine(self, s):
-        return self.options.sBeginSpec in s
+        return self.options.beginSpec in s
 
     def isEndSpecLine(self, s):
-        return self.options.sEndSpec in s and not self.isEndOutputLine(s)
+        return self.options.endSpec in s and not self.isEndOutputLine(s)
 
     def isEndOutputLine(self, s):
-        return self.options.sEndOutput in s
+        return self.options.endOutput in s
 
     def createCogModule(self):
         """Make a cog "module" object.
@@ -379,8 +379,8 @@ class Cog(Redirectable):
         """Open an output file, taking all the details into account."""
         opts = {}
         mode = "w"
-        opts["encoding"] = self.options.sEncoding
-        if self.options.bNewlines:
+        opts["encoding"] = self.options.encoding
+        if self.options.newlines:
             opts["newline"] = "\n"
         fdir = os.path.dirname(fname)
         if os.path.dirname(fdir) and not os.path.exists(fdir):
@@ -392,35 +392,35 @@ class Cog(Redirectable):
         if fname == "-":
             return sys.stdin
         else:
-            return open(fname, encoding=self.options.sEncoding)
+            return open(fname, encoding=self.options.encoding)
 
-    def processFile(self, fIn, fOut, fname=None, globals=None):
+    def processFile(self, fileIn, fileOut, fname=None, globals=None):
         """Process an input file object to an output file object.
 
-        `fIn` and `fOut` can be file objects, or file names.
+        `fileIn` and `fileOut` can be file objects, or file names.
 
         """
-        sFileIn = fname or ""
-        sFileOut = fname or ""
-        fInToClose = fOutToClose = None
+        fileNameIn = fname or ""
+        fileNameOut = fname or ""
+        fileInToClose = fileOutToClose = None
         # Convert filenames to files.
-        if isinstance(fIn, (bytes, str)):
+        if isinstance(fileIn, (bytes, str)):
             # Open the input file.
-            sFileIn = fIn
-            fIn = fInToClose = self.openInputFile(fIn)
-        if isinstance(fOut, (bytes, str)):
+            fileNameIn = fileIn
+            fileIn = fileInToClose = self.openInputFile(fileIn)
+        if isinstance(fileOut, (bytes, str)):
             # Open the output file.
-            sFileOut = fOut
-            fOut = fOutToClose = self.openOutputFile(fOut)
+            fileNameOut = fileOut
+            fileOut = fileOutToClose = self.openOutputFile(fileOut)
 
         try:
-            fIn = NumberedFileReader(fIn)
+            fileIn = NumberedFileReader(fileIn)
 
-            bSawCog = False
+            sawCog = False
 
-            self.cogmodule.inFile = sFileIn
-            self.cogmodule.outFile = sFileOut
-            self.cogmodulename = "cog_" + md5(sFileOut.encode()).hexdigest()
+            self.cogmodule.inFile = fileNameIn
+            self.cogmodule.outFile = fileNameOut
+            self.cogmodulename = "cog_" + md5(fileNameOut.encode()).hexdigest()
             sys.modules[self.cogmodulename] = self.cogmodule
             # if "import cog" explicitly done in code by user, note threading will cause clashes.
             sys.modules["cog"] = self.cogmodule
@@ -433,82 +433,84 @@ class Cog(Redirectable):
             globals.update(self.options.defines)
 
             # loop over generator chunks
-            line = fIn.readline()
+            line = fileIn.readline()
             while line:
                 # Find the next spec begin
                 while line and not self.isBeginSpecLine(line):
                     if self.isEndSpecLine(line):
                         raise CogError(
-                            f"Unexpected {self.options.sEndSpec!r}",
-                            file=sFileIn,
-                            line=fIn.linenumber(),
+                            f"Unexpected {self.options.endSpec!r}",
+                            file=fileNameIn,
+                            line=fileIn.linenumber(),
                         )
                     if self.isEndOutputLine(line):
                         raise CogError(
-                            f"Unexpected {self.options.sEndOutput!r}",
-                            file=sFileIn,
-                            line=fIn.linenumber(),
+                            f"Unexpected {self.options.endOutput!r}",
+                            file=fileNameIn,
+                            line=fileIn.linenumber(),
                         )
-                    fOut.write(line)
-                    line = fIn.readline()
+                    fileOut.write(line)
+                    line = fileIn.readline()
                 if not line:
                     break
-                if not self.options.bDeleteCode:
-                    fOut.write(line)
+                if not self.options.deleteCode:
+                    fileOut.write(line)
 
                 # l is the begin spec
                 gen = CogGenerator(options=self.options)
                 gen.setOutput(stdout=self.stdout)
                 gen.parseMarker(line)
-                firstLineNum = fIn.linenumber()
+                firstLineNum = fileIn.linenumber()
                 self.cogmodule.firstLineNum = firstLineNum
 
                 # If the spec begin is also a spec end, then process the single
                 # line of code inside.
                 if self.isEndSpecLine(line):
-                    beg = line.find(self.options.sBeginSpec)
-                    end = line.find(self.options.sEndSpec)
+                    beg = line.find(self.options.beginSpec)
+                    end = line.find(self.options.endSpec)
                     if beg > end:
                         raise CogError(
-                            "Cog code markers inverted", file=sFileIn, line=firstLineNum
+                            "Cog code markers inverted",
+                            file=fileNameIn,
+                            line=firstLineNum,
                         )
                     else:
-                        sCode = line[beg + len(self.options.sBeginSpec) : end].strip()
-                        gen.parseLine(sCode)
+                        code = line[beg + len(self.options.beginSpec) : end].strip()
+                        gen.parseLine(code)
                 else:
                     # Deal with an ordinary code block.
-                    line = fIn.readline()
+                    line = fileIn.readline()
 
                     # Get all the lines in the spec
                     while line and not self.isEndSpecLine(line):
                         if self.isBeginSpecLine(line):
                             raise CogError(
-                                f"Unexpected {self.options.sBeginSpec!r}",
-                                file=sFileIn,
-                                line=fIn.linenumber(),
+                                f"Unexpected {self.options.beginSpec!r}",
+                                file=fileNameIn,
+                                line=fileIn.linenumber(),
                             )
                         if self.isEndOutputLine(line):
                             raise CogError(
-                                f"Unexpected {self.options.sEndOutput!r}",
-                                file=sFileIn,
-                                line=fIn.linenumber(),
+                                f"Unexpected {self.options.endOutput!r}",
+                                file=fileNameIn,
+                                line=fileIn.linenumber(),
                             )
-                        if not self.options.bDeleteCode:
-                            fOut.write(line)
+                        if not self.options.deleteCode:
+                            fileOut.write(line)
                         gen.parseLine(line)
-                        line = fIn.readline()
+                        line = fileIn.readline()
                     if not line:
                         raise CogError(
                             "Cog block begun but never ended.",
-                            file=sFileIn,
+                            file=fileNameIn,
                             line=firstLineNum,
                         )
 
-                    if not self.options.bDeleteCode:
-                        fOut.write(line)
+                    if not self.options.deleteCode:
+                        fileOut.write(line)
                     gen.parseMarker(line)
 
-                line = fIn.readline()
+                line = fileIn.readline()
 
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
@@ -517,27 +519,27 @@ class Cog(Redirectable):
                 while line and not self.isEndOutputLine(line):
                     if self.isBeginSpecLine(line):
                         raise CogError(
-                            f"Unexpected {self.options.sBeginSpec!r}",
-                            file=sFileIn,
-                            line=fIn.linenumber(),
+                            f"Unexpected {self.options.beginSpec!r}",
+                            file=fileNameIn,
+                            line=fileIn.linenumber(),
                         )
                     if self.isEndSpecLine(line):
                         raise CogError(
-                            f"Unexpected {self.options.sEndSpec!r}",
-                            file=sFileIn,
-                            line=fIn.linenumber(),
+                            f"Unexpected {self.options.endSpec!r}",
+                            file=fileNameIn,
+                            line=fileIn.linenumber(),
                         )
                     previous.append(line)
                     hasher.update(line.encode("utf-8"))
-                    line = fIn.readline()
+                    line = fileIn.readline()
                 curHash = hasher.hexdigest()
 
-                if not line and not self.options.bEofCanBeEnd:
+                if not line and not self.options.eofCanBeEnd:
                     # We reached end of file before we found the end output line.
                     raise CogError(
-                        f"Missing {self.options.sEndOutput!r} before end of file.",
-                        file=sFileIn,
-                        line=fIn.linenumber(),
+                        f"Missing {self.options.endOutput!r} before end of file.",
+                        file=fileNameIn,
+                        line=fileIn.linenumber(),
                     )
 
                 # Make the previous output available to the current code
@@ -546,50 +548,50 @@ class Cog(Redirectable):
                 # Write the output of the spec to be the new output if we're
                 # supposed to generate code.
                 hasher = md5()
-                if not self.options.bNoGenerate:
-                    sFile = f"<cog {sFileIn}:{firstLineNum}>"
-                    sGen = gen.evaluate(cog=self, globals=globals, fname=sFile)
-                    sGen = self.suffixLines(sGen)
-                    hasher.update(sGen.encode("utf-8"))
-                    fOut.write(sGen)
+                if not self.options.noGenerate:
+                    fname = f"<cog {fileNameIn}:{firstLineNum}>"
+                    gen = gen.evaluate(cog=self, globals=globals, fname=fname)
+                    gen = self.suffixLines(gen)
+                    hasher.update(gen.encode("utf-8"))
+                    fileOut.write(gen)
                 newHash = hasher.hexdigest()
 
-                bSawCog = True
+                sawCog = True
 
                 # Write the ending output line
                 hashMatch = self.reEndOutput.search(line)
-                if self.options.bHashOutput:
+                if self.options.hashOutput:
                     if hashMatch:
                         oldHash = hashMatch["hash"]
                         if oldHash != curHash:
                             raise CogError(
                                 "Output has been edited! Delete old checksum to unprotect.",
-                                file=sFileIn,
-                                line=fIn.linenumber(),
+                                file=fileNameIn,
+                                line=fileIn.linenumber(),
                             )
                         # Create a new end line with the correct hash.
                         endpieces = line.split(hashMatch.group(0), 1)
                     else:
                         # There was no old hash, but we want a new hash.
-                        endpieces = line.split(self.options.sEndOutput, 1)
-                    line = (self.sEndFormat % newHash).join(endpieces)
+                        endpieces = line.split(self.options.endOutput, 1)
+                    line = (self.endFormat % newHash).join(endpieces)
                 else:
                     # We don't want hashes output, so if there was one, get rid of
                     # it.
                     if hashMatch:
                         line = line.replace(hashMatch["hashsect"], "", 1)
 
-                if not self.options.bDeleteCode:
-                    fOut.write(line)
-                line = fIn.readline()
+                if not self.options.deleteCode:
+                    fileOut.write(line)
+                line = fileIn.readline()
 
-            if not bSawCog and self.options.bWarnEmpty:
-                self.showWarning(f"no cog code found in {sFileIn}")
+            if not sawCog and self.options.warnEmpty:
+                self.showWarning(f"no cog code found in {fileNameIn}")
         finally:
-            if fInToClose:
-                fInToClose.close()
-            if fOutToClose:
-                fOutToClose.close()
+            if fileInToClose:
+                fileInToClose.close()
+            if fileOutToClose:
+                fileOutToClose.close()
 
     # A regex for non-empty lines, used by suffixLines.
     reNonEmptyLines = re.compile(r"^\s*\S+.*$", re.MULTILINE)
@@ -600,39 +602,39 @@ class Cog(Redirectable):
         `text` is many lines, as a single string.
 
         """
-        if self.options.sSuffix:
+        if self.options.suffix:
             # Find all non-blank lines, and add the suffix to the end.
-            repl = r"\g<0>" + self.options.sSuffix.replace("\\", "\\\\")
+            repl = r"\g<0>" + self.options.suffix.replace("\\", "\\\\")
             text = self.reNonEmptyLines.sub(repl, text)
         return text
 
-    def processString(self, sInput, fname=None):
-        """Process `sInput` as the text to cog.
+    def processString(self, input, fname=None):
+        """Process `input` as the text to cog.
 
         Return the cogged output as a string.
 
         """
-        fOld = io.StringIO(sInput)
-        fNew = io.StringIO()
-        self.processFile(fOld, fNew, fname=fname)
-        return fNew.getvalue()
+        fileOld = io.StringIO(input)
+        fileNew = io.StringIO()
+        self.processFile(fileOld, fileNew, fname=fname)
+        return fileNew.getvalue()
 
-    def replaceFile(self, sOldPath, sNewText):
-        """Replace file sOldPath with the contents sNewText"""
-        if not os.access(sOldPath, os.W_OK):
+    def replaceFile(self, oldPath, newText):
+        """Replace file oldPath with the contents newText"""
+        if not os.access(oldPath, os.W_OK):
             # Need to ensure we can write.
-            if self.options.sMakeWritableCmd:
+            if self.options.makeWritableCmd:
                 # Use an external command to make the file writable.
-                cmd = self.options.sMakeWritableCmd.replace("%s", sOldPath)
+                cmd = self.options.makeWritableCmd.replace("%s", oldPath)
                 with os.popen(cmd) as cmdout:
                     self.stdout.write(cmdout.read())
-                if not os.access(sOldPath, os.W_OK):
-                    raise CogError(f"Couldn't make {sOldPath} writable")
+                if not os.access(oldPath, os.W_OK):
+                    raise CogError(f"Couldn't make {oldPath} writable")
             else:
                 # Can't write!
-                raise CogError(f"Can't overwrite {sOldPath}")
-        f = self.openOutputFile(sOldPath)
-        f.write(sNewText)
+                raise CogError(f"Can't overwrite {oldPath}")
+        f = self.openOutputFile(oldPath)
+        f.write(newText)
         f.close()
 
     def saveIncludePath(self):
@@ -648,68 +650,68 @@ class Cog(Redirectable):
         self.cogmodule.path.extend(includePath)
         sys.path.extend(includePath)
 
-    def processOneFile(self, sFile):
+    def processOneFile(self, fname):
         """Process one filename through cog."""
 
         self.saveIncludePath()
-        bNeedNewline = False
+        needNewline = False
 
         try:
             self.addToIncludePath(self.options.includePath)
             # Since we know where the input file came from,
             # push its directory onto the include path.
-            self.addToIncludePath([os.path.dirname(sFile)])
+            self.addToIncludePath([os.path.dirname(fname)])
 
             # How we process the file depends on where the output is going.
-            if self.options.sOutputName:
-                self.processFile(sFile, self.options.sOutputName, sFile)
-            elif self.options.bReplace or self.options.bCheck:
+            if self.options.outputName:
+                self.processFile(fname, self.options.outputName, fname)
+            elif self.options.replace or self.options.check:
                 # We want to replace the cog file with the output,
                 # but only if they differ.
-                verb = "Cogging" if self.options.bReplace else "Checking"
+                verb = "Cogging" if self.options.replace else "Checking"
                 if self.options.verbosity >= 2:
-                    self.prout(f"{verb} {sFile}", end="")
-                    bNeedNewline = True
+                    self.prout(f"{verb} {fname}", end="")
+                    needNewline = True
 
                 try:
-                    fOldFile = self.openInputFile(sFile)
-                    sOldText = fOldFile.read()
-                    fOldFile.close()
-                    sNewText = self.processString(sOldText, fname=sFile)
-                    if sOldText != sNewText:
+                    fileOldFile = self.openInputFile(fname)
+                    oldText = fileOldFile.read()
+                    fileOldFile.close()
+                    newText = self.processString(oldText, fname=fname)
+                    if oldText != newText:
                         if self.options.verbosity >= 1:
                             if self.options.verbosity < 2:
-                                self.prout(f"{verb} {sFile}", end="")
+                                self.prout(f"{verb} {fname}", end="")
                             self.prout("  (changed)")
-                            bNeedNewline = False
-                        if self.options.bReplace:
-                            self.replaceFile(sFile, sNewText)
+                            needNewline = False
+                        if self.options.replace:
+                            self.replaceFile(fname, newText)
                         else:
-                            assert self.options.bCheck
-                            self.bCheckFailed = True
+                            assert self.options.check
+                            self.checkFailed = True
                 finally:
                     # The try-finally block is so we can print a partial line
                     # with the name of the file, and print (changed) on the
                     # same line, but also make sure to break the line before
                     # any traceback.
-                    if bNeedNewline:
+                    if needNewline:
                         self.prout("")
             else:
-                self.processFile(sFile, self.stdout, sFile)
+                self.processFile(fname, self.stdout, fname)
         finally:
             self.restoreIncludePath()
 
-    def processWildcards(self, sFile):
-        files = glob.glob(sFile)
+    def processWildcards(self, fname):
+        files = glob.glob(fname)
         if files:
-            for sMatchingFile in files:
-                self.processOneFile(sMatchingFile)
+            for matchingFile in files:
+                self.processOneFile(matchingFile)
         else:
-            self.processOneFile(sFile)
+            self.processOneFile(fname)
 
-    def processFileList(self, sFileList):
+    def processFileList(self, fileNameList):
         """Process the files in a file list."""
-        flist = self.openInputFile(sFileList)
+        flist = self.openInputFile(fileNameList)
         lines = flist.readlines()
         flist.close()
         for line in lines:
@@ -732,11 +734,11 @@ class Cog(Redirectable):
         self.options.validate()
 
         if args[0][0] == "@":
-            if self.options.sOutputName:
+            if self.options.outputName:
                 raise CogUsageError("Can't use -o with @file")
             self.processFileList(args[0][1:])
         elif args[0][0] == "&":
-            if self.options.sOutputName:
+            if self.options.outputName:
                 raise CogUsageError("Can't use -o with &file")
             file_list = args[0][1:]
             with change_dir(os.path.dirname(file_list)):
@@ -763,7 +765,7 @@ class Cog(Redirectable):
         self.options.validate()
         self._fixEndOutputPatterns()
 
-        if self.options.bShowVersion:
+        if self.options.showVersion:
             self.prout(f"Cog version {__version__}")
             return
 
@@ -773,7 +775,7 @@ class Cog(Redirectable):
         else:
             raise CogUsageError("No files to process")
 
-        if self.bCheckFailed:
+        if self.checkFailed:
             raise CogCheckFailed("Check failed")
 
     def main(self, argv):
