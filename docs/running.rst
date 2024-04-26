@@ -16,7 +16,7 @@ Cog is a command-line utility which takes arguments in standard form.
     outf = io.StringIO()
     print("$ cog -h", file=outf)
     cog = Cog()
-    cog.setOutput(stdout=outf, stderr=outf)
+    cog.set_output(stdout=outf, stderr=outf)
     cog.main(["cog", "-h"])
     print(textwrap.indent(outf.getvalue(), "    "))
 .. }}}
