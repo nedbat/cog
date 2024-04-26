@@ -513,16 +513,16 @@ class CogOptionsTests(TestCase):
     def testMarkers(self):
         o = CogOptions()
         o._parse_markers("a b c")
-        self.assertEqual("a", o.sBeginSpec)
-        self.assertEqual("b", o.sEndSpec)
-        self.assertEqual("c", o.sEndOutput)
+        self.assertEqual("a", o.beginSpec)
+        self.assertEqual("b", o.endSpec)
+        self.assertEqual("c", o.endOutput)
 
     def testMarkersSwitch(self):
         o = CogOptions()
         o.parseArgs(["--markers", "a b c"])
-        self.assertEqual("a", o.sBeginSpec)
-        self.assertEqual("b", o.sEndSpec)
-        self.assertEqual("c", o.sEndOutput)
+        self.assertEqual("a", o.beginSpec)
+        self.assertEqual("b", o.endSpec)
+        self.assertEqual("c", o.endOutput)
 
 
 class FileStructureTests(TestCase):
@@ -789,10 +789,10 @@ class TestCaseWithTempDir(TestCase):
         # Get rid of the temporary directory.
         shutil.rmtree(self.tempdir)
 
-    def assertFilesSame(self, sFName1, sFName2):
-        with open(os.path.join(self.tempdir, sFName1), "rb") as f1:
+    def assertFilesSame(self, fileName1, fileName2):
+        with open(os.path.join(self.tempdir, fileName1), "rb") as f1:
             text1 = f1.read()
-        with open(os.path.join(self.tempdir, sFName2), "rb") as f2:
+        with open(os.path.join(self.tempdir, fileName2), "rb") as f2:
             text2 = f2.read()
         self.assertEqual(text1, text2)
 
@@ -2600,7 +2600,7 @@ class BlakeTests(TestCaseWithTempDir):
         makeFiles(d)
         globals = {}
         globals["fnames"] = ["DoBlake", "DoWinton", "DoContribution"]
-        self.cog.options.bDeleteCode = True
+        self.cog.options.deleteCode = True
         self.cog.processFile("test.cog", "test.cogged", globals=globals)
         self.assertFilesSame("test.cogged", "test.out")
 
