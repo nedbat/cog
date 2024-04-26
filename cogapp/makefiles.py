@@ -6,7 +6,7 @@ from .whiteutils import reindentBlock
 
 
 def makeFiles(d, basedir="."):
-    """Create files from the dictionary `d`, in the directory named by `basedir`."""
+    """Create files from the dictionary `d` in the directory named by `basedir`."""
     for name, contents in d.items():
         child = os.path.join(basedir, name)
         if isinstance(contents, (bytes, str)):
@@ -22,8 +22,10 @@ def makeFiles(d, basedir="."):
 
 
 def removeFiles(d, basedir="."):
-    """Remove the files created by makeFiles.
+    """Remove the files created by `makeFiles`.
+
     Directories are removed if they are empty.
+
     """
     for name, contents in d.items():
         child = os.path.join(basedir, name)

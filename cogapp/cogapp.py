@@ -91,7 +91,9 @@ class CogGeneratedError(CogError):
 
 class CogUserException(CogError):
     """An exception caught when running a user's cog generator.
+
     The argument is the traceback message to print.
+
     """
 
     pass
@@ -202,9 +204,11 @@ class CogGenerator(Redirectable):
 
     def error(self, msg="Error raised by cog generator."):
         """The cog.error function.
+
         Instead of raising standard python errors, cog generators can use
         this function.  It will display the error without a scary Python
         traceback.
+
         """
         raise CogGeneratedError(msg)
 
@@ -363,8 +367,10 @@ class Cog(Redirectable):
         return self.options.sEndOutput in s
 
     def createCogModule(self):
-        """Make a cog "module" object so that imported Python modules
-        can say "import cog" and get our state.
+        """Make a cog "module" object.
+
+        Imported Python modules can use "import cog" to get our state.
+
         """
         self.cogmodule = types.SimpleNamespace()
         self.cogmodule.path = []
@@ -390,9 +396,10 @@ class Cog(Redirectable):
 
     def processFile(self, fIn, fOut, fname=None, globals=None):
         """Process an input file object to an output file object.
-        fIn and fOut can be file objects, or file names.
-        """
 
+        `fIn` and `fOut` can be file objects, or file names.
+
+        """
         sFileIn = fname or ""
         sFileOut = fname or ""
         fInToClose = fOutToClose = None
@@ -589,7 +596,9 @@ class Cog(Redirectable):
 
     def suffixLines(self, text):
         """Add suffixes to the lines in text, if our options desire it.
-        text is many lines, as a single string.
+
+        `text` is many lines, as a single string.
+
         """
         if self.options.sSuffix:
             # Find all non-blank lines, and add the suffix to the end.
@@ -598,8 +607,10 @@ class Cog(Redirectable):
         return text
 
     def processString(self, sInput, fname=None):
-        """Process sInput as the text to cog.
+        """Process `sInput` as the text to cog.
+
         Return the cogged output as a string.
+
         """
         fOld = io.StringIO(sInput)
         fNew = io.StringIO()
@@ -737,8 +748,9 @@ class Cog(Redirectable):
 
     def callableMain(self, argv):
         """All of command-line cog, but in a callable form.
-        This is used by main.
-        argv is the equivalent of sys.argv.
+
+        This is used by main.  `argv` is the equivalent of sys.argv.
+
         """
         argv = argv[1:]
 

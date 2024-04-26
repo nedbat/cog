@@ -526,9 +526,7 @@ class CogOptionsTests(TestCase):
 
 
 class FileStructureTests(TestCase):
-    """Test cases to check that we're properly strict about the structure
-    of files.
-    """
+    """Test that we're properly strict about the structure of files."""
 
     def isBad(self, infile, msg=None):
         infile = reindentBlock(infile)
@@ -704,14 +702,11 @@ class CogErrorTests(TestCase):
 
 
 class CogGeneratorGetCodeTests(TestCase):
-    """Unit tests against CogGenerator to see if its getCode() method works
-    properly.
-    """
+    """Tests for CogGenerator.getCode()."""
 
     def setUp(self):
-        """All tests get a generator to use, and short same-length names for
-        the functions we're going to use.
-        """
+        # All tests get a generator to use, and short same-length names for
+        # the functions we're going to use.
         self.gen = CogGenerator()
         self.m = self.gen.parseMarker
         self.l = self.gen.parseLine
@@ -1514,9 +1509,12 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
 
 
 class TestCaseWithImports(TestCaseWithTempDir):
-    """When running tests which import modules, the sys.modules list
+    """Automatic resetting of sys.modules for tests that import modules.
+
+    When running tests which import modules, the sys.modules list
     leaks from one test to the next.  This test case class scrubs
     the list after each run to keep the tests isolated from each other.
+
     """
 
     def setUp(self):

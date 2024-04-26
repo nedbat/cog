@@ -4,9 +4,7 @@ import re
 
 
 def whitePrefix(strings):
-    """Determine the whitespace prefix common to all non-blank lines
-    in the argument list.
-    """
+    """Find the whitespace prefix common to non-blank lines in `strings`."""
     # Remove all blank lines from the list
     strings = [s for s in strings if s.strip() != ""]
 
@@ -31,9 +29,12 @@ def whitePrefix(strings):
 
 
 def reindentBlock(lines, newIndent=""):
-    """Take a block of text as a string or list of lines.
+    """Re-indent a block of text.
+
+    Take a block of text as a string or list of lines.
     Remove any common whitespace indentation.
-    Re-indent using newIndent, and return it as a single string.
+    Re-indent using `newIndent`, and return it as a single string.
+
     """
     sep, nothing = "\n", ""
     if isinstance(lines, bytes):
