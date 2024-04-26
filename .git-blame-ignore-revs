@@ -1,2 +1,4 @@
-# introduced `ruff format`
-e36601b92ad2354ade13​4288d9e097a098513a64
+# Commits to ignore when doing git-blame.
+
+# 2024-04-24 refactor: reformat Python code via ruff
+e591c4d3557974f1aa41070c60f1c95e2f949b75
