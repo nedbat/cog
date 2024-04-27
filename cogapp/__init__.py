@@ -5,3 +5,7 @@ Copyright 2004-2024, Ned Batchelder.
 """
 
 from .cogapp import Cog as Cog, CogUsageError as CogUsageError, main as main
+
+
+if __name__ == "__main__":
+    main()

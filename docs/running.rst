@@ -10,15 +10,13 @@ Cog is a command-line utility which takes arguments in standard form.
 
     import io
     import textwrap
-    from cogapp import Cog
+    import sys
+    from subprocess import check_output, STDOUT
 
     print("\n.. code-block:: text\n")
-    outf = io.StringIO()
-    print("$ cog -h", file=outf)
-    cog = Cog()
-    cog.set_output(stdout=outf, stderr=outf)
-    cog.main(["cog", "-h"])
-    print(textwrap.indent(outf.getvalue(), "    "))
+    cmd_text = "$ cog -h"
+    helptext = check_output([sys.executable, "-m", "cogapp", "-h"], stderr=STDOUT, text=True)
+    print(textwrap.indent(f"{cmd_text}\n{helptext}", "    "))
 .. }}}
 
 .. code-block:: text
@@ -26,46 +24,73 @@ Cog is a command-line utility which takes arguments in standard form.
     $ cog -h
     cog - generate content with inlined Python code.
 
-    cog [OPTIONS] [INFILE | @FILELIST | &FILELIST] ...
+    usage: cog [OPTIONS] [INFILE | @FILELIST | &FILELIST] ...
 
-    INFILE is the name of an input file, '-' will read from stdin.
-    FILELIST is the name of a text file containing file names or
-    other @FILELISTs.
+    INFILE is the name of an input file, '-' will read from stdin. FILELIST is the
+    name of a text file containing file names or other @FILELISTs.
 
-    For @FILELIST, paths in the file list are relative to the working
-    directory where cog was called.  For &FILELIST, paths in the file
-    list are relative to the file list location.
+    For @FILELIST, paths in the file list are relative to the working directory
+    where cog was called.  For &FILELIST, paths in the file list are relative to
+    the file list location.
 
-    OPTIONS:
-        -c          Checksum the output to protect it against accidental change.
-        -d          Delete the generator code from the output file.
-        -D name=val Define a global string available to your generator code.
-        -e          Warn if a file has no cog code in it.
-        -I PATH     Add PATH to the list of directories for data files and modules.
-        -n ENCODING Use ENCODING when reading and writing files.
-        -o OUTNAME  Write the output to OUTNAME.
-        -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
-                    import line. Example: -p "import math"
-        -P          Use print() instead of cog.outl() for code output.
-        -r          Replace the input file with the output.
-        -s STRING   Suffix all generated output lines with STRING.
-        -U          Write the output with Unix newlines (only LF line-endings).
-        -w CMD      Use CMD if the output file needs to be made writable.
-                        A %s in the CMD will be filled with the filename.
-        -x          Excise all the generated output without running the generators.
-        -z          The end-output marker can be omitted, and is assumed at eof.
-        -v          Print the version of cog and exit.
-        --check     Check that the files would not change if run again.
-        --markers='START END END-OUTPUT'
+    positional arguments:
+      [INFILE | @FILELIST | &FILELIST]
+
+    options:
+      -h, --help    show this help message and exit
+                
+      -c            Checksum the output to protect it against accidental change.
+                
+      -d            Delete the generator code from the output file.
+                
+      -D name=val, --define name=val
+                    Define a global string available to your generator code.
+                
+      -e            Warn if a file has no cog code in it.
+                
+      -I PATH       Add PATH to the list of directories for data files and
+                    modules.
+                
+      -n ENCODING   Use ENCODING when reading and writing files.
+                
+      -o OUTNAME, --output OUTNAME
+                    Write the output to OUTNAME.
+                
+      -p PROLOGUE   Prepend the generator source with PROLOGUE. Useful to insert
+                    an import line. Example: -p "import math"
+                
+      -P            Use print() instead of cog.outl() for code output.
+                
+      -r            Replace the input file with the output.
+                
+      -s STRING     Suffix all generated output lines with STRING.
+                
+      -U            Write the output with Unix newlines (only LF line-endings).
+                
+      -w CMD        Use CMD if the output file needs to be made writable. A %s in
+                    the CMD will be filled with the filename.
+                
+      -x            Excise all the generated output without running the
+                    generators.
+                
+      -z            The end-output marker can be omitted, and is assumed at eof.
+                
+      -v, --version
+                    Print the version of cog and exit.
+                
+      --check       Check that the files would not change if run again.
+                
+      --markers 'START END END-OUTPUT'
                     The patterns surrounding cog inline instructions. Should
-                    include three values separated by spaces, the start, end,
-                    and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
-        --verbosity=VERBOSITY
+                    include three values separated by spaces, the start, end, and
+                    end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
+                
+      --verbosity VERBOSITY
                     Control the amount of output. 2 (the default) lists all files,
                     1 lists only changed files, 0 lists no files.
-        -h          Print this help.
+                
 
-.. {{{end}}} (checksum: 159e7d7aebb9dcc98f250d47879703dd)
+.. {{{end}}} (checksum: 2dfc70c55fa55f3099487e76bdb5cfb0)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:

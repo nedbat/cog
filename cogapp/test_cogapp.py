@@ -12,10 +12,12 @@ import tempfile
 import threading
 from unittest import TestCase
 
-from .cogapp import Cog, CogOptions, CogGenerator
-from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
-from .cogapp import usage, __version__, main
+import pytest
+
+from .cogapp import __version__, Cog, CogGenerator, main
+from .errors import CogError, CogGeneratedError, CogUsageError, CogUserException
 from .makefiles import make_files
+from .options import CogOptions
 from .whiteutils import reindent_block
 
 
@@ -510,19 +512,12 @@ class CogOptionsTests(TestCase):
         p.parse_args(["-erz"])
         self.assertEqual(o, p)
 
-    def test_markers(self):
-        o = CogOptions()
-        o._parse_markers("a b c")
-        self.assertEqual("a", o.begin_spec)
-        self.assertEqual("b", o.end_spec)
-        self.assertEqual("c", o.end_output)
-
     def test_markers_switch(self):
         o = CogOptions()
         o.parse_args(["--markers", "a b c"])
-        self.assertEqual("a", o.begin_spec)
-        self.assertEqual("b", o.end_spec)
-        self.assertEqual("c", o.end_output)
+        self.assertEqual("a", o.markers.begin_spec)
+        self.assertEqual("b", o.markers.end_spec)
+        self.assertEqual("c", o.markers.end_output)
 
 
 class FileStructureTests(TestCase):
@@ -767,12 +762,15 @@ class CogGeneratorGetCodeTests(TestCase):
 
 
 class TestCaseWithTempDir(TestCase):
+    capsys: pytest.CaptureFixture
+
+    @pytest.fixture(autouse=True)
+    def _capsys(self, capsys: pytest.CaptureFixture):
+        self.capsys = capsys
+
     def new_cog(self):
-        """Initialize the cog members for another run."""
-        # Create a cog engine, and catch its output.
         self.cog = Cog()
-        self.output = io.StringIO()
-        self.cog.set_output(stdout=self.output, stderr=self.output)
+        self.capsys.readouterr()  # reset stdout/stderr
 
     def setUp(self):
         # Create a temporary directory.
@@ -807,40 +805,45 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
     def test_argument_failure(self):
         # Return value 2 means usage problem.
         self.assertEqual(self.cog.main(["argv0", "-j"]), 2)
-        output = self.output.getvalue()
-        self.assertIn("option -j not recognized", output)
+        _output, errput = self.capsys.readouterr()
+        self.assertIn("unrecognized arguments: -j", errput)
         with self.assertRaisesRegex(CogUsageError, r"^No files to process$"):
             self.cog.callable_main(["argv0"])
-        with self.assertRaisesRegex(CogUsageError, r"^option -j not recognized$"):
+        with self.assertRaisesRegex(CogUsageError, r"^unrecognized arguments: -j$"):
             self.cog.callable_main(["argv0", "-j"])
 
     def test_no_dash_o_and_at_file(self):
         make_files({"cogfiles.txt": "# Please run cog"})
-        with self.assertRaisesRegex(CogUsageError, r"^Can't use -o with @file$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^Can't use -o/--output with @file$"
+        ):
             self.cog.callable_main(["argv0", "-o", "foo", "@cogfiles.txt"])
 
     def test_no_dash_o_and_amp_file(self):
         make_files({"cogfiles.txt": "# Please run cog"})
-        with self.assertRaisesRegex(CogUsageError, r"^Can't use -o with &file$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^Can't use -o/--output with &file$"
+        ):
             self.cog.callable_main(["argv0", "-o", "foo", "&cogfiles.txt"])
 
     def test_dash_v(self):
         self.assertEqual(self.cog.main(["argv0", "-v"]), 0)
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertEqual("Cog version %s\n" % __version__, output)
 
     def produces_help(self, args):
         self.new_cog()
         argv = ["argv0"] + args.split()
         self.assertEqual(self.cog.main(argv), 0)
-        self.assertEqual(usage, self.output.getvalue())
+        output, errput = self.capsys.readouterr()
+        self.assertIn("usage: ", output)
 
     def test_dash_h(self):
         # -h or -? anywhere on the command line should just print help.
         self.produces_help("-h")
         self.produces_help("-?")
         self.produces_help("fooey.txt -h")
-        self.produces_help("-o -r @fooey.txt -? @booey.txt")
+        self.produces_help("-o foo -r @fooey.txt -? @booey.txt")
 
     def test_dash_o_and_dash_r(self):
         d = {
@@ -888,20 +891,24 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         self.assertFilesSame("test.cog", "test.out")
 
     def test_bad_dash_d(self):
-        with self.assertRaisesRegex(CogUsageError, r"^-D takes a name=value argument$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^argument -D/--define: takes a name=value argument$"
+        ):
             self.cog.callable_main(["argv0", "-Dfooey", "cog.txt"])
-        with self.assertRaisesRegex(CogUsageError, r"^-D takes a name=value argument$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^argument -D/--define: takes a name=value argument$"
+        ):
             self.cog.callable_main(["argv0", "-D", "fooey", "cog.txt"])
 
     def test_bad_markers(self):
         with self.assertRaisesRegex(
             CogUsageError,
-            r"^--markers requires 3 values separated by spaces, could not parse 'X'$",
+            r"^argument --markers: requires 3 values separated by spaces, could not parse 'X'$",
         ):
             self.cog.callable_main(["argv0", "--markers=X"])
         with self.assertRaisesRegex(
             CogUsageError,
-            r"^--markers requires 3 values separated by spaces, could not parse 'A B C D'$",
+            r"^argument --markers: requires 3 values separated by spaces, could not parse 'A B C D'$",
         ):
             self.cog.callable_main(["argv0", "--markers=A B C D"])
 
@@ -924,7 +931,7 @@ class TestMain(TestCaseWithTempDir):
         ret = main()
         self.assertEqual(ret, 2)
         stderr = sys.stderr.getvalue()
-        self.assertEqual(stderr, "option -Z not recognized\n(for help use -h)\n")
+        self.assertEqual(stderr, "unrecognized arguments: -Z\n(for help use -h)\n")
 
     files = {
         "test.cog": """\
@@ -1015,7 +1022,7 @@ class TestFileHandling(TestCaseWithTempDir):
         make_files(d)
         self.cog.callable_main(["argv0", "-r", "test.cog"])
         self.assertFilesSame("test.cog", "test.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_print_output(self):
@@ -1046,7 +1053,7 @@ class TestFileHandling(TestCaseWithTempDir):
         make_files(d)
         self.cog.callable_main(["argv0", "-rP", "test.cog"])
         self.assertFilesSame("test.cog", "test.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_wildcards(self):
@@ -1106,7 +1113,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.assertFilesSame("test.cog", "test.out")
         self.assertFilesSame("test2.cog", "test.out")
         self.assertFilesSame("not_this_one.cog", "not_this_one.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_output_file(self):
@@ -1179,7 +1186,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "@cogfiles.txt"])
         self.assertFilesSame("one.cog", "one.out")
         self.assertFilesSame("two.cog", "two.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_nested_at_file(self):
@@ -1225,7 +1232,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "@cogfiles.txt"])
         self.assertFilesSame("one.cog", "one.out")
         self.assertFilesSame("two.cog", "two.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_at_file_with_args(self):
@@ -1392,7 +1399,7 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(
             ["argv0", "-r", "--verbosity=" + verbosity, "@cogfiles.txt"]
         )
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         return output
 
     def test_verbosity0(self):
@@ -1479,7 +1486,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
         make_files(d)
         self.cog.callable_main(["argv0", "-r", "test.cog"])
         self.assertFilesSame("test.cog", "test.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_file_encoding_option(self):
@@ -1504,7 +1511,7 @@ class CogTestCharacterEncoding(TestCaseWithTempDir):
         make_files(d)
         self.cog.callable_main(["argv0", "-n", "cp1251", "-r", "test.cog"])
         self.assertFilesSame("test.cog", "test.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
 
@@ -1707,15 +1714,15 @@ class CogTestsInFiles(TestCaseWithTempDir):
 
         make_files(d)
         self.cog.callable_main(["argv0", "-e", "with.cog"])
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertNotIn("Warning", output)
         self.new_cog()
         self.cog.callable_main(["argv0", "-e", "without.cog"])
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("Warning: no cog code found in without.cog", output)
         self.new_cog()
         self.cog.callable_main(["argv0", "without.cog"])
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertNotIn("Warning", output)
 
     def test_file_name_props(self):
@@ -1797,7 +1804,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "@cogfiles.txt"])
         self.assertFilesSame("one.cog", "one.out")
         self.assertFilesSame("two.cog", "two.out")
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertIn("(changed)", output)
 
     def test_remove_generated_output(self):
@@ -1849,7 +1856,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             """
         infile = reindent_block(infile)
         self.assertEqual(self.cog.process_string(infile), infile)
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         self.assertEqual(output, "Message: Hello there!\n")
 
     def test_error_message_has_no_traceback(self):
@@ -1870,12 +1877,11 @@ class CogTestsInFiles(TestCaseWithTempDir):
         }
 
         make_files(d)
-        stderr = io.StringIO()
-        self.cog.set_output(stderr=stderr)
         self.cog.main(["argv0", "-c", "-r", "cog1.txt"])
-        self.assertEqual(self.output.getvalue(), "Cogging cog1.txt\n")
+        output, errput = self.capsys.readouterr()
+        self.assertEqual(output, "Cogging cog1.txt\n")
         self.assertEqual(
-            stderr.getvalue(),
+            errput,
             "cog1.txt(9): Output has been edited! Delete old checksum to unprotect.\n",
         )
 
@@ -1934,7 +1940,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         stderr = io.StringIO()
         self.cog.set_output(stderr=stderr)
         self.cog.callable_main(["argv0", "test.cog"])
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         outerr = stderr.getvalue()
         self.assertEqual(
             output, "--[[[cog cog.outl('Hey there!') ]]]\nHey there!\n--[[[end]]]\n"
@@ -1953,7 +1959,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         stderr = io.StringIO()
         self.cog.set_output(stderr=stderr)
         self.cog.callable_main(["argv0", "-"])
-        output = self.output.getvalue()
+        output, errput = self.capsys.readouterr()
         outerr = stderr.getvalue()
         self.assertEqual(output, "--[[[cog cog.outl('Wow') ]]]\nWow\n--[[[end]]]\n")
         self.assertEqual(outerr, "")
@@ -2083,7 +2089,6 @@ class CogTestsInFiles(TestCaseWithTempDir):
 class CheckTests(TestCaseWithTempDir):
     def run_check(self, args, status=0):
         actual_status = self.cog.main(["argv0", "--check"] + args)
-        print(self.output.getvalue())
         self.assertEqual(status, actual_status)
 
     def assert_made_files_unchanged(self, d):
@@ -2101,7 +2106,7 @@ class CheckTests(TestCaseWithTempDir):
         }
         make_files(d)
         self.run_check(["hello.txt"], status=0)
-        self.assertEqual(self.output.getvalue(), "Checking hello.txt\n")
+        self.assertEqual(self.capsys.readouterr(), ("Checking hello.txt\n", ""))
         self.assert_made_files_unchanged(d)
 
     def test_check_good(self):
@@ -2116,7 +2121,7 @@ class CheckTests(TestCaseWithTempDir):
         }
         make_files(d)
         self.run_check(["unchanged.cog"], status=0)
-        self.assertEqual(self.output.getvalue(), "Checking unchanged.cog\n")
+        self.assertEqual(self.capsys.readouterr(), ("Checking unchanged.cog\n", ""))
         self.assert_made_files_unchanged(d)
 
     def test_check_bad(self):
@@ -2131,9 +2136,9 @@ class CheckTests(TestCaseWithTempDir):
         }
         make_files(d)
         self.run_check(["changed.cog"], status=5)
-        self.assertEqual(
-            self.output.getvalue(), "Checking changed.cog  (changed)\nCheck failed\n"
-        )
+        output, errput = self.capsys.readouterr()
+        self.assertEqual(output, "Checking changed.cog  (changed)\n")
+        self.assertEqual(errput, "Check failed\n")
         self.assert_made_files_unchanged(d)
 
     def test_check_mixed(self):
@@ -2154,19 +2159,20 @@ class CheckTests(TestCaseWithTempDir):
                 """,
         }
         make_files(d)
-        for verbosity, output in [
-            ("0", "Check failed\n"),
-            ("1", "Checking changed.cog  (changed)\nCheck failed\n"),
+        for verbosity, output, errput in [
+            ("0", "", "Check failed\n"),
+            ("1", "Checking changed.cog  (changed)\n", "Check failed\n"),
             (
                 "2",
-                "Checking unchanged.cog\nChecking changed.cog  (changed)\nCheck failed\n",
+                "Checking unchanged.cog\nChecking changed.cog  (changed)\n",
+                "Check failed\n",
             ),
         ]:
             self.new_cog()
             self.run_check(
                 ["--verbosity=%s" % verbosity, "unchanged.cog", "changed.cog"], status=5
             )
-            self.assertEqual(self.output.getvalue(), output)
+            self.assertEqual(self.capsys.readouterr(), (output, errput))
             self.assert_made_files_unchanged(d)
 
     def test_check_with_good_checksum(self):
@@ -2186,7 +2192,7 @@ class CheckTests(TestCaseWithTempDir):
         make_files(d)
         # Have to use -c with --check if there are checksums in the file.
         self.run_check(["-c", "good.txt"], status=0)
-        self.assertEqual(self.output.getvalue(), "Checking good.txt\n")
+        self.assertEqual(self.capsys.readouterr(), ("Checking good.txt\n", ""))
         self.assert_made_files_unchanged(d)
 
     def test_check_with_bad_checksum(self):
@@ -2207,8 +2213,11 @@ class CheckTests(TestCaseWithTempDir):
         # Have to use -c with --check if there are checksums in the file.
         self.run_check(["-c", "bad.txt"], status=1)
         self.assertEqual(
-            self.output.getvalue(),
-            "Checking bad.txt\nbad.txt(9): Output has been edited! Delete old checksum to unprotect.\n",
+            self.capsys.readouterr(),
+            (
+                "Checking bad.txt\n",
+                "bad.txt(9): Output has been edited! Delete old checksum to unprotect.\n",
+            ),
         )
         self.assert_made_files_unchanged(d)
 
@@ -2619,8 +2628,9 @@ class ErrorCallTests(TestCaseWithTempDir):
 
         make_files(d)
         self.cog.main(["argv0", "-r", "error.cog"])
-        output = self.output.getvalue()
-        self.assertEqual(output, "Cogging error.cog\nError: Something Bad!\n")
+        self.assertEqual(
+            self.capsys.readouterr(), ("Cogging error.cog\n", "Error: Something Bad!\n")
+        )
 
     def test_real_error_has_traceback(self):
         # Test that a genuine error does show a traceback.
@@ -2635,12 +2645,10 @@ class ErrorCallTests(TestCaseWithTempDir):
 
         make_files(d)
         self.cog.main(["argv0", "-r", "error.cog"])
-        output = self.output.getvalue()
-        msg = "Actual output:\n" + output
-        self.assertTrue(
-            output.startswith("Cogging error.cog\nTraceback (most recent"), msg
-        )
-        self.assertIn("RuntimeError: Hey!", output)
+        output, errput = self.capsys.readouterr()
+        self.assertEqual(output, "Cogging error.cog\n")
+        self.assertRegex(errput, r"^Traceback \(most recent")
+        self.assertIn("RuntimeError: Hey!", errput)
 
 
 # Things not yet tested:
