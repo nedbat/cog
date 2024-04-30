@@ -39,41 +39,54 @@ Cog is a command-line utility which takes arguments in standard form.
     options:
       -h, --help    show this help message and exit
                 
-      -c            Checksum the output to protect it against accidental change.
+      -c, --checksum
+                    Checksum the output to protect it against accidental change.
                 
-      -d            Delete the generator code from the output file.
+      -d, --delete-code
+                    Delete the generator code from the output file.
                 
       -D name=val, --define name=val
                     Define a global string available to your generator code.
                 
-      -e            Warn if a file has no cog code in it.
+      -e, --warn-empty
+                    Warn if a file has no cog code in it.
                 
-      -I PATH       Add PATH to the list of directories for data files and
+      -I PATH, --include PATH
+                    Add PATH to the list of directories for data files and
                     modules.
                 
-      -n ENCODING   Use ENCODING when reading and writing files.
+      -n ENCODING, --encoding ENCODING
+                    Use ENCODING when reading and writing files.
                 
       -o OUTNAME, --output OUTNAME
                     Write the output to OUTNAME.
                 
-      -p PROLOGUE   Prepend the generator source with PROLOGUE. Useful to insert
+      -p PROLOGUE, --prologue PROLOGUE
+                    Prepend the generator source with PROLOGUE. Useful to insert
                     an import line. Example: -p "import math"
                 
-      -P            Use print() instead of cog.outl() for code output.
+      -P, --print-output
+                    Use print() instead of cog.outl() for code output.
                 
-      -r            Replace the input file with the output.
+      -r, --replace
+                    Replace the input file with the output.
                 
-      -s STRING     Suffix all generated output lines with STRING.
+      -s STRING, --suffix STRING
+                    Suffix all generated output lines with STRING.
                 
-      -U            Write the output with Unix newlines (only LF line-endings).
+      -U, --unix-newlines
+                    Write the output with Unix newlines (only LF line-endings).
                 
-      -w CMD        Use CMD if the output file needs to be made writable. A %s in
+      -w CMD, --make-writable-cmd CMD
+                    Use CMD if the output file needs to be made writable. A %s in
                     the CMD will be filled with the filename.
                 
-      -x            Excise all the generated output without running the
+      -x, --no-generate
+                    Excise all the generated output without running the
                     generators.
                 
-      -z            The end-output marker can be omitted, and is assumed at eof.
+      -z, --eof-can-be-end
+                    The end-output marker can be omitted, and is assumed at eof.
                 
       -v, --version
                     Print the version of cog and exit.
@@ -90,7 +103,7 @@ Cog is a command-line utility which takes arguments in standard form.
                     1 lists only changed files, 0 lists no files.
                 
 
-.. {{{end}}} (checksum: 2dfc70c55fa55f3099487e76bdb5cfb0)
+.. {{{end}}} (checksum: cb62775436766f7f928b4c16b53f5ab5)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:

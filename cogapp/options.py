@@ -115,7 +115,7 @@ class CogOptions:
     checksum: bool = False
     _parser.add_argument(
         "-c",
-        dest="checksum",
+        "--checksum",
         action="store_true",
         help="Checksum the output to protect it against accidental change.",
     )
@@ -123,7 +123,7 @@ class CogOptions:
     delete_code: bool = False
     _parser.add_argument(
         "-d",
-        dest="delete_code",
+        "--delete-code",
         action="store_true",
         help="Delete the generator code from the output file.",
     )
@@ -142,7 +142,7 @@ class CogOptions:
     warn_empty: bool = False
     _parser.add_argument(
         "-e",
-        dest="warn_empty",
+        "--warn-empty",
         action="store_true",
         help="Warn if a file has no cog code in it.",
     )
@@ -150,6 +150,7 @@ class CogOptions:
     include_path: List[str] = field(default_factory=list)
     _parser.add_argument(
         "-I",
+        "--include",
         dest="include_path",
         metavar="PATH",
         type=lambda paths: map(os.path.abspath, paths.split(os.path.pathsep)),
@@ -160,7 +161,7 @@ class CogOptions:
     encoding: str = "utf-8"
     _parser.add_argument(
         "-n",
-        dest="encoding",
+        "--encoding",
         metavar="ENCODING",
         help="Use ENCODING when reading and writing files.",
     )
@@ -177,7 +178,7 @@ class CogOptions:
     prologue: str = ""
     _parser.add_argument(
         "-p",
-        dest="prologue",
+        "--prologue",
         help=dedent("""
             Prepend the generator source with PROLOGUE. Useful to insert an import
             line. Example: -p "import math"
@@ -187,7 +188,7 @@ class CogOptions:
     print_output: bool = False
     _parser.add_argument(
         "-P",
-        dest="print_output",
+        "--print-output",
         action="store_true",
         help="Use print() instead of cog.outl() for code output.",
     )
@@ -195,7 +196,7 @@ class CogOptions:
     replace: bool = False
     _parser.add_argument(
         "-r",
-        dest="replace",
+        "--replace",
         action="store_true",
         help="Replace the input file with the output.",
     )
@@ -203,7 +204,7 @@ class CogOptions:
     suffix: Optional[str] = None
     _parser.add_argument(
         "-s",
-        dest="suffix",
+        "--suffix",
         metavar="STRING",
         help="Suffix all generated output lines with STRING.",
     )
@@ -211,7 +212,7 @@ class CogOptions:
     unix_newlines: bool = False
     _parser.add_argument(
         "-U",
-        dest="unix_newlines",
+        "--unix-newlines",
         action="store_true",
         help="Write the output with Unix newlines (only LF line-endings).",
     )
@@ -219,7 +220,7 @@ class CogOptions:
     make_writable_cmd: Optional[str] = None
     _parser.add_argument(
         "-w",
-        dest="make_writable_cmd",
+        "--make-writable-cmd",
         metavar="CMD",
         help=dedent("""
             Use CMD if the output file needs to be made writable. A %%s in the CMD
@@ -230,7 +231,7 @@ class CogOptions:
     no_generate: bool = False
     _parser.add_argument(
         "-x",
-        dest="no_generate",
+        "--no-generate",
         action="store_true",
         help="Excise all the generated output without running the generators.",
     )
@@ -238,7 +239,7 @@ class CogOptions:
     eof_can_be_end: bool = False
     _parser.add_argument(
         "-z",
-        dest="eof_can_be_end",
+        "--eof-can-be-end",
         action="store_true",
         help="The end-output marker can be omitted, and is assumed at eof.",
     )
