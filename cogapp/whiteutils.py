@@ -3,7 +3,7 @@
 import re
 
 
-def whitePrefix(strings):
+def white_prefix(strings):
     """Find the whitespace prefix common to non-blank lines in `strings`."""
     # Remove all blank lines from the list
     strings = [s for s in strings if s.strip() != ""]
@@ -28,7 +28,7 @@ def whitePrefix(strings):
     return prefix
 
 
-def reindentBlock(lines, newIndent=""):
+def reindent_block(lines, new_indent=""):
     """Re-indent a block of text.
 
     Take a block of text as a string or list of lines.
@@ -41,18 +41,18 @@ def reindentBlock(lines, newIndent=""):
         sep, nothing = b"\n", b""
     if isinstance(lines, (bytes, str)):
         lines = lines.split(sep)
-    oldIndent = whitePrefix(lines)
-    outLines = []
+    old_indent = white_prefix(lines)
+    out_lines = []
     for line in lines:
-        if oldIndent:
-            line = line.replace(oldIndent, nothing, 1)
-        if line and newIndent:
-            line = newIndent + line
-        outLines.append(line)
-    return sep.join(outLines)
+        if old_indent:
+            line = line.replace(old_indent, nothing, 1)
+        if line and new_indent:
+            line = new_indent + line
+        out_lines.append(line)
+    return sep.join(out_lines)
 
 
-def commonPrefix(strings):
+def common_prefix(strings):
     """Find the longest string that is a prefix of all the strings."""
     if not strings:
         return ""

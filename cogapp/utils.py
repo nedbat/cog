@@ -22,7 +22,7 @@ class Redirectable:
         self.stdout = sys.stdout
         self.stderr = sys.stderr
 
-    def setOutput(self, stdout=None, stderr=None):
+    def set_output(self, stdout=None, stderr=None):
         """Assign new files for standard out and/or standard error."""
         if stdout:
             self.stdout = stdout
