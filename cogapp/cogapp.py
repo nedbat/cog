@@ -50,6 +50,7 @@ OPTIONS:
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
     --check     Check that the files would not change if run again.
+    --extract   Extract only the generator code into the output (implies -x).
     --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
                 include three values separated by spaces, the start, end,
@@ -132,18 +133,27 @@ class CogGenerator(Redirectable):
 
         return reindent_block(self.lines, "")
 
+    def get_prologue(self, cog):
+        if not self.options.extract_code:
+            prologue = f"import {cog.cogmodulename} as cog\n"
+        else:
+            prologue = "import cog\n"
+        if self.options.prologue:
+            prologue += self.options.prologue + "\n"
+
+        return prologue
+
     def evaluate(self, cog, globals, fname):
         # figure out the right whitespace prefix for the output
         pref_out = white_prefix(self.markers)
 
+        prologue = self.get_prologue(cog)
         intext = self.get_code()
         if not intext:
             return ""
 
-        prologue = "import " + cog.cogmodulename + " as cog\n"
-        if self.options.prologue:
-            prologue += self.options.prologue + "\n"
-        code = compile(prologue + intext, str(fname), "exec")
+        source = prologue + intext
+        code = compile(source, str(fname), "exec")
 
         # Make sure the "cog" module has our state.
         cog.cogmodule.msg = self.msg
@@ -240,6 +250,7 @@ class CogOptions:
         self.prologue = ""
         self.print_output = False
         self.check = False
+        self.extract_code = False
 
     def __eq__(self, other):
         """Comparison operator for tests to use."""
@@ -261,6 +272,7 @@ class CogOptions:
                 argv,
                 "cdD:eI:n:o:rs:p:PUvw:xz",
                 [
+                    "extract",
                     "check",
                     "markers=",
                     "verbosity=",
@@ -308,6 +320,10 @@ class CogOptions:
                 self.eof_can_be_end = True
             elif o == "--check":
                 self.check = True
+            elif o == "--extract":
+                self.extract_code = True
+                self.no_generate = True
+                self.delete_code = True
             elif o == "--markers":
                 self._parse_markers(a)
             elif o == "--verbosity":
@@ -331,6 +347,10 @@ class CogOptions:
             raise CogUsageError(
                 "Can't use -d with -r (or you would delete all your source!)"
             )
+        # if self.delete_code and self.extract_code:
+        #     raise CogUsageError(
+        #         "Can't use -d with --extract (they are opposites)"
+        #     )
 
         if self.replace and self.output_name:
             raise CogUsageError("Can't use -o with -r (they are opposites)")
@@ -449,7 +469,8 @@ class Cog(Redirectable):
                             file=file_name_in,
                             line=file_in.linenumber(),
                         )
-                    file_out.write(line)
+                    if not self.options.extract_code:
+                        file_out.write(line)
                     line = file_in.readline()
                 if not line:
                     break
@@ -548,12 +569,16 @@ class Cog(Redirectable):
                 # Write the output of the spec to be the new output if we're
                 # supposed to generate code.
                 hasher = md5()
+                fname = f"<cog {file_name_in}:{first_line_num}>"
+                output = None
                 if not self.options.no_generate:
-                    fname = f"<cog {file_name_in}:{first_line_num}>"
-                    gen = gen.evaluate(cog=self, globals=globals, fname=fname)
-                    gen = self.suffix_lines(gen)
-                    hasher.update(gen.encode("utf-8"))
-                    file_out.write(gen)
+                    output = gen.evaluate(cog=self, globals=globals, fname=fname)
+                    output = self.suffix_lines(output)
+                elif self.options.extract_code:
+                    output = f'# {fname}\n{gen.get_prologue(self)}{gen.get_code()}\n\n'
+                if output is not None:
+                    hasher.update(output.encode("utf-8"))
+                    file_out.write(output)
                 new_hash = hasher.hexdigest()
 
                 saw_cog = True
