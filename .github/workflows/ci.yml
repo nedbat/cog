@@ -88,6 +88,7 @@ jobs:
         with:
           name: covdata-${{ env.MATRIX_ID }}
           path: .coverage.*
+          include-hidden-files: true
 
   combine:
     name: "Combine and report coverage"
