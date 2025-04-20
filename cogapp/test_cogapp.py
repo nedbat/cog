@@ -2051,7 +2051,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
             d[f"f{i}.cog"] = (
                 "x\n" * i
                 + "[[[cog\n"
-                + f"assert cog.firstLineNum == int(FIRST) == {i+1}\n"
+                + f"assert cog.firstLineNum == int(FIRST) == {i + 1}\n"
                 + "]]]\n"
                 + "[[[end]]]\n"
             )
@@ -2062,7 +2062,7 @@ class CogTestsInFiles(TestCaseWithTempDir):
         def thread_main(num):
             try:
                 ret = Cog().main(
-                    ["cog.py", "-r", "-D", f"FIRST={num+1}", f"f{num}.cog"]
+                    ["cog.py", "-r", "-D", f"FIRST={num + 1}", f"f{num}.cog"]
                 )
                 assert ret == 0
             except Exception as exc:  # pragma: no cover (only happens on test failure)
