@@ -2642,6 +2642,38 @@ class ErrorCallTests(TestCaseWithTempDir):
         )
         self.assertIn("RuntimeError: Hey!", output)
 
+class ExtractCodeTests(TestCaseWithTempDir):
+    def test_extract_basic(self):
+        d = {
+            "a.cog": """\
+                preceding text
+                [[[cog
+                cog.out("chunk1")
+                ]]]
+                [[[end]]]
+                centre text
+                [[[cog
+                cog.out("chunk2")
+                ]]]
+                [[[end]]]
+                following text
+                """,
+            "a.expected": """\
+                # <cog a.cog:2>
+                import cog
+                cog.out("chunk1")
+
+                # <cog a.cog:7>
+                import cog
+                cog.out("chunk2")
+
+                """,
+        }
+
+        make_files(d)
+        self.cog.main(["argv0", "--extract", "-o", "a.out", "a.cog"])
+        self.assertFilesSame("a.out", "a.expected")
+
 
 # Things not yet tested:
 # - A bad -w command (currently fails silently).
