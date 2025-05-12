@@ -125,6 +125,10 @@ class CogGenerator(Redirectable):
         # If the markers and lines all have the same prefix
         # (end-of-line comment chars, for example),
         # then remove it from all the lines.
+        for idx, marker in enumerate(self.markers):
+            self.markers[idx] = marker.replace(self.options.begin_spec, "").replace(
+                self.options.end_spec, ""
+            )
         pref_in = common_prefix(self.markers + self.lines)
         if pref_in:
             self.markers = [line.replace(pref_in, "", 1) for line in self.markers]
