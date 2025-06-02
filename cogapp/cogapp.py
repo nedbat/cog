@@ -413,6 +413,8 @@ class Cog(Redirectable):
             file_name_out = file_out
             file_out = file_out_to_close = self.open_output_file(file_out)
 
+        start_dir = os.getcwd()
+
         try:
             file_in = NumberedFileReader(file_in)
 
@@ -592,6 +594,7 @@ class Cog(Redirectable):
                 file_in_to_close.close()
             if file_out_to_close:
                 file_out_to_close.close()
+            os.chdir(start_dir)
 
     # A regex for non-empty lines, used by suffixLines.
     re_non_empty_lines = re.compile(r"^\s*\S+.*$", re.MULTILINE)

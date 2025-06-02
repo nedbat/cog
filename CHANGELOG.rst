@@ -21,6 +21,9 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- Embedded code can change the current directory, cog will change back to the
+  original directory when the code is done.
+
 - Dropped support for Python 3.7 and 3.8, and added 3.13.
 
 

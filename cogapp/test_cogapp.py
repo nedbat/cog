@@ -1409,6 +1409,37 @@ class TestFileHandling(TestCaseWithTempDir):
             output, "Cogging unchanged.cog\nCogging changed.cog  (changed)\n"
         )
 
+    def test_change_dir(self):
+        # The code can change directories, cog will move us back.
+        d = {
+            "sub": {
+                "data.txt": "Hello!",
+            },
+            "test.cog": """\
+                //[[[cog
+                import os
+                os.chdir("sub")
+                cog.outl(open("data.txt").read())
+                //]]]
+                //[[[end]]]
+                """,
+            "test.out": """\
+                //[[[cog
+                import os
+                os.chdir("sub")
+                cog.outl(open("data.txt").read())
+                //]]]
+                Hello!
+                //[[[end]]]
+                """,
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-r", "test.cog"])
+        self.assertFilesSame("test.cog", "test.out")
+        output = self.output.getvalue()
+        self.assertIn("(changed)", output)
+
 
 class CogTestLineEndings(TestCaseWithTempDir):
     """Tests for -U option (force LF line-endings in output)."""
