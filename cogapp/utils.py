@@ -7,12 +7,8 @@ import os
 import sys
 
 
-# Support FIPS mode where possible (Python >= 3.9). We don't use MD5 for security.
-md5 = (
-    functools.partial(hashlib.md5, usedforsecurity=False)
-    if sys.version_info >= (3, 9)
-    else hashlib.md5
-)
+# Support FIPS mode. We don't use MD5 for security.
+md5 = functools.partial(hashlib.md5, usedforsecurity=False)
 
 
 class Redirectable:
