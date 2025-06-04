@@ -21,6 +21,9 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- Added a ``--diff`` option to show the diff of what changed to fail a
+  ``--check`` run.
+
 - Embedded code can change the current directory, cog will change back to the
   original directory when the code is done.
 

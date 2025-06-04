@@ -1,6 +1,7 @@
 """Cog content generation tool."""
 
 import copy
+import difflib
 import getopt
 import glob
 import io
@@ -50,6 +51,7 @@ OPTIONS:
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
     --check     Check that the files would not change if run again.
+    --diff      With --check, show a diff of what failed the check.
     --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
                 include three values separated by spaces, the start, end,
@@ -240,6 +242,7 @@ class CogOptions:
         self.prologue = ""
         self.print_output = False
         self.check = False
+        self.diff = False
 
     def __eq__(self, other):
         """Comparison operator for tests to use."""
@@ -262,6 +265,7 @@ class CogOptions:
                 "cdD:eI:n:o:rs:p:PUvw:xz",
                 [
                     "check",
+                    "diff",
                     "markers=",
                     "verbosity=",
                 ],
@@ -308,6 +312,8 @@ class CogOptions:
                 self.eof_can_be_end = True
             elif o == "--check":
                 self.check = True
+            elif o == "--diff":
+                self.diff = True
             elif o == "--markers":
                 self._parse_markers(a)
             elif o == "--verbosity":
@@ -334,6 +340,9 @@ class CogOptions:
 
         if self.replace and self.output_name:
             raise CogUsageError("Can't use -o with -r (they are opposites)")
+
+        if self.diff and not self.check:
+            raise CogUsageError("Can't use --diff without --check")
 
 
 class Cog(Redirectable):
@@ -692,6 +701,18 @@ class Cog(Redirectable):
                         else:
                             assert self.options.check
                             self.check_failed = True
+                            if self.options.diff:
+                                old_lines = old_text.splitlines()
+                                new_lines = new_text.splitlines()
+                                diff = difflib.unified_diff(
+                                    old_lines,
+                                    new_lines,
+                                    fromfile=f"current {fname}",
+                                    tofile=f"changed {fname}",
+                                    lineterm="",
+                                )
+                                for diff_line in diff:
+                                    self.prout(diff_line)
                 finally:
                     # The try-finally block is so we can print a partial line
                     # with the name of the file, and print (changed) on the

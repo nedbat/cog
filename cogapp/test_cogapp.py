@@ -824,6 +824,12 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         with self.assertRaisesRegex(CogUsageError, r"^Can't use -o with &file$"):
             self.cog.callable_main(["argv0", "-o", "foo", "&cogfiles.txt"])
 
+    def test_no_diff_without_check(self):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^Can't use --diff without --check$"
+        ):
+            self.cog.callable_main(["argv0", "--diff"])
+
     def test_dash_v(self):
         self.assertEqual(self.cog.main(["argv0", "-v"]), 0)
         output = self.output.getvalue()
@@ -2165,6 +2171,40 @@ class CheckTests(TestCaseWithTempDir):
         self.assertEqual(
             self.output.getvalue(), "Checking changed.cog  (changed)\nCheck failed\n"
         )
+        self.assert_made_files_unchanged(d)
+
+    def test_check_bad_with_diff(self):
+        d = {
+            "skittering.cog": """\
+                //[[[cog
+                for i in range(5): cog.outl(f"number {i}")
+                cog.outl("goodbye world")
+                //]]]
+                number 0
+                number 1
+                number 2
+                number 3
+                number 4
+                hello world
+                //[[[end]]]
+                """,
+        }
+        make_files(d)
+        self.run_check(["--diff", "skittering.cog"], status=5)
+        output = """\
+            Checking skittering.cog  (changed)
+            --- current skittering.cog
+            +++ changed skittering.cog
+            @@ -7,5 +7,5 @@
+             number 2
+             number 3
+             number 4
+            -hello world
+            +goodbye world
+             //[[[end]]]
+            Check failed
+            """
+        self.assertEqual(self.output.getvalue(), reindent_block(output))
         self.assert_made_files_unchanged(d)
 
     def test_check_mixed(self):
