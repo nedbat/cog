@@ -349,8 +349,8 @@ class Cog(Redirectable):
 
     def _fix_end_output_patterns(self):
         end_output = re.escape(self.options.end_output)
-        self.re_end_output = re.compile(
-            end_output + r"(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]+)\))"
+        self.re_end_output_with_hash = re.compile(
+            end_output + r"(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]{32})\))"
         )
         self.end_format = self.options.end_output + " (checksum: %s)"
 
@@ -458,7 +458,7 @@ class Cog(Redirectable):
                 if not self.options.delete_code:
                     file_out.write(line)
 
-                # l is the begin spec
+                # `line` is the begin spec
                 gen = CogGenerator(options=self.options)
                 gen.set_output(stdout=self.stdout)
                 gen.parse_marker(line)
@@ -561,7 +561,7 @@ class Cog(Redirectable):
                 saw_cog = True
 
                 # Write the ending output line
-                hash_match = self.re_end_output.search(line)
+                hash_match = self.re_end_output_with_hash.search(line)
                 if self.options.hash_output:
                     if hash_match:
                         old_hash = hash_match["hash"]
