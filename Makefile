@@ -28,19 +28,28 @@ test:			## Run the test suite.
 
 # Docs
 
-.PHONY: cogdoc dochtml
+.PHONY: cogdoc lintdoc dochtml
+
+# Normally I'd put this in a comment in index.px, but the
+# quoting/escaping would be impossible.
+COGARGS = -cP --markers='{{{cog }}} {{{end}}}' docs/running.rst
 
 cogdoc:			## Run cog to keep the docs correct.
-	# Normally I'd put this in a comment in index.px, but the
-	# quoting/escaping would be impossible.
-	python -m cogapp -crP --markers='{{{cog }}} {{{end}}}' docs/running.rst
+	python -m cogapp -r $(COGARGS)
+
+lintdoc:		## Check that the docs are up-to-date.
+	@python -m cogapp --check --diff $(COGARGS); \
+	if [ $$? -ne 0 ]; then \
+		echo 'Docs need to be updated: `make cogdoc`'; \
+		exit 1; \
+	fi
 
 dochtml:		## Build local docs.
 	$(MAKE) -C docs html
 
 # Release
 
-.PHONY: dist pypi testpypi check_release
+.PHONY: dist pypi testpypi check_release _check_manifest
 
 dist:			## Build distribution artifacts.
 	python -m build
