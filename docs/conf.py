@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "cog"
-copyright = "2004–2024, Ned Batchelder"
+copyright = "2004–2025, Ned Batchelder"
 author = "Ned Batchelder"
-release = "3.4.1"
+release = "3.5.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
