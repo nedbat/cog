@@ -15,6 +15,7 @@ import types
 
 from .whiteutils import common_prefix, reindent_block, white_prefix
 from .utils import NumberedFileReader, Redirectable, change_dir, md5
+from .hashhandler import HashHandler
 
 __version__ = "3.5.0"
 
@@ -351,17 +352,14 @@ class Cog(Redirectable):
     def __init__(self):
         super().__init__()
         self.options = CogOptions()
-        self._fix_end_output_patterns()
         self.cogmodulename = "cog"
         self.create_cog_module()
         self.check_failed = False
+        self.hash_handler = None
+        self._fix_end_output_patterns()
 
     def _fix_end_output_patterns(self):
-        end_output = re.escape(self.options.end_output)
-        self.re_end_output_with_hash = re.compile(
-            end_output + r"(?P<hashsect> *\(checksum: (?P<hash>[a-f0-9]{32})\))"
-        )
-        self.end_format = self.options.end_output + " (checksum: %s)"
+        self.hash_handler = HashHandler(self.options.end_output)
 
     def show_warning(self, msg):
         self.prout(f"Warning: {msg}")
@@ -526,7 +524,6 @@ class Cog(Redirectable):
                 # Eat all the lines in the output section.  While reading past
                 # them, compute the md5 hash of the old output.
                 previous = []
-                hasher = md5()
                 while line and not self.is_end_output_line(line):
                     if self.is_begin_spec_line(line):
                         raise CogError(
@@ -541,9 +538,8 @@ class Cog(Redirectable):
                             line=file_in.linenumber(),
                         )
                     previous.append(line)
-                    hasher.update(line.encode("utf-8"))
                     line = file_in.readline()
-                cur_hash = hasher.hexdigest()
+                cur_hash = self.hash_handler.compute_lines_hash(previous)
 
                 if not line and not self.options.eof_can_be_end:
                     # We reached end of file before we found the end output line.
@@ -558,39 +554,34 @@ class Cog(Redirectable):
 
                 # Write the output of the spec to be the new output if we're
                 # supposed to generate code.
-                hasher = md5()
                 if not self.options.no_generate:
                     fname = f"<cog {file_name_in}:{first_line_num}>"
                     gen = gen.evaluate(cog=self, globals=globals, fname=fname)
                     gen = self.suffix_lines(gen)
-                    hasher.update(gen.encode("utf-8"))
+                    new_hash = self.hash_handler.compute_hash(gen)
                     file_out.write(gen)
-                new_hash = hasher.hexdigest()
+                else:
+                    new_hash = ""
 
                 saw_cog = True
 
                 # Write the ending output line
-                hash_match = self.re_end_output_with_hash.search(line)
                 if self.options.hash_output:
-                    if hash_match:
-                        old_hash = hash_match["hash"]
-                        if old_hash != cur_hash:
-                            raise CogError(
-                                "Output has been edited! Delete old checksum to unprotect.",
-                                file=file_name_in,
-                                line=file_in.linenumber(),
-                            )
-                        # Create a new end line with the correct hash.
-                        endpieces = line.split(hash_match.group(0), 1)
-                    else:
-                        # There was no old hash, but we want a new hash.
-                        endpieces = line.split(self.options.end_output, 1)
-                    line = (self.end_format % new_hash).join(endpieces)
+                    try:
+                        self.hash_handler.validate_hash(line, cur_hash)
+                    except ValueError as e:
+                        raise CogError(
+                            str(e),
+                            file=file_name_in,
+                            line=file_in.linenumber(),
+                        )
+                    line = self.hash_handler.format_end_line_with_hash(
+                        line, new_hash, add_hash=True
+                    )
                 else:
-                    # We don't want hashes output, so if there was one, get rid of
-                    # it.
-                    if hash_match:
-                        line = line.replace(hash_match["hashsect"], "", 1)
+                    line = self.hash_handler.format_end_line_with_hash(
+                        line, new_hash, add_hash=False
+                    )
 
                 if not self.options.delete_code:
                     file_out.write(line)
