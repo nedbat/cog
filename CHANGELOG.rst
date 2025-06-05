@@ -31,6 +31,8 @@ Unreleased
   making checksums less visually distracting. The old hex format will still be
   accepted, but will be updated to the new format automatically when writing.
 
+- Added ``--help`` option as an alias for ``-h``.
+
 - Dropped support for Python 3.7 and 3.8, and added 3.13.
 
 

@@ -60,7 +60,7 @@ OPTIONS:
     --verbosity=VERBOSITY
                 Control the amount of output. 2 (the default) lists all files,
                 1 lists only changed files, 0 lists no files.
-    -h          Print this help.
+    -h, --help  Print this help.
 """
 
 
@@ -775,7 +775,7 @@ class Cog(Redirectable):
         argv = argv[1:]
 
         # Provide help if asked for anywhere in the command line.
-        if "-?" in argv or "-h" in argv:
+        if "-?" in argv or "-h" in argv or "--help" in argv:
             self.prerr(usage, end="")
             return
 
@@ -804,7 +804,7 @@ class Cog(Redirectable):
             return 0
         except CogUsageError as err:
             self.prerr(err)
-            self.prerr("(for help use -h)")
+            self.prerr("(for help use --help)")
             return 2
         except CogGeneratedError as err:
             self.prerr(f"Error: {err}")

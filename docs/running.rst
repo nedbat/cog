@@ -64,9 +64,9 @@ Cog is a command-line utility which takes arguments in standard form.
         --verbosity=VERBOSITY
                     Control the amount of output. 2 (the default) lists all files,
                     1 lists only changed files, 0 lists no files.
-        -h          Print this help.
+        -h, --help  Print this help.
 
-.. {{{end}}} (checksum: d9737a8e9fc9c2fc78a5200f2fa8440f)
+.. {{{end}}} (sum: aE5SIko6oj)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:

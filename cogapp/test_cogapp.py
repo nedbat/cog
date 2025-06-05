@@ -843,10 +843,12 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         self.assertEqual(usage, self.output.getvalue())
 
     def test_dash_h(self):
-        # -h or -? anywhere on the command line should just print help.
+        # -h, --help, or -? anywhere on the command line should just print help.
         self.produces_help("-h")
+        self.produces_help("--help")
         self.produces_help("-?")
         self.produces_help("fooey.txt -h")
+        self.produces_help("fooey.txt --help")
         self.produces_help("-o -r @fooey.txt -? @booey.txt")
 
     def test_dash_o_and_dash_r(self):
@@ -931,7 +933,7 @@ class TestMain(TestCaseWithTempDir):
         ret = main()
         self.assertEqual(ret, 2)
         stderr = sys.stderr.getvalue()
-        self.assertEqual(stderr, "option -Z not recognized\n(for help use -h)\n")
+        self.assertEqual(stderr, "option -Z not recognized\n(for help use --help)\n")
 
     files = {
         "test.cog": """\
