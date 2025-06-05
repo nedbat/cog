@@ -1,5 +1,8 @@
 # Makefile for cog work.
 
+# A command to get the current version from cogapp.py
+VERSION := $$(python -c "import cogapp.cogapp; print(cogapp.cogapp.__version__)")
+
 .PHONY: help clean sterile test
 
 help:			## Show this help.
@@ -49,7 +52,7 @@ dochtml:		## Build local docs.
 
 # Release
 
-.PHONY: dist pypi testpypi check_release _check_manifest
+.PHONY: dist pypi testpypi tag release check_release _check_credentials _check_manifest _check_tree _check_version
 
 dist:			## Build distribution artifacts.
 	python -m build
@@ -61,8 +64,33 @@ pypi:			## Upload distributions to PyPI.
 testpypi:		## Upload distributions to test PyPI
 	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
 
-check_release: _check_manifest ## Check that we are ready for a release
+tag:			## Make a git tag with the version number
+	git tag -s -m "Version $(VERSION)" v$(VERSION)
+	git push --all
+
+release: _check_credentials clean check_release dist pypi tag ## Do all the steps for a release
+	@echo "Release $(VERSION) complete!"
+
+check_release: _check_manifest _check_tree _check_version ## Check that we are ready for a release
 	@echo "Release checks passed"
+
+_check_credentials:
+	@if [[ -z "$$TWINE_PASSWORD" ]]; then \
+		echo 'Missing TWINE_PASSWORD'; \
+		exit 1; \
+	fi
 
 _check_manifest:
 	python -m check_manifest
+
+_check_tree:
+	@if [[ -n $$(git status --porcelain) ]]; then \
+		echo 'There are modified files! Did you forget to check them in?'; \
+		exit 1; \
+	fi
+
+_check_version:
+	@if git tag | grep -q -w v$(VERSION); then \
+		echo 'A git tag for this version exists! Did you forget to bump the version?'; \
+		exit 1; \
+	fi
