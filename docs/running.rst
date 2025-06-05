@@ -190,11 +190,21 @@ a checksum:
     --      cog.out("%d " % i)
     --]]]
     0 1 2 3 4 5 6 7 8 9
-    --[[[end]]] (checksum: bd7715304529f66c4d3493e786bb0f1f)
+    --[[[end]]] (sum: vXcVMEUp9m)
 
+The checksum uses a compact base64 encoding to be less visually distracting.
 If the generated code is edited by a misguided developer, the next time cog
 is run, the checksum won't match, and cog will stop to avoid overwriting the
 edited code.
+
+Cog can also read files with the older hex checksum format:
+
+.. code-block:: sql
+
+    --[[[end]]] (checksum: bd7715304529f66c4d3493e786bb0f1f)
+
+When such files are regenerated, the checksum will be updated to the new
+base64 format automatically.
 
 
 Continuous integration

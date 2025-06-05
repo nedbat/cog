@@ -27,6 +27,10 @@ Unreleased
 - Embedded code can change the current directory, cog will change back to the
   original directory when the code is done.
 
+- Changed the checksum format to use shorter base64 encoding instead of hex,
+  making checksums less visually distracting. The old hex format will still be
+  accepted, but will be updated to the new format automatically when writing.
+
 - Dropped support for Python 3.7 and 3.8, and added 3.13.
 
 

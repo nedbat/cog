@@ -576,7 +576,10 @@ class Cog(Redirectable):
                             line=file_in.linenumber(),
                         )
                     line = self.hash_handler.format_end_line_with_hash(
-                        line, new_hash, add_hash=True
+                        line,
+                        new_hash,
+                        add_hash=True,
+                        preserve_format=self.options.check,
                     )
                 else:
                     line = self.hash_handler.format_end_line_with_hash(
