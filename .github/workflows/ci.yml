@@ -24,7 +24,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: astral-sh/ruff-action@84f83ecf9e1e15d26b7984c7ec9cf73d39ffc946 # v3.3.1
+      - uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49 # v3.4.0
         with:
           args: 'format --check'
 
@@ -35,7 +35,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: astral-sh/ruff-action@84f83ecf9e1e15d26b7984c7ec9cf73d39ffc946 # v3.3.1
+      - uses: astral-sh/ruff-action@eaf0ecdd668ceea36159ff9d91882c9795d89b49 # v3.4.0
 
       - name: "Set up Python"
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
