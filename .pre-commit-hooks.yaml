@@ -1,0 +1,8 @@
+# https://pre-commit.com/#new-hooks
+- id: cog
+  name: cog
+  description: Regenerate files with cog
+  entry: cogapp
+  language: python
+  types: [text]
+  stages: [pre-commit, pre-merge-commit, pre-push, manual]
