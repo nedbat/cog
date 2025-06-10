@@ -9,7 +9,7 @@
 project = "cog"
 copyright = "2004–2025, Ned Batchelder"
 author = "Ned Batchelder"
-release = "3.5.0"
+release = "3.5.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

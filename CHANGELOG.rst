@@ -24,6 +24,12 @@ Unreleased
 Nothing yet.
 
 
+3.5.1 – June 10 2025
+--------------------
+
+- Updated documentation to remove confusing terminology.
+
+
 3.5.0 – June 5 2025
 -------------------
 

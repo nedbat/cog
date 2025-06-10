@@ -35,7 +35,7 @@ Cog
 Cog is a content generation tool.  It lets you use small bits of Python code
 in otherwise static files to generate whatever text you need.
 
-This page describes version 3.5.0, released June 5, 2025.
+This page describes version 3.5.1, released June 5, 2025.
 
 
 What does it do?
