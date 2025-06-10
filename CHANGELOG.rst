@@ -21,6 +21,11 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- TODO
+
+3.5.0 – June 5 2025
+-------------------
+
 - Added a ``--diff`` option to show the diff of what changed to fail a
   ``--check`` run.
 
