@@ -87,9 +87,9 @@ class HashHandler:
                 return ("hex", hash_match.group("hash"))
             else:
                 # New format: sum with base64
-                assert hash_match.group(
-                    "b64hash"
-                ), "Regex matched but no hash group found"
+                assert hash_match.group("b64hash"), (
+                    "Regex matched but no hash group found"
+                )
                 return ("base64", hash_match.group("b64hash"))
         return (None, None)
 
