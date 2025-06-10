@@ -71,7 +71,7 @@ tag:			## Make a git tag with the version number
 release: _check_credentials clean check_release dist pypi tag ## Do all the steps for a release
 	@echo "Release $(VERSION) complete!"
 
-check_release: _check_manifest _check_tree _check_version ## Check that we are ready for a release
+check_release: clean dist _check_manifest _check_tree _check_version ## Check that we are ready for a release
 	@echo "Release checks passed"
 
 _check_credentials:
