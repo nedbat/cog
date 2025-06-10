@@ -30,7 +30,7 @@ The module contents are:
 
 **cog.error** `(msg)`
     Raises an exception with `msg` as the text.  No traceback is included, so
-    that non-Python programmers using your code generators won't be scared.
+    that non-Python programmers seeing the output won't be scared.
 
 **cog.inFile**
     An attribute, the path of the input file.
@@ -40,10 +40,10 @@ The module contents are:
 
 **cog.firstLineNum**
     An attribute, the line number of the first line of Python code in the
-    generator.  This can be used to distinguish between two generators in the
+    current chunk.  This can be used to distinguish between two chunks in the
     same input file, if needed.
 
 **cog.previous**
-    An attribute, the text output of the previous run of this generator.  This
-    can be used for whatever purpose you like, including outputting again with
-    **cog.out**.
+    An attribute, the text output of the previous run of this Python code.
+    This can be used for whatever purpose you like, including outputting again
+    with **cog.out**.

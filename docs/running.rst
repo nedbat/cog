@@ -38,13 +38,13 @@ Cog is a command-line utility which takes arguments in standard form.
 
     OPTIONS:
         -c          Checksum the output to protect it against accidental change.
-        -d          Delete the generator code from the output file.
-        -D name=val Define a global string available to your generator code.
+        -d          Delete the Python code from the output file.
+        -D name=val Define a global string available to your Python code.
         -e          Warn if a file has no cog code in it.
         -I PATH     Add PATH to the list of directories for data files and modules.
         -n ENCODING Use ENCODING when reading and writing files.
         -o OUTNAME  Write the output to OUTNAME.
-        -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
+        -p PROLOGUE Prepend the Python source with PROLOGUE. Useful to insert an
                     import line. Example: -p "import math"
         -P          Use print() instead of cog.outl() for code output.
         -r          Replace the input file with the output.
@@ -52,7 +52,7 @@ Cog is a command-line utility which takes arguments in standard form.
         -U          Write the output with Unix newlines (only LF line-endings).
         -w CMD      Use CMD if the output file needs to be made writable.
                         A %s in the CMD will be filled with the filename.
-        -x          Excise all the generated output without running the generators.
+        -x          Excise all the generated output without running the Python.
         -z          The end-output marker can be omitted, and is assumed at eof.
         -v          Print the version of cog and exit.
         --check     Check that the files would not change if run again.
@@ -66,7 +66,7 @@ Cog is a command-line utility which takes arguments in standard form.
                     1 lists only changed files, 0 lists no files.
         -h, --help  Print this help.
 
-.. {{{end}}} (sum: aE5SIko6oj)
+.. {{{end}}} (sum: VLpx2/79qp)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:
@@ -161,7 +161,7 @@ example, invoking Cog like this:
 
 will run Cog over mycode.txt, but first define a global variable called thefile
 with a value of "fooey.xml". This variable can then be referenced in your
-generator code. You can provide multiple ``-D`` arguments on the command line,
+Python code. You can provide multiple ``-D`` arguments on the command line,
 and all will be defined and available.
 
 The value is always interpreted as a Python string, to simplify the problem of
@@ -195,7 +195,7 @@ a checksum:
 The checksum uses a compact base64 encoding to be less visually distracting.
 If the generated code is edited by a misguided developer, the next time cog
 is run, the checksum won't match, and cog will stop to avoid overwriting the
-edited code.
+edited output.
 
 Cog can also read files with the older hex checksum format:
 
@@ -203,7 +203,7 @@ Cog can also read files with the older hex checksum format:
 
     --[[[end]]] (checksum: bd7715304529f66c4d3493e786bb0f1f)
 
-When such files are regenerated, the checksum will be updated to the new
+When such files are regenerated, the checksum will be updated to the shorter
 base64 format automatically.
 
 
@@ -274,11 +274,11 @@ pieces separated by the spaces.  The default value for markers is ``"[[[cog ]]]
 [[[end]]]"``.
 
 The ``-x`` flag tells cog to delete the old generated output without running
-the generators.  This lets you remove all the generated output from a source
+the Python code.  This lets you remove all the generated output from a source
 file.
 
-The ``-d`` flag tells cog to delete the generators from the output file.  This
-lets you generate content in a public file but not have to show the generator
+The ``-d`` flag tells cog to delete the Python code from the output file.  This
+lets you generate content in a public file but not have to show the Python
 to your customers.
 
 The ``-U`` flag causes the output file to use pure Unix newlines rather than
@@ -287,8 +287,8 @@ Unix-style output files.
 
 The ``-I`` flag adds a directory to the path used to find Python modules.
 
-The ``-p`` option specifies Python text to prepend to embedded generator
-source, which can keep common imports out of source files.
+The ``-p`` option specifies Python text to prepend to your Python, which can
+keep common imports out of source files.
 
 The ``-z`` flag lets you omit the ``[[[end]]]`` marker line, and it will be
 assumed at the end of the file.

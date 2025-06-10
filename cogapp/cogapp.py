@@ -34,13 +34,13 @@ list are relative to the file list location.
 
 OPTIONS:
     -c          Checksum the output to protect it against accidental change.
-    -d          Delete the generator code from the output file.
-    -D name=val Define a global string available to your generator code.
+    -d          Delete the Python code from the output file.
+    -D name=val Define a global string available to your Python code.
     -e          Warn if a file has no cog code in it.
     -I PATH     Add PATH to the list of directories for data files and modules.
     -n ENCODING Use ENCODING when reading and writing files.
     -o OUTNAME  Write the output to OUTNAME.
-    -p PROLOGUE Prepend the generator source with PROLOGUE. Useful to insert an
+    -p PROLOGUE Prepend the Python source with PROLOGUE. Useful to insert an
                 import line. Example: -p "import math"
     -P          Use print() instead of cog.outl() for code output.
     -r          Replace the input file with the output.
@@ -48,7 +48,7 @@ OPTIONS:
     -U          Write the output with Unix newlines (only LF line-endings).
     -w CMD      Use CMD if the output file needs to be made writable.
                     A %s in the CMD will be filled with the filename.
-    -x          Excise all the generated output without running the generators.
+    -x          Excise all the generated output without running the Python.
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
     --check     Check that the files would not change if run again.
@@ -87,13 +87,13 @@ class CogInternalError(CogError):
 
 
 class CogGeneratedError(CogError):
-    """An error raised by a user's cog generator."""
+    """An error raised by a user's Python code."""
 
     pass
 
 
 class CogUserException(CogError):
-    """An exception caught when running a user's cog generator.
+    """An exception caught when running a user's Python code.
 
     The argument is the traceback message to print.
 

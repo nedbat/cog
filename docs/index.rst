@@ -32,10 +32,10 @@ Cog
     <what when='20211119T104100'>Version 3.3.0</what>
     </history>
 
-Cog is a file generation tool.  It lets you use pieces of Python code
-as generators in your source files to generate whatever text you need.
+Cog is a content generation tool.  It lets you use small bits of Python code
+in otherwise static files to generate whatever text you need.
 
-This page describes version 3.4.1, released March 7, 2024.
+This page describes version 3.5.0, released June 5, 2025.
 
 
 What does it do?
@@ -44,7 +44,7 @@ What does it do?
 Cog transforms files in a very simple way: it finds chunks of Python code
 embedded in them, executes the Python code, and inserts its output back into
 the original file.  The file can contain whatever text you like around the
-Python code.  It will usually be source code.
+Python code.
 
 For example, if you run this file through cog:
 
@@ -80,27 +80,27 @@ it will come out like this:
     ...
 
 Lines with triple square brackets are marker lines.  The lines between
-``[[[cog`` and ``]]]`` are the generator Python code.  The lines between
-``]]]`` and ``[[[end]]]`` are the output from the generator.
+``[[[cog`` and ``]]]`` are Python code.  The lines between
+``]]]`` and ``[[[end]]]`` are the output from the Python.
 
 Output is written with `cog.outl()`, or if you use the ``-P`` option,
 normal `print()` calls.
 
 When cog runs, it discards the last generated Python output, executes the
-generator Python code, and writes its generated output into the file.  All text
+Python code, and writes its generated output into the file.  All text
 lines outside of the special markers are passed through unchanged.
 
 The cog marker lines can contain any text in addition to the triple square
-bracket tokens.  This makes it possible to hide the generator Python code from
-the source file.  In the sample above, the entire chunk of Python code is a C++
-comment, so the Python code can be left in place while the file is treated as
-C++ code.
+bracket tokens.  This makes it possible to hide the Python code from whatever
+tools might read the file.  In the sample above, the entire chunk of Python
+code is a C++ comment, so the Python code can be left in place while the file
+is treated as C++ code.
 
 
 Installation
 ============
 
-Cog requires Python 3.7 or higher.
+Cog requires Python 3.9 or higher.
 
 Cog is installed in the usual way, except the installation name is "cogapp",
 not "cog":
