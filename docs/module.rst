@@ -25,6 +25,10 @@ The module contents are:
 **cog.outl**
     Same as **cog.out**, but adds a trailing newline.
 
+**cog.include(filepath=, **kwargs)**
+    Outputs the contents of the file at filepath (relative to the current file's directory).
+    (Keyword-arguments forwarded to **cog.out**)
+
 **cog.msg** `(msg)`
     Prints `msg` to stdout with a "Message: " prefix.
 
