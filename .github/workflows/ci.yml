@@ -64,6 +64,14 @@ jobs:
         run: |
           make lintdoc
 
+      - name: "Check that this file is up-to-date"
+        run: |
+          python -m cogapp -r --check --diff .github/workflows/ci.yml
+          if [ $? -ne 0 ]; then
+            echo 'Docs need to be updated: `python -m cogapp -r .github/workflows/ci.yml`';
+            exit 1;
+          fi
+
   tests:
     name: "Python ${{ matrix.python }} on ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}-${{ matrix.os-version || 'latest' }}"
