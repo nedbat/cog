@@ -1482,7 +1482,6 @@ class TestFileHandling(TestCaseWithTempDir):
         output = self.output.getvalue()
         self.assertIn("(changed)", output)
 
-
     def test_cog_include_with_stdin(self):
         d = {"coglet": "Hello World!"}
         make_files(d)
@@ -1499,8 +1498,11 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-"])
         output = self.output.getvalue()
         outerr = stderr.getvalue()
-        self.assertEqual(output, "--[[[cog cog.include('coglet') ]]]\nHello World!\n--[[[end]]]\n")
+        self.assertEqual(
+            output, "--[[[cog cog.include('coglet') ]]]\nHello World!\n--[[[end]]]\n"
+        )
         self.assertEqual(outerr, "")
+
 
 class CogTestLineEndings(TestCaseWithTempDir):
     """Tests for -U option (force LF line-endings in output)."""
@@ -2867,8 +2869,6 @@ class HashHandlerTests(TestCase):
         # Should not raise an exception
         result = self.handler.validate_hash(line, expected_hash)
         self.assertTrue(result)
-
-
 
 
 # Things not yet tested:

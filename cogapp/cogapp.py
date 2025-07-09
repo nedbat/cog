@@ -211,9 +211,8 @@ class CogGenerator(Redirectable):
     def include(self, filepath, **kw):
         """The cog.include function."""
         parent_dir = os.path.dirname(self.filename)
-        with open(os.path.join(parent_dir, filepath), 'r') as f:
+        with open(os.path.join(parent_dir, filepath), "r") as f:
             self.out(f.read(), **kw)
-        self.out("\n")
 
     def error(self, msg="Error raised by cog generator."):
         """The cog.error function.
