@@ -1449,6 +1449,58 @@ class TestFileHandling(TestCaseWithTempDir):
         output = self.output.getvalue()
         self.assertIn("(changed)", output)
 
+    def test_cog_include(self):
+        d = {
+            "coglet": "World!",
+            "sub": {
+                "coglet": "Hello!",
+                "test.cog": """\
+                    //[[[cog
+                    cog.include("coglet")
+                    cog.include("./coglet")
+                    cog.include("../coglet")
+                    //]]]
+                    //[[[end]]]
+                    """,
+                "test.out": """\
+                    //[[[cog
+                    cog.include("coglet")
+                    cog.include("./coglet")
+                    cog.include("../coglet")
+                    //]]]
+                    Hello!
+                    Hello!
+                    World!
+                    //[[[end]]]
+                    """,
+            },
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-r", "sub/test.cog"])
+        self.assertFilesSame("sub/test.cog", "sub/test.out")
+        output = self.output.getvalue()
+        self.assertIn("(changed)", output)
+
+
+    def test_cog_include_with_stdin(self):
+        d = {"coglet": "Hello World!"}
+        make_files(d)
+        stdin = io.StringIO("--[[[cog cog.include('coglet') ]]]\n--[[[end]]]\n")
+
+        def restore_stdin(old_stdin):
+            sys.stdin = old_stdin
+
+        self.addCleanup(restore_stdin, sys.stdin)
+        sys.stdin = stdin
+
+        stderr = io.StringIO()
+        self.cog.set_output(stderr=stderr)
+        self.cog.callable_main(["argv0", "-"])
+        output = self.output.getvalue()
+        outerr = stderr.getvalue()
+        self.assertEqual(output, "--[[[cog cog.include('coglet') ]]]\nHello World!\n--[[[end]]]\n")
+        self.assertEqual(outerr, "")
 
 class CogTestLineEndings(TestCaseWithTempDir):
     """Tests for -U option (force LF line-endings in output)."""
@@ -2815,6 +2867,8 @@ class HashHandlerTests(TestCase):
         # Should not raise an exception
         result = self.handler.validate_hash(line, expected_hash)
         self.assertTrue(result)
+
+
 
 
 # Things not yet tested:

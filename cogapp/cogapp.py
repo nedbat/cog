@@ -7,6 +7,7 @@ import glob
 import io
 import linecache
 import os
+import os.path
 import re
 import shlex
 import sys
@@ -111,10 +112,11 @@ class CogCheckFailed(CogError):
 class CogGenerator(Redirectable):
     """A generator pulled from a source file."""
 
-    def __init__(self, options=None):
+    def __init__(self, filename, options=None):
         super().__init__()
         self.markers = []
         self.lines = []
+        self.filename = filename
         self.options = options or CogOptions()
 
     def parse_marker(self, line):
@@ -152,6 +154,7 @@ class CogGenerator(Redirectable):
         cog.cogmodule.msg = self.msg
         cog.cogmodule.out = self.out
         cog.cogmodule.outl = self.outl
+        cog.cogmodule.include = self.include
         cog.cogmodule.error = self.error
 
         real_stdout = sys.stdout
@@ -203,6 +206,13 @@ class CogGenerator(Redirectable):
     def outl(self, sOut="", **kw):
         """The cog.outl function."""
         self.out(sOut, **kw)
+        self.out("\n")
+
+    def include(self, filepath, **kw):
+        """The cog.include function."""
+        parent_dir = os.path.dirname(self.filename)
+        with open(os.path.join(parent_dir, filepath), 'r') as f:
+            self.out(f.read(), **kw)
         self.out("\n")
 
     def error(self, msg="Error raised by cog generator."):
@@ -466,7 +476,7 @@ class Cog(Redirectable):
                     file_out.write(line)
 
                 # `line` is the begin spec
-                gen = CogGenerator(options=self.options)
+                gen = CogGenerator(filename=file_name_in, options=self.options)
                 gen.set_output(stdout=self.stdout)
                 gen.parse_marker(line)
                 first_line_num = file_in.linenumber()

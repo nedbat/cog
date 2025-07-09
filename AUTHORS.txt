@@ -9,6 +9,7 @@ Daniel Murdin
 Doug Hellmann
 Hugh Perkins
 Jean-François Giraud
+Joshua Cannon
 Panayiotis Gavriil
 Petr Gladkiy
 Phil Kirkpatrick
