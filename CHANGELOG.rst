@@ -21,7 +21,7 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
-Nothing yet.
+- Added support for Python 3.14.
 
 
 3.5.1 – June 10 2025
