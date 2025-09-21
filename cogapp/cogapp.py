@@ -17,7 +17,7 @@ from .whiteutils import common_prefix, reindent_block, white_prefix
 from .utils import NumberedFileReader, Redirectable, change_dir, md5
 from .hashhandler import HashHandler
 
-__version__ = "3.5.1"
+__version__ = "3.6.0"
 
 usage = """\
 cog - generate content with inlined Python code.

@@ -18,8 +18,8 @@ Changelog
 
 These are changes to Cog over time.
 
-Unreleased
-----------
+3.6.0 – September 21 2025
+-------------------------
 
 - Added a ``--check-fail-msg`` option for providing a message as part of the
   output of a ``--check`` failure.
