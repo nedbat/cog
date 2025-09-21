@@ -2210,6 +2210,26 @@ class CheckTests(TestCaseWithTempDir):
         self.assertEqual(self.output.getvalue(), reindent_block(output))
         self.assert_made_files_unchanged(d)
 
+    def test_check_bad_with_message(self):
+        d = {
+            "changed.cog": """\
+                //[[[cog
+                cog.outl("goodbye world")
+                //]]]
+                hello world
+                //[[[end]]]
+                """,
+        }
+        make_files(d)
+        self.run_check(
+            ["--check-fail-msg=Run `make cogged` to fix", "changed.cog"], status=5
+        )
+        self.assertEqual(
+            self.output.getvalue(),
+            "Checking changed.cog  (changed)\nCheck failed: Run `make cogged` to fix\n",
+        )
+        self.assert_made_files_unchanged(d)
+
     def test_check_mixed(self):
         d = {
             "unchanged.cog": """\

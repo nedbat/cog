@@ -52,6 +52,9 @@ OPTIONS:
     -z          The end-output marker can be omitted, and is assumed at eof.
     -v          Print the version of cog and exit.
     --check     Check that the files would not change if run again.
+    --check-fail-msg='MSG'
+                If --check fails, include MSG in the output to help devs
+                understand how to run cog in your project.
     --diff      With --check, show a diff of what failed the check.
     --markers='START END END-OUTPUT'
                 The patterns surrounding cog inline instructions. Should
@@ -243,6 +246,7 @@ class CogOptions:
         self.prologue = ""
         self.print_output = False
         self.check = False
+        self.check_fail_msg = None
         self.diff = False
 
     def __eq__(self, other):
@@ -266,6 +270,7 @@ class CogOptions:
                 "cdD:eI:n:o:rs:p:PUvw:xz",
                 [
                     "check",
+                    "check-fail-msg=",
                     "diff",
                     "markers=",
                     "verbosity=",
@@ -313,6 +318,8 @@ class CogOptions:
                 self.eof_can_be_end = True
             elif o == "--check":
                 self.check = True
+            elif o == "--check-fail-msg":
+                self.check_fail_msg = a
             elif o == "--diff":
                 self.diff = True
             elif o == "--markers":
@@ -794,7 +801,10 @@ class Cog(Redirectable):
             raise CogUsageError("No files to process")
 
         if self.check_failed:
-            raise CogCheckFailed("Check failed")
+            msg = "Check failed"
+            if self.options.check_fail_msg:
+                msg = f"{msg}: {self.options.check_fail_msg}"
+            raise CogCheckFailed(msg)
 
     def main(self, argv):
         """Handle the command-line execution for cog."""

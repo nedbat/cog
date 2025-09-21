@@ -21,6 +21,9 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- Added a ``--check-fail-msg`` option for providing a message as part of the
+  output of a ``--check`` failure.
+
 - Added support for Python 3.14.
 
 

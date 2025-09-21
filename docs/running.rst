@@ -56,6 +56,9 @@ Cog is a command-line utility which takes arguments in standard form.
         -z          The end-output marker can be omitted, and is assumed at eof.
         -v          Print the version of cog and exit.
         --check     Check that the files would not change if run again.
+        --check-fail-msg='MSG'
+                    If --check fails, include MSG in the output to help devs
+                    understand how to run cog in your project.
         --diff      With --check, show a diff of what failed the check.
         --markers='START END END-OUTPUT'
                     The patterns surrounding cog inline instructions. Should
@@ -66,7 +69,7 @@ Cog is a command-line utility which takes arguments in standard form.
                     1 lists only changed files, 0 lists no files.
         -h, --help  Print this help.
 
-.. {{{end}}} (sum: VLpx2/79qp)
+.. {{{end}}} (sum: HvoLNTo8/2)
 
 In addition to running cog as a command on the command line, you can also
 invoke it as a module with the Python interpreter:
@@ -216,6 +219,10 @@ check that your files have been updated properly.
 
 The ``--diff`` option will show a unified diff of the change that caused
 ``--check`` to fail.
+
+The ``--check-fail-msg`` option can be used to provide a message as part of the
+output if ``--check`` fails.  This can be used to give instructions about how
+to run cog in your project to fix the problem.
 
 
 Output line suffixes

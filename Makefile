@@ -41,11 +41,7 @@ cogdoc:			## Run cog to keep the docs correct.
 	python -m cogapp -r $(COGARGS)
 
 lintdoc:		## Check that the docs are up-to-date.
-	@python -m cogapp --check --diff $(COGARGS); \
-	if [ $$? -ne 0 ]; then \
-		echo 'Docs need to be updated: `make cogdoc`'; \
-		exit 1; \
-	fi
+	@python -m cogapp --check --check-fail-msg='Docs need to be updated: `make cogdoc`' --diff $(COGARGS)
 
 dochtml:		## Build local docs.
 	$(MAKE) -C docs html
