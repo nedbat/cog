@@ -9,6 +9,9 @@ updates:
     schedule:
       # Check for updates to GitHub Actions once a week
       interval: "weekly"
+    cooldown:
+      # https://blog.yossarian.net/2025/11/21/We-should-all-be-using-dependency-cooldowns
+      default-days: 7
     groups:
       action-dependencies:
         patterns:
