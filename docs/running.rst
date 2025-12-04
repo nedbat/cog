@@ -293,6 +293,7 @@ the platform's native line endings.  You can use this on Windows to produce
 Unix-style output files.
 
 The ``-I`` flag adds a directory to the path used to find Python modules.
+By default, cog only adds the directory containing the input file.
 
 The ``-p`` option specifies Python text to prepend to your Python, which can
 keep common imports out of source files.
