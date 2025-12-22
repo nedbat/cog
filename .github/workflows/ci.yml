@@ -96,7 +96,7 @@ jobs:
           python -m coverage debug data
 
       - name: "Upload coverage data"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: covdata-${{ env.MATRIX_ID }}
           path: .coverage.*
@@ -124,7 +124,7 @@ jobs:
           python -m pip install -r requirements.pip
 
       - name: "Download coverage data"
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           pattern: covdata-*
           merge-multiple: true
