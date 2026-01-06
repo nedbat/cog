@@ -76,7 +76,7 @@ class CogOptions:
             For @FILELIST, paths in the file list are relative to the working
             directory where cog was called.  For &FILELIST, paths in the file
             list are relative to the file list location."
-        """)
+        """),
     )
 
     hash_output: bool = False
