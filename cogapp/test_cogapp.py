@@ -841,7 +841,7 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         argv = ["argv0"] + args.split()
         self.assertEqual(self.cog.main(argv), 0)
         output = self.output.getvalue()
-        self.assertStartsWith(output, description)
+        self.assertRegex(output, f"^{re.escape(description)}.*")
 
     def test_dash_h(self):
         # -h, --help, or -? anywhere on the command line should just print help.
