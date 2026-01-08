@@ -1,8 +1,6 @@
 """Cog content generation tool."""
 
-import copy
 import difflib
-import getopt
 import glob
 import io
 import linecache
@@ -13,102 +11,19 @@ import sys
 import traceback
 import types
 
+from .errors import (
+    CogCheckFailed,
+    CogError,
+    CogGeneratedError,
+    CogUsageError,
+    CogUserException,
+)
+from .options import CogOptions
 from .whiteutils import common_prefix, reindent_block, white_prefix
 from .utils import NumberedFileReader, Redirectable, change_dir, md5
 from .hashhandler import HashHandler
 
 __version__ = "3.6.0"
-
-usage = """\
-cog - generate content with inlined Python code.
-
-cog [OPTIONS] [INFILE | @FILELIST | &FILELIST] ...
-
-INFILE is the name of an input file, '-' will read from stdin.
-FILELIST is the name of a text file containing file names or
-other @FILELISTs.
-
-For @FILELIST, paths in the file list are relative to the working
-directory where cog was called.  For &FILELIST, paths in the file
-list are relative to the file list location.
-
-OPTIONS:
-    -c          Checksum the output to protect it against accidental change.
-    -d          Delete the Python code from the output file.
-    -D name=val Define a global string available to your Python code.
-    -e          Warn if a file has no cog code in it.
-    -I PATH     Add PATH to the list of directories for data files and modules.
-    -n ENCODING Use ENCODING when reading and writing files.
-    -o OUTNAME  Write the output to OUTNAME.
-    -p PROLOGUE Prepend the Python source with PROLOGUE. Useful to insert an
-                import line. Example: -p "import math"
-    -P          Use print() instead of cog.outl() for code output.
-    -r          Replace the input file with the output.
-    -s STRING   Suffix all generated output lines with STRING.
-    -U          Write the output with Unix newlines (only LF line-endings).
-    -w CMD      Use CMD if the output file needs to be made writable.
-                    A %s in the CMD will be filled with the filename.
-    -x          Excise all the generated output without running the Python.
-    -z          The end-output marker can be omitted, and is assumed at eof.
-    -v          Print the version of cog and exit.
-    --check     Check that the files would not change if run again.
-    --check-fail-msg='MSG'
-                If --check fails, include MSG in the output to help devs
-                understand how to run cog in your project.
-    --diff      With --check, show a diff of what failed the check.
-    --markers='START END END-OUTPUT'
-                The patterns surrounding cog inline instructions. Should
-                include three values separated by spaces, the start, end,
-                and end-output markers. Defaults to '[[[cog ]]] [[[end]]]'.
-    --verbosity=VERBOSITY
-                Control the amount of output. 2 (the default) lists all files,
-                1 lists only changed files, 0 lists no files.
-    -h, --help  Print this help.
-"""
-
-
-class CogError(Exception):
-    """Any exception raised by Cog."""
-
-    def __init__(self, msg, file="", line=0):
-        if file:
-            super().__init__(f"{file}({line}): {msg}")
-        else:
-            super().__init__(msg)
-
-
-class CogUsageError(CogError):
-    """An error in usage of command-line arguments in cog."""
-
-    pass
-
-
-class CogInternalError(CogError):
-    """An error in the coding of Cog. Should never happen."""
-
-    pass
-
-
-class CogGeneratedError(CogError):
-    """An error raised by a user's Python code."""
-
-    pass
-
-
-class CogUserException(CogError):
-    """An exception caught when running a user's Python code.
-
-    The argument is the traceback message to print.
-
-    """
-
-    pass
-
-
-class CogCheckFailed(CogError):
-    """A --check failed."""
-
-    pass
 
 
 class CogGenerator(Redirectable):
@@ -219,140 +134,6 @@ class CogGenerator(Redirectable):
         raise CogGeneratedError(msg)
 
 
-class CogOptions:
-    """Options for a run of cog."""
-
-    def __init__(self):
-        # Defaults for argument values.
-        self.args = []
-        self.include_path = []
-        self.defines = {}
-        self.show_version = False
-        self.make_writable_cmd = None
-        self.replace = False
-        self.no_generate = False
-        self.output_name = None
-        self.warn_empty = False
-        self.hash_output = False
-        self.delete_code = False
-        self.eof_can_be_end = False
-        self.suffix = None
-        self.newlines = False
-        self.begin_spec = "[[[cog"
-        self.end_spec = "]]]"
-        self.end_output = "[[[end]]]"
-        self.encoding = "utf-8"
-        self.verbosity = 2
-        self.prologue = ""
-        self.print_output = False
-        self.check = False
-        self.check_fail_msg = None
-        self.diff = False
-
-    def __eq__(self, other):
-        """Comparison operator for tests to use."""
-        return self.__dict__ == other.__dict__
-
-    def clone(self):
-        """Make a clone of these options, for further refinement."""
-        return copy.deepcopy(self)
-
-    def add_to_include_path(self, dirs):
-        """Add directories to the include path."""
-        dirs = dirs.split(os.pathsep)
-        self.include_path.extend(dirs)
-
-    def parse_args(self, argv):
-        # Parse the command line arguments.
-        try:
-            opts, self.args = getopt.getopt(
-                argv,
-                "cdD:eI:n:o:rs:p:PUvw:xz",
-                [
-                    "check",
-                    "check-fail-msg=",
-                    "diff",
-                    "markers=",
-                    "verbosity=",
-                ],
-            )
-        except getopt.error as msg:
-            raise CogUsageError(msg)
-
-        # Handle the command line arguments.
-        for o, a in opts:
-            if o == "-c":
-                self.hash_output = True
-            elif o == "-d":
-                self.delete_code = True
-            elif o == "-D":
-                if a.count("=") < 1:
-                    raise CogUsageError("-D takes a name=value argument")
-                name, value = a.split("=", 1)
-                self.defines[name] = value
-            elif o == "-e":
-                self.warn_empty = True
-            elif o == "-I":
-                self.add_to_include_path(os.path.abspath(a))
-            elif o == "-n":
-                self.encoding = a
-            elif o == "-o":
-                self.output_name = a
-            elif o == "-r":
-                self.replace = True
-            elif o == "-s":
-                self.suffix = a
-            elif o == "-p":
-                self.prologue = a
-            elif o == "-P":
-                self.print_output = True
-            elif o == "-U":
-                self.newlines = True
-            elif o == "-v":
-                self.show_version = True
-            elif o == "-w":
-                self.make_writable_cmd = a
-            elif o == "-x":
-                self.no_generate = True
-            elif o == "-z":
-                self.eof_can_be_end = True
-            elif o == "--check":
-                self.check = True
-            elif o == "--check-fail-msg":
-                self.check_fail_msg = a
-            elif o == "--diff":
-                self.diff = True
-            elif o == "--markers":
-                self._parse_markers(a)
-            elif o == "--verbosity":
-                self.verbosity = int(a)
-            else:
-                # Since getopt.getopt is given a list of possible flags,
-                # this is an internal error.
-                raise CogInternalError(f"Don't understand argument {o}")
-
-    def _parse_markers(self, val):
-        try:
-            self.begin_spec, self.end_spec, self.end_output = val.split(" ")
-        except ValueError:
-            raise CogUsageError(
-                f"--markers requires 3 values separated by spaces, could not parse {val!r}"
-            )
-
-    def validate(self):
-        """Does nothing if everything is OK, raises CogError's if it's not."""
-        if self.replace and self.delete_code:
-            raise CogUsageError(
-                "Can't use -d with -r (or you would delete all your source!)"
-            )
-
-        if self.replace and self.output_name:
-            raise CogUsageError("Can't use -o with -r (they are opposites)")
-
-        if self.diff and not self.check:
-            raise CogUsageError("Can't use --diff without --check")
-
-
 class Cog(Redirectable):
     """The Cog engine."""
 
@@ -394,8 +175,7 @@ class Cog(Redirectable):
         opts = {}
         mode = "w"
         opts["encoding"] = self.options.encoding
-        if self.options.newlines:
-            opts["newline"] = "\n"
+        opts["newline"] = self.options.newline
         fdir = os.path.dirname(fname)
         if os.path.dirname(fdir) and not os.path.exists(fdir):
             os.makedirs(fdir)
@@ -756,7 +536,6 @@ class Cog(Redirectable):
         self.options = self.options.clone()
 
         self.options.parse_args(args[1:])
-        self.options.validate()
 
         if args[0][0] == "@":
             if self.options.output_name:
@@ -783,11 +562,10 @@ class Cog(Redirectable):
 
         # Provide help if asked for anywhere in the command line.
         if "-?" in argv or "-h" in argv or "--help" in argv:
-            self.prerr(usage, end="")
+            self.prerr(self.options.format_help(), end="")
             return
 
         self.options.parse_args(argv)
-        self.options.validate()
         self._fix_end_output_patterns()
 
         if self.options.show_version:

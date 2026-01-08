@@ -14,9 +14,10 @@ from unittest import TestCase
 
 from .cogapp import Cog, CogOptions, CogGenerator
 from .cogapp import CogError, CogUsageError, CogGeneratedError, CogUserException
-from .cogapp import usage, __version__, main
+from .cogapp import __version__, main
 from .hashhandler import HashHandler
 from .makefiles import make_files
+from .options import Markers, description
 from .whiteutils import reindent_block
 
 
@@ -512,8 +513,7 @@ class CogOptionsTests(TestCase):
         self.assertEqual(o, p)
 
     def test_markers(self):
-        o = CogOptions()
-        o._parse_markers("a b c")
+        o = Markers.from_arg("a b c")
         self.assertEqual("a", o.begin_spec)
         self.assertEqual("b", o.end_spec)
         self.assertEqual("c", o.end_output)
@@ -809,10 +809,10 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         # Return value 2 means usage problem.
         self.assertEqual(self.cog.main(["argv0", "-j"]), 2)
         output = self.output.getvalue()
-        self.assertIn("option -j not recognized", output)
+        self.assertIn("unrecognized arguments: -j", output)
         with self.assertRaisesRegex(CogUsageError, r"^No files to process$"):
             self.cog.callable_main(["argv0"])
-        with self.assertRaisesRegex(CogUsageError, r"^option -j not recognized$"):
+        with self.assertRaisesRegex(CogUsageError, r"^unrecognized arguments: -j$"):
             self.cog.callable_main(["argv0", "-j"])
 
     def test_no_dash_o_and_at_file(self):
@@ -840,7 +840,8 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         self.new_cog()
         argv = ["argv0"] + args.split()
         self.assertEqual(self.cog.main(argv), 0)
-        self.assertEqual(usage, self.output.getvalue())
+        output = self.output.getvalue()
+        self.assertRegex(output, f"^{re.escape(description)}.*")
 
     def test_dash_h(self):
         # -h, --help, or -? anywhere on the command line should just print help.
@@ -897,20 +898,24 @@ class ArgumentHandlingTests(TestCaseWithTempDir):
         self.assertFilesSame("test.cog", "test.out")
 
     def test_bad_dash_d(self):
-        with self.assertRaisesRegex(CogUsageError, r"^-D takes a name=value argument$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^argument -D: takes a name=value argument$"
+        ):
             self.cog.callable_main(["argv0", "-Dfooey", "cog.txt"])
-        with self.assertRaisesRegex(CogUsageError, r"^-D takes a name=value argument$"):
+        with self.assertRaisesRegex(
+            CogUsageError, r"^argument -D: takes a name=value argument$"
+        ):
             self.cog.callable_main(["argv0", "-D", "fooey", "cog.txt"])
 
     def test_bad_markers(self):
         with self.assertRaisesRegex(
             CogUsageError,
-            r"^--markers requires 3 values separated by spaces, could not parse 'X'$",
+            r"^argument --markers: requires 3 values separated by spaces, could not parse 'X'$",
         ):
             self.cog.callable_main(["argv0", "--markers=X"])
         with self.assertRaisesRegex(
             CogUsageError,
-            r"^--markers requires 3 values separated by spaces, could not parse 'A B C D'$",
+            r"^argument --markers: requires 3 values separated by spaces, could not parse 'A B C D'$",
         ):
             self.cog.callable_main(["argv0", "--markers=A B C D"])
 
@@ -933,7 +938,7 @@ class TestMain(TestCaseWithTempDir):
         ret = main()
         self.assertEqual(ret, 2)
         stderr = sys.stderr.getvalue()
-        self.assertEqual(stderr, "option -Z not recognized\n(for help use --help)\n")
+        self.assertEqual(stderr, "unrecognized arguments: -Z\n(for help use --help)\n")
 
     files = {
         "test.cog": """\
