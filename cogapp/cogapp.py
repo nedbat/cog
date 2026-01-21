@@ -233,12 +233,6 @@ class Cog(Redirectable):
             while line:
                 # Find the next spec begin
                 while line and not self.is_begin_spec_line(line):
-                    if self.is_end_spec_line(line):
-                        raise CogError(
-                            f"Unexpected {self.options.end_spec!r}",
-                            file=file_name_in,
-                            line=file_in.linenumber(),
-                        )
                     if self.is_end_output_line(line):
                         raise CogError(
                             f"Unexpected {self.options.end_output!r}",
