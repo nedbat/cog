@@ -467,6 +467,35 @@ class CogTestsInMemory(TestCase):
         infile = reindent_block(infile)
         self.assertEqual(Cog().process_string(infile), reindent_block(outfile))
 
+    def test_unrelated_triple_closing_brackets(self):
+        # Python code with accurate type annotations may have triple closing brackets.
+        # The Python code may be embedded in other files with cog usage,
+        # such as RST files or GitHub workflows. Cog must not error on this input.
+        # The example below is a fully-valid, executable GitHub workflow.
+        infile = """\
+            on:
+              push:
+            jobs:
+              demo:
+                runs-on: ubuntu-latest
+                steps:
+                  - shell: bash
+                    run: |
+                      # [[[cog cog.outl("echo 'hello'") ]]]
+                      echo 'hello'
+                      # [[[end]]]
+                  - shell: python
+                    run: |
+                      def demo() -> tuple[tuple[tuple[str]]]:
+                          # This is what's being tested  ^^^
+                          #
+                          return ((("hello world",),),)
+                      print(demo()[0][0][0])
+        """
+
+        infile = reindent_block(infile)
+        self.assertEqual(Cog().process_string(infile), infile)
+
 
 class CogOptionsTests(TestCase):
     """Test the CogOptions class."""
@@ -561,21 +590,6 @@ class FileStructureTests(TestCase):
             #]]]
             """
         self.is_bad(infile2, "infile.txt(5): Unexpected '[[[cog'")
-
-    def test_start_with_end(self):
-        infile = """\
-            #]]]
-            """
-        self.is_bad(infile, "infile.txt(1): Unexpected ']]]'")
-
-        infile2 = """\
-            #[[[cog
-                cog.outl('hello')
-            #]]]
-            #[[[end]]]
-            #]]]
-            """
-        self.is_bad(infile2, "infile.txt(5): Unexpected ']]]'")
 
     def test_start_with_eoo(self):
         infile = """\

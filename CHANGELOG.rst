@@ -23,6 +23,8 @@ Unreleased
 
 - Dropped support for Python 3.9.
 
+- Stopped raising exceptions on unexpected ``]]]`` characters.
+
 
 3.6.0 – September 21 2025
 -------------------------
