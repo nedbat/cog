@@ -23,7 +23,11 @@ Unreleased
 
 - Dropped support for Python 3.9.
 
-- Stopped raising exceptions on unexpected ``]]]`` characters.
+- Stopped raising exceptions on unexpected ``]]]`` characters, closing `issue
+  52`_, thanks to `Kurt McKee <pull 69_>`_.
+
+.. _issue 52: https://github.com/nedbat/cog/issues/52
+.. _pull 69: https://github.com/nedbat/cog/pull/69
 
 
 3.6.0 – September 21 2025
