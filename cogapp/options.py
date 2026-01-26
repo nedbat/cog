@@ -3,7 +3,7 @@ import copy
 import os
 from dataclasses import dataclass, field
 from textwrap import dedent
-from typing import ClassVar, Dict, List, NoReturn, Optional
+from typing import ClassVar, NoReturn
 
 from .errors import CogUsageError
 
@@ -64,7 +64,7 @@ class CogOptions:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    args: List[str] = field(default_factory=list)
+    args: list[str] = field(default_factory=list)
     _parser.add_argument(
         "args",
         metavar="[INFILE | @FILELIST | &FILELIST]",
@@ -95,7 +95,7 @@ class CogOptions:
         help="Delete the Python code from the output file.",
     )
 
-    defines: Dict[str, str] = field(default_factory=dict)
+    defines: dict[str, str] = field(default_factory=dict)
     _parser.add_argument(
         "-D",
         dest="defines",
@@ -113,7 +113,7 @@ class CogOptions:
         help="Warn if a file has no cog code in it.",
     )
 
-    include_path: List[str] = field(default_factory=list)
+    include_path: list[str] = field(default_factory=list)
     _parser.add_argument(
         "-I",
         dest="include_path",
@@ -131,7 +131,7 @@ class CogOptions:
         help="Use ENCODING when reading and writing files.",
     )
 
-    output_name: Optional[str] = None
+    output_name: str | None = None
     _parser.add_argument(
         "-o",
         dest="output_name",
@@ -165,7 +165,7 @@ class CogOptions:
         help="Replace the input file with the output.",
     )
 
-    suffix: Optional[str] = None
+    suffix: str | None = None
     _parser.add_argument(
         "-s",
         dest="suffix",
@@ -182,7 +182,7 @@ class CogOptions:
         help="Write the output with Unix newlines (only LF line-endings).",
     )
 
-    make_writable_cmd: Optional[str] = None
+    make_writable_cmd: str | None = None
     _parser.add_argument(
         "-w",
         dest="make_writable_cmd",
@@ -275,7 +275,7 @@ class CogOptions:
         """Get help text for command line options"""
         return self._parser.format_help()
 
-    def parse_args(self, argv: List[str]):
+    def parse_args(self, argv: list[str]):
         try:
             self._parser.parse_args(argv, namespace=self)
         except argparse.ArgumentError as err:
