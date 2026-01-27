@@ -1,35 +1,15 @@
 # Makefile for cog work.
 
-# A command to get the current version from cogapp.py
-VERSION := $$(python -c "import cogapp.cogapp; print(cogapp.cogapp.__version__)")
+.DEFAULT_GOAL := help
 
-.PHONY: help clean sterile test
+### Testing
 
-help:			## Show this help.
-	@echo "Available targets:"
-	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | sort | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
+.PHONY: test
 
-clean:			## Remove artifacts of test execution, installation, etc.
-	-rm -rf build
-	-rm -rf dist
-	-rm -f MANIFEST
-	-rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
-	-rm -f *.pyo */*.pyo */*/*.pyo */*/*/*.pyo
-	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
-	-rm -rf __pycache__ */__pycache__ */*/__pycache__
-	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
-	-rm -f .coverage .coverage.* coverage.xml
-	-rm -rf cogapp.egg-info htmlcov
-	-rm -rf docs/_build
-
-sterile: clean		## Remove all non-controlled content.
-	-rm -rf .tox*
-	-rm -rf .*_cache
-
-test:			## Run the test suite.
+test:			#- Run the test suite.
 	tox -q
 
-# Docs
+### Docs
 
 .PHONY: cogdoc lintdoc dochtml
 
@@ -37,38 +17,43 @@ test:			## Run the test suite.
 # quoting/escaping would be impossible.
 COGARGS = -cP --markers='{{{cog }}} {{{end}}}' docs/running.rst
 
-cogdoc:			## Run cog to keep the docs correct.
+cogdoc:			#- Run cog to keep the docs correct.
 	python -m cogapp -r $(COGARGS)
 
-lintdoc:		## Check that the docs are up-to-date.
+lintdoc:		#- Check that the docs are up-to-date.
 	@python -m cogapp --check --check-fail-msg='Docs need to be updated: `make cogdoc`' --diff $(COGARGS)
 
-dochtml:		## Build local docs.
+dochtml:		#- Build local docs.
 	$(MAKE) -C docs html
 
-# Release
+### Release
 
-.PHONY: dist pypi testpypi tag release check_release _check_credentials _check_manifest _check_tree _check_version
+.PHONY: check_release release dist pypi testpypi tag
 
-dist:			## Build distribution artifacts.
+# A command to get the current version from cogapp.py
+VERSION := $$(python -c "import cogapp.cogapp; print(cogapp.cogapp.__version__)")
+
+check_release: clean dist _check_manifest _check_tree _check_version #- Check that we are ready for a release.
+	@echo "Release checks passed"
+
+release: _check_credentials clean check_release dist pypi tag #- Do all the steps for a release.
+	@echo "Release $(VERSION) complete!"
+
+dist:			#- Build distribution artifacts (part of release).
 	python -m build
 	twine check dist/*
 
-pypi:			## Upload distributions to PyPI.
+pypi:			#- Upload distributions to PyPI (part of release).
 	twine upload --verbose dist/*
 
-testpypi:		## Upload distributions to test PyPI
-	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
-
-tag:			## Make a git tag with the version number
+tag:			#- Make a git tag with the version number (part of release).
 	git tag -s -m "Version $(VERSION)" v$(VERSION)
 	git push --all
 
-release: _check_credentials clean check_release dist pypi tag ## Do all the steps for a release
-	@echo "Release $(VERSION) complete!"
+testpypi:		#- Upload distributions to test PyPI.
+	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
 
-check_release: clean dist _check_manifest _check_tree _check_version ## Check that we are ready for a release
-	@echo "Release checks passed"
+.PHONY: _check_credentials _check_manifest _check_tree _check_version
 
 _check_credentials:
 	@if [[ -z "$$TWINE_PASSWORD" ]]; then \
@@ -90,3 +75,32 @@ _check_version:
 		echo 'A git tag for this version exists! Did you forget to bump the version?'; \
 		exit 1; \
 	fi
+
+### Utilities
+
+.PHONY: help clean sterile
+
+help:			#- Show this help.
+	@# Adapted from https://www.thapaliya.com/en/writings/well-documented-makefiles/
+	@# Markdown-inspired syntax is used in comments to print help.
+	@# Lines starting with '###' are section headers.
+	@# Targets with bullet-like '#- ' comments are shown.
+	@echo Available targets:
+	@awk -F ':.*#-' '/^[^: ]+:.*#-/{printf "  \033[1m%-20s\033[m %s\n",$$1,$$2} /^###/{printf "\n%s\n",substr($$0,5)}' $(MAKEFILE_LIST)
+
+clean:			#- Remove artifacts of test execution, installation, etc.
+	-rm -rf build
+	-rm -rf dist
+	-rm -f MANIFEST
+	-rm -f *.pyc */*.pyc */*/*.pyc */*/*/*.pyc
+	-rm -f *.pyo */*.pyo */*/*.pyo */*/*/*.pyo
+	-rm -f *$$py.class */*$$py.class */*/*$$py.class */*/*/*$$py.class
+	-rm -rf __pycache__ */__pycache__ */*/__pycache__
+	-rm -f *.bak */*.bak */*/*.bak */*/*/*.bak
+	-rm -f .coverage .coverage.* coverage.xml
+	-rm -rf cogapp.egg-info htmlcov
+	-rm -rf docs/_build
+
+sterile: clean		#- Remove all non-controlled content.
+	-rm -rf .tox*
+	-rm -rf .*_cache
