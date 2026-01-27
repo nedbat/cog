@@ -46,7 +46,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          python -m pip install -r requirements.pip
+          python -m pip install -r dev-requirements.txt
 
       - name: "Check the docs are up-to-date"
         run: |
@@ -88,7 +88,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          python -m pip install -r requirements.pip
+          python -m pip install -r dev-requirements.txt
 
       - name: "Run tox for ${{ matrix.python }}"
         run: |
@@ -121,7 +121,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          python -m pip install -r requirements.pip
+          python -m pip install -r dev-requirements.txt
 
       - name: "Download coverage data"
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0

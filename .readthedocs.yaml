@@ -17,6 +17,6 @@ formats: all
 
 python:
   install:
-    - requirements: requirements.pip
+    - requirements: dev-requirements.txt
     - method: pip
       path: .

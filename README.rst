@@ -17,7 +17,7 @@ Code repository and issue tracker are at
 
 To run the tests::
 
-    $ pip install -r requirements.pip
+    $ pip install -r dev-requirements.txt
     $ tox
 
 

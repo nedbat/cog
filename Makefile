@@ -2,12 +2,26 @@
 
 .DEFAULT_GOAL := help
 
-### Testing
+### Development
 
-.PHONY: test
+.PHONY: venv install test
+
+venv: .venv		#- Create a development virtualenv.
+.venv:
+	uv venv --python=3.10 --prompt=cog
+
+install: venv		#- Install the development tools.
+	uv pip sync dev-requirements.txt
 
 test:			#- Run the test suite.
 	tox -q
+
+# Limit to packages that were released more than 10 days ago.
+# https://blog.yossarian.net/2025/11/21/We-should-all-be-using-dependency-cooldowns
+upgrade: export UV_CUSTOM_COMPILE_COMMAND=make upgrade
+upgrade: export UV_EXCLUDE_NEWER=P10D
+upgrade: venv		#- Upgrade development tool pins.
+	uv pip compile -q --universal --upgrade -o dev-requirements.txt dev-requirements.in
 
 ### Docs
 
