@@ -27,7 +27,7 @@ colorama==0.4.6
     #   build
     #   sphinx
     #   tox
-coverage==7.13.2
+coverage==7.13.4
     # via -r dev-requirements.in
 cryptography==46.0.4 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
     # via secretstorage
