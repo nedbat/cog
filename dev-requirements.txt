@@ -10,7 +10,7 @@ build==1.4.0
     # via
     #   -r dev-requirements.in
     #   check-manifest
-cachetools==6.2.4
+cachetools==6.2.6
     # via tox
 certifi==2026.1.4
     # via requests
@@ -27,9 +27,9 @@ colorama==0.4.6
     #   build
     #   sphinx
     #   tox
-coverage==7.13.1
+coverage==7.13.2
     # via -r dev-requirements.in
-cryptography==46.0.3 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
+cryptography==46.0.4 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
     # via secretstorage
 distlib==0.4.0
     # via virtualenv
@@ -81,7 +81,7 @@ more-itertools==10.8.0 ; platform_machine != 'ppc64le' and platform_machine != '
     #   jaraco-functools
 nh3==0.3.2
     # via readme-renderer
-packaging==25.0
+packaging==26.0
     # via
     #   build
     #   pyproject-api
@@ -94,7 +94,7 @@ platformdirs==4.5.1
     #   virtualenv
 pluggy==1.6.0
     # via tox
-pycparser==2.23 ; implementation_name != 'PyPy' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
+pycparser==3.0 ; implementation_name != 'PyPy' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
     # via cffi
 pygments==2.19.2
     # via
@@ -119,13 +119,13 @@ requests-toolbelt==1.0.0
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==14.2.0
+rich==14.3.1
     # via twine
 roman-numerals==4.1.0 ; python_full_version >= '3.11'
     # via sphinx
 secretstorage==3.5.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
     # via keyring
-setuptools==80.9.0
+setuptools==80.10.2
     # via check-manifest
 snowballstemmer==3.0.1
     # via sphinx
