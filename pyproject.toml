@@ -43,3 +43,6 @@ version.attr = "cogapp.cogapp.__version__"
 [build-system]
 requires = ["setuptools>=80"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest-gremlins]
+paths = ["cogapp"]

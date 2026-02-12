@@ -2,6 +2,9 @@
 
 from unittest import TestCase
 
+import hypothesis
+import hypothesis.strategies as st
+
 from .whiteutils import common_prefix, reindent_block, white_prefix
 
 
@@ -94,3 +97,13 @@ class CommonPrefixTests(TestCase):
 
     def test_decreasing_lengths(self):
         self.assertEqual(common_prefix(["abcd", "abc", "ab"]), "ab")
+
+
+@hypothesis.given(st.lists(st.text(max_size=100), max_size=50))
+# @hypothesis.settings(max_examples=1_000_000)
+def test_common_prefix(strings):
+    """Test that common_prefix returns a prefix of all the strings."""
+    prefix = common_prefix(strings)
+    assert all(s.startswith(prefix) for s in strings)
+    if len(set(strings)) > 1:
+        assert len(set(s[: len(prefix) + 1] for s in strings)) > 1
