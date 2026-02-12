@@ -167,7 +167,7 @@ class Cog(Redirectable):
         Imported Python modules can use "import cog" to get our state.
 
         """
-        self.cogmodule = types.SimpleNamespace()
+        self.cogmodule = types.ModuleType("cog", doc="Auto-generated module for cog")
         self.cogmodule.path = []
 
     def open_output_file(self, fname):
