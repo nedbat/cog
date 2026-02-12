@@ -17,5 +17,6 @@ setuptools-*.egg
 cogapp.egg-info
 .tox
 .*cache
+.hypothesis/
 
 docs/_build
