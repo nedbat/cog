@@ -278,10 +278,10 @@ Miscellaneous
 The ``-n`` option lets you tell cog what encoding to use when reading and
 writing files.
 
-The ``--verbose`` option lets you control how much cog should chatter about the
-files it is cogging.  ``--verbose=2`` is the default: cog will name every file
-it considers, and whether it has changed.  ``--verbose=1`` will only name the
-changed files. ``--verbose=0`` won't mention any files at all.
+The ``--verbosity`` option lets you control how much cog should chatter about the
+files it is cogging.  ``--verbosity=2`` is the default: cog will name every file
+it considers, and whether it has changed.  ``--verbosity=1`` will only name the
+changed files. ``--verbosity=0`` won't mention any files at all.
 
 The ``--markers`` option lets you control the syntax of the marker lines.  The
 value must be a string with two spaces in it.  The three markers are the three
