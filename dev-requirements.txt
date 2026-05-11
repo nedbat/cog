@@ -148,7 +148,7 @@ typing-extensions==4.15.0
     #   cryptography
     #   tox
     #   virtualenv
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   requests
     #   twine
