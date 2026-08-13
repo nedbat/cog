@@ -256,6 +256,30 @@ class CogTestsInMemory(TestCase):
         infile = reindent_block(infile)
         self.assertEqual(Cog().process_string(infile), infile)
 
+    def test_markers_overlapping_prefix(self):
+        infile = """\
+            // cog-begin
+            // cog.outl('lorem ipsum')
+            // cog-middle
+            // cog-end
+            """
+
+        outfile = """\
+            // cog-begin
+            // cog.outl('lorem ipsum')
+            // cog-middle
+            lorem ipsum
+            // cog-end
+            """
+
+        infile = reindent_block(infile)
+        outfile = reindent_block(outfile)
+        cog = Cog()
+        cog.options.begin_spec = "cog-begin"
+        cog.options.end_spec = "cog-middle"
+        cog.options.end_output = "cog-end"
+        self.assertEqual(cog.process_string(infile), outfile)
+
     def test_bogus_prefix_match(self):
         infile = """\
             prologue
