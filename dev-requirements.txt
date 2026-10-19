@@ -2,105 +2,119 @@
 #    make upgrade
 alabaster==1.0.0
     # via sphinx
-babel==2.17.0
+babel==2.18.0
     # via sphinx
-backports-tarfile==1.2.0
+backports-tarfile==1.2.0 ; python_full_version < '3.12' and platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via jaraco-context
-build==1.4.0
+build==1.6.1
     # via
     #   -r dev-requirements.in
     #   check-manifest
-cachetools==6.2.6
+cachetools==7.2.1
     # via tox
-certifi==2026.1.4
+certifi==2026.7.22
     # via requests
-cffi==2.0.0
+cffi==2.1.1 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
     # via cryptography
-chardet==5.2.0
-    # via tox
-charset-normalizer==3.4.4
+charset-normalizer==3.5.2
     # via requests
 check-manifest==0.51
     # via -r dev-requirements.in
 colorama==0.4.6
-    # via tox
-coverage==7.13.4
+    # via
+    #   build
+    #   sphinx
+    #   tox
+coverage==7.16.2
     # via -r dev-requirements.in
-cryptography==50.0.0
+cryptography==50.0.2 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
     # via secretstorage
-distlib==0.4.0
+distlib==0.4.3
     # via virtualenv
-docutils==0.21.2
+docutils==0.21.2 ; python_full_version < '3.11'
     # via
     #   readme-renderer
     #   sphinx
-filelock==3.20.3
+docutils==0.22.4 ; python_full_version >= '3.11'
     # via
+    #   readme-renderer
+    #   sphinx
+filelock==4.0.12
+    # via
+    #   python-discovery
     #   tox
     #   virtualenv
-id==1.5.0
+id==1.6.1
     # via twine
-idna==3.15
+idna==3.20
     # via requests
-imagesize==1.4.1
+imagesize==2.0.1
     # via sphinx
-importlib-metadata==8.7.1
+importlib-metadata==9.0.1 ; (python_full_version < '3.10.2' and platform_machine == 'ppc64le') or (python_full_version < '3.10.2' and platform_machine == 's390x') or (python_full_version < '3.12' and platform_machine != 'ppc64le' and platform_machine != 's390x')
+    # via
+    #   build
+    #   keyring
+jaraco-classes==3.4.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via keyring
-jaraco-classes==3.4.0
+jaraco-context==6.1.2 ; platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via keyring
-jaraco-context==6.1.0
+jaraco-functools==4.6.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via keyring
-jaraco-functools==4.4.0
-    # via keyring
-jeepney==0.9.0
+jeepney==0.9.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
     # via
     #   keyring
     #   secretstorage
 jinja2==3.1.6
     # via sphinx
-keyring==25.7.0
+keyring==25.7.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via twine
-markdown-it-py==4.0.0
+markdown-it-py==4.2.0
     # via rich
-markupsafe==3.0.3
+markupsafe==3.0.4
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
-more-itertools==10.8.0
+more-itertools==11.1.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x'
     # via
     #   jaraco-classes
     #   jaraco-functools
-nh3==0.3.2
+nh3==0.3.7
     # via readme-renderer
-packaging==26.0
+packaging==26.3
     # via
     #   build
     #   pyproject-api
     #   sphinx
     #   tox
     #   twine
-platformdirs==4.5.1
+    #   virtualenv
+platformdirs==4.12.4
     # via
     #   tox
     #   virtualenv
 pluggy==1.6.0
     # via tox
-pycparser==3.0
+pycparser==3.1 ; implementation_name != 'PyPy' and platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
     # via cffi
-pygments==2.20.0
+pygments==2.21.0
     # via
     #   readme-renderer
     #   rich
     #   sphinx
-pyproject-api==1.10.0
+pyproject-api==1.11.4
     # via tox
-pyproject-hooks==1.2.0
+pyproject-hooks==1.3.3
     # via build
-readme-renderer==44.0
-    # via twine
-requests==2.33.0
+python-discovery==1.6.1
     # via
-    #   id
+    #   tox
+    #   virtualenv
+pywin32-ctypes==0.2.3 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'win32'
+    # via keyring
+readme-renderer==46.0
+    # via twine
+requests==2.34.2
+    # via
     #   requests-toolbelt
     #   sphinx
     #   twine
@@ -108,13 +122,21 @@ requests-toolbelt==1.0.0
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==14.3.1
+rich==15.0.0
     # via twine
-secretstorage==3.5.0
-    # via keyring
-snowballstemmer==3.0.1
+roman-numerals==4.1.0 ; python_full_version >= '3.11'
     # via sphinx
-sphinx==8.1.3
+secretstorage==3.5.0 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and sys_platform == 'linux'
+    # via keyring
+setuptools==84.0.0
+    # via check-manifest
+snowballstemmer==3.1.1
+    # via sphinx
+sphinx==8.1.3 ; python_full_version < '3.11'
+    # via -r dev-requirements.in
+sphinx==9.0.4 ; python_full_version == '3.11.*'
+    # via -r dev-requirements.in
+sphinx==9.1.0 ; python_full_version >= '3.12'
     # via -r dev-requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
@@ -128,31 +150,35 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-tomli==2.4.0
+tomli==2.5.0 ; python_full_version < '3.11'
     # via
     #   build
     #   check-manifest
     #   pyproject-api
     #   sphinx
     #   tox
-tox==4.34.1
+tomli-w==1.2.0
+    # via tox
+tox==4.64.10
     # via
     #   -r dev-requirements.in
     #   tox-gh
-tox-gh==1.6.1
+tox-gh==1.8.0
     # via -r dev-requirements.in
-twine==6.2.0
+twine==7.0.0
     # via -r dev-requirements.in
-typing-extensions==4.15.0
+typing-extensions==4.16.0 ; python_full_version < '3.13'
     # via
     #   cryptography
     #   tox
+    #   tox-gh
     #   virtualenv
-urllib3==2.7.0
+urllib3==2.8.0
     # via
+    #   id
     #   requests
     #   twine
-virtualenv==20.36.1
+virtualenv==21.14.6
     # via tox
-zipp==3.23.0
+zipp==4.1.1 ; (python_full_version < '3.10.2' and platform_machine == 'ppc64le') or (python_full_version < '3.10.2' and platform_machine == 's390x') or (python_full_version < '3.12' and platform_machine != 'ppc64le' and platform_machine != 's390x')
     # via importlib-metadata
