@@ -2541,6 +2541,42 @@ class ChecksumTests(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "cog1.txt"])
         self.assertFilesSame("cog1.txt", "cog1.out")
 
+    def test_excise_removes_checksum(self):
+        # https://github.com/nedbat/cog/issues/94
+        d = {
+            "cog1.txt": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                This line was generated.
+                //[[[end]]] (sum: itsT+1m5lq) what
+                This line was not.
+                """,
+            "cog1.out": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                //[[[end]]] what
+                This line was not.
+                """,
+            "cog1.out2": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                This line was generated.
+                //[[[end]]] (sum: itsT+1m5lq) what
+                This line was not.
+                """,
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-x", "-r", "-c", "cog1.txt"])
+        self.assertFilesSame("cog1.txt", "cog1.out")
+        self.new_cog()
+        # Regenerating gives one checksum, not "(sum: ...) (sum: )".
+        self.cog.callable_main(["argv0", "-r", "-c", "cog1.txt"])
+        self.assertFilesSame("cog1.txt", "cog1.out2")
+
     def test_tampered_checksum_output(self):
         d = {
             "cog1.txt": """\
