@@ -233,6 +233,24 @@ output if ``--check`` fails.  This can be used to give instructions about how
 to run cog in your project to fix the problem.
 
 
+Generated files on GitHub
+-------------------------
+
+If you host your project on GitHub and some of your files are produced entirely
+by cog (for example with the ``-o`` option), you can keep them from cluttering
+pull request diffs by marking them as generated in a ``.gitattributes`` file:
+
+.. code-block:: text
+
+    generated/*.txt linguist-generated=true
+
+GitHub collapses the diffs of those files by default, and leaves them out of
+the language statistics.  See `Customizing how changed files appear on GitHub
+<https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github>`_
+for details.  This only works for whole files: cog output that sits inside a
+hand-written file can't be marked this way.
+
+
 Output line suffixes
 --------------------
 
