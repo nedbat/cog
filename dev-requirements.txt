@@ -12,7 +12,7 @@ build==1.6.1
     #   check-manifest
 cachetools==7.2.1
     # via tox
-certifi==2026.7.22
+certifi==2026.10.19
     # via requests
 cffi==2.1.1
     # via cryptography
