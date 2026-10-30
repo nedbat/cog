@@ -2513,6 +2513,41 @@ class ChecksumTests(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "-c", "cog1.txt"])
         self.assertFilesSame("cog1.txt", "cog1.out")
 
+    def test_excise_with_checksum_removes_hash(self):
+        # -x -c must drop the checksum entirely, not leave an empty (sum: ).
+        d = {
+            "cog1.txt": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                This line was generated.
+                //[[[end]]] (sum: itsT+1m5lq)
+                This line was not.
+                """,
+            "cog1.out": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                //[[[end]]]
+                This line was not.
+                """,
+            "cog1.out2": """\
+                //[[[cog
+                cog.outl("This line was generated.")
+                //]]]
+                This line was generated.
+                //[[[end]]] (sum: itsT+1m5lq)
+                This line was not.
+                """,
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-r", "-x", "-c", "cog1.txt"])
+        self.assertFilesSame("cog1.txt", "cog1.out")
+        self.new_cog()
+        self.cog.callable_main(["argv0", "-r", "-c", "cog1.txt"])
+        self.assertFilesSame("cog1.txt", "cog1.out2")
+
     def test_remove_checksum_output(self):
         d = {
             "cog1.txt": """\
