@@ -21,7 +21,7 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
-- Dropped support for Python 3.9.
+- Dropped support for Python 3.9 and 3.10, added 3.15
 
 - Fix: ``cog -x -c`` now removes checksums instead of leaving an empty
   ``(sum: )``, closing `issue 94`_.

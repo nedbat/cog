@@ -98,7 +98,7 @@ is treated as C++ code.
 Installation
 ============
 
-Cog requires Python 3.10 or higher.
+Cog requires Python 3.11 or higher.
 
 Cog is installed in the usual way, except the installation name is "cogapp",
 not "cog":

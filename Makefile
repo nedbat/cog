@@ -8,7 +8,7 @@
 
 venv: .venv		#- Create a development virtualenv.
 .venv:
-	uv venv --python=3.10 --prompt=cog
+	uv venv --python=3.11 --prompt=cog
 
 install: venv		#- Install the development tools.
 	uv pip sync dev-requirements.txt
