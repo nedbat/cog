@@ -245,10 +245,11 @@ pull request diffs by marking them as generated in a ``.gitattributes`` file:
     generated/*.txt linguist-generated=true
 
 GitHub collapses the diffs of those files by default, and leaves them out of
-the language statistics.  See `Customizing how changed files appear on GitHub
-<https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github>`_
-for details.  This only works for whole files: cog output that sits inside a
-hand-written file can't be marked this way.
+the language statistics.  See `Customizing how changed files appear on
+GitHub`__ for details.  This only works for whole files: cog output that sits
+inside a hand-written file can't be marked this way.
+
+__ https://docs.github.com/en/repositories/working-with-files/managing-files/customizing-how-changed-files-appear-on-github
 
 
 Output line suffixes
