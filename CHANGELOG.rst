@@ -21,8 +21,12 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- ``cog -x -c`` now removes the checksum instead of leaving an empty
+  ``(sum: )``, closing `issue 94`_.
+
 - Dropped support for Python 3.9.
 
+.. _issue 94: https://github.com/nedbat/cog/issues/94
 - Documented how to use ``linguist-generated=true`` to collapse cog-generated
   files in GitHub diffs, closing `issue 53`_.
 

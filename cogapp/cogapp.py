@@ -359,7 +359,7 @@ class Cog(Redirectable):
                     line = self.hash_handler.format_end_line_with_hash(
                         line,
                         new_hash,
-                        add_hash=True,
+                        add_hash=not self.options.no_generate,
                         preserve_format=self.options.check,
                     )
                 else:
