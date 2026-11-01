@@ -21,21 +21,21 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
-- ``cog -x -c`` now removes the checksum instead of leaving an empty
-  ``(sum: )``, closing `issue 94`_.
-
 - Dropped support for Python 3.9.
 
-.. _issue 94: https://github.com/nedbat/cog/issues/94
+- Fix: ``cog -x -c`` now removes checksums instead of leaving an empty
+  ``(sum: )``, closing `issue 94`_.
+
+- Fix: stopped raising exceptions on unexpected ``]]]`` characters, closing
+  `issue 52`_, thanks to `Kurt McKee <pull 69_>`_.
+
 - Documented how to use ``linguist-generated=true`` to collapse cog-generated
   files in GitHub diffs, closing `issue 53`_.
-
-- Stopped raising exceptions on unexpected ``]]]`` characters, closing `issue
-  52`_, thanks to `Kurt McKee <pull 69_>`_.
 
 .. _issue 53: https://github.com/nedbat/cog/issues/53
 .. _issue 52: https://github.com/nedbat/cog/issues/52
 .. _pull 69: https://github.com/nedbat/cog/pull/69
+.. _issue 94: https://github.com/nedbat/cog/issues/94
 
 
 3.6.0 – September 21 2025

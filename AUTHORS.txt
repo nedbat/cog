@@ -4,6 +4,7 @@ Contributions have been made by:
 
 Alexander Belchenko
 Anders Hovmöller
+Anshul Singh
 Blake Winton
 Daniel Murdin
 Doug Hellmann
