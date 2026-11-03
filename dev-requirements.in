@@ -5,3 +5,4 @@ Sphinx
 tox
 tox-gh
 twine
+pytest-cov
