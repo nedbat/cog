@@ -24,6 +24,7 @@ colorama==0.4.6
     # via tox
 coverage==7.17.1
     # via -r dev-requirements.in
+pytest-cov
 cryptography==50.0.2
     # via secretstorage
 distlib==0.4.4
