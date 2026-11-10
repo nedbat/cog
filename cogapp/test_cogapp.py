@@ -1395,6 +1395,31 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-r", "&code/files_to_cog"])
         self.assertFilesSame("code/test.cog", "code/test.out")
 
+    def test_amp_file_in_current_dir(self):
+        d = {
+            "files_to_cog": """\
+                # A locally resolved file name.
+                test.cog
+                """,
+            "test.cog": """\
+                //[[[cog
+                    cog.outl("Hello from test")
+                //]]]
+                //[[[end]]]
+                """,
+            "test.out": """\
+                //[[[cog
+                    cog.outl("Hello from test")
+                //]]]
+                Hello from test
+                //[[[end]]]
+                """,
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-r", "&files_to_cog"])
+        self.assertFilesSame("test.cog", "test.out")
+
     def run_with_verbosity(self, verbosity):
         d = {
             "unchanged.cog": """\

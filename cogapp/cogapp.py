@@ -539,7 +539,7 @@ class Cog(Redirectable):
             if self.options.output_name:
                 raise CogUsageError("Can't use -o with &file")
             file_list = args[0][1:]
-            with change_dir(os.path.dirname(file_list)):
+            with change_dir(os.path.dirname(file_list) or os.curdir):
                 self.process_file_list(os.path.basename(file_list))
         else:
             self.process_wildcards(args[0])
