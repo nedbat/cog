@@ -37,6 +37,11 @@ Unreleased
 .. _pull 69: https://github.com/nedbat/cog/pull/69
 .. _issue 94: https://github.com/nedbat/cog/issues/94
 
+- Fixed ``-x`` with ``-c`` leaving an empty ``(sum: )`` checksum on the end
+  line, closing `issue 94`_.
+
+.. _issue 94: https://github.com/nedbat/cog/issues/94
+
 
 3.6.0 – September 21 2025
 -------------------------
