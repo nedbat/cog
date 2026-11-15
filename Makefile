@@ -22,6 +22,7 @@ upgrade: export UV_CUSTOM_COMPILE_COMMAND=make upgrade
 upgrade: export UV_EXCLUDE_NEWER=P10D
 upgrade: venv		#- Upgrade development tool pins.
 	uv pip compile -q --universal --upgrade -o dev-requirements.txt dev-requirements.in
+	prek update --cooldown-days 10
 
 ### Docs
 
@@ -42,7 +43,7 @@ dochtml:		#- Build local docs.
 
 ### Release
 
-.PHONY: check_release release dist pypi testpypi tag
+.PHONY: check_release release dist tag
 
 # A command to get the current version from cogapp.py
 VERSION := $$(python -c "import cogapp.cogapp; print(cogapp.cogapp.__version__)")
@@ -50,30 +51,19 @@ VERSION := $$(python -c "import cogapp.cogapp; print(cogapp.cogapp.__version__)"
 check_release: clean dist _check_manifest _check_tree _check_version #- Check that we are ready for a release.
 	@echo "Release checks passed"
 
-release: _check_credentials clean check_release dist pypi tag #- Do all the steps for a release.
-	@echo "Release $(VERSION) complete!"
+release: check_release tag #- Do all the steps for a release.
+	@echo "Pushed v$(VERSION): GitHub will publish it to PyPI"
 
 dist:			#- Build distribution artifacts (part of release).
 	python -m build
 	twine check dist/*
 
-pypi:			#- Upload distributions to PyPI (part of release).
-	twine upload --verbose dist/*
-
+# Pushing the tag triggers the publish workflow.
 tag:			#- Make a git tag with the version number (part of release).
 	git tag -s -m "Version $(VERSION)" v$(VERSION)
-	git push --all
+	git push --all --follow-tags
 
-testpypi:		#- Upload distributions to test PyPI.
-	twine upload --verbose --repository testpypi --password $$TWINE_TEST_PASSWORD dist/*
-
-.PHONY: _check_credentials _check_manifest _check_tree _check_version
-
-_check_credentials:
-	@if [[ -z "$$TWINE_PASSWORD" ]]; then \
-		echo 'Missing TWINE_PASSWORD'; \
-		exit 1; \
-	fi
+.PHONY: _check_manifest _check_tree _check_version
 
 _check_manifest:
 	python -m check_manifest
