@@ -1167,6 +1167,28 @@ class TestFileHandling(TestCaseWithTempDir):
         self.cog.callable_main(["argv0", "-o", "in/a/dir/test.cogged", "test.cog"])
         self.assertFilesSame("in/a/dir/test.cogged", "test.out")
 
+    def test_output_file_in_new_directory(self):
+        # -o creates the output directory, even if it is only one level deep.
+        d = {
+            "test.cog": """\
+                //[[[cog
+                cog.outl("hello world")
+                //]]]
+                //[[[end]]]
+                """,
+            "test.out": """\
+                //[[[cog
+                cog.outl("hello world")
+                //]]]
+                hello world
+                //[[[end]]]
+                """,
+        }
+
+        make_files(d)
+        self.cog.callable_main(["argv0", "-o", "outdir/test.cogged", "test.cog"])
+        self.assertFilesSame("outdir/test.cogged", "test.out")
+
     def test_at_file(self):
         d = {
             "one.cog": """\

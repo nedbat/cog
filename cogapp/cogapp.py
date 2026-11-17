@@ -177,7 +177,7 @@ class Cog(Redirectable):
         opts["encoding"] = self.options.encoding
         opts["newline"] = self.options.newline
         fdir = os.path.dirname(fname)
-        if os.path.dirname(fdir) and not os.path.exists(fdir):
+        if fdir and not os.path.exists(fdir):
             os.makedirs(fdir)
         return open(fname, mode, **opts)
 
