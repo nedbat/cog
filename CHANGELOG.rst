@@ -21,6 +21,14 @@ These are changes to Cog over time.
 Unreleased
 ----------
 
+- Fix: ``-o`` now creates the output directory when it is a single relative
+  directory, like ``-o gen/out.txt``. Previously only deeper paths had their
+  directories created.
+
+
+3.6.1 – November 15 2026
+------------------------
+
 - Dropped support for Python 3.9 and 3.10, added 3.15
 
 - Fix: ``cog -x -c`` now removes checksums instead of leaving an empty
@@ -32,12 +40,8 @@ Unreleased
 - Documented how to use ``linguist-generated=true`` to collapse cog-generated
   files in GitHub diffs, closing `issue 53`_.
 
-- Fix: ``-o`` now creates the output directory when it is a single relative
-  directory, like ``-o gen/out.txt``. Previously only deeper paths had their
-  directories created.
-
-.. _issue 53: https://github.com/nedbat/cog/issues/53
 .. _issue 52: https://github.com/nedbat/cog/issues/52
+.. _issue 53: https://github.com/nedbat/cog/issues/53
 .. _pull 69: https://github.com/nedbat/cog/pull/69
 .. _issue 94: https://github.com/nedbat/cog/issues/94
 
