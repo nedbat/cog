@@ -25,6 +25,10 @@ Unreleased
   directory, like ``-o gen/out.txt``. Previously only deeper paths had their
   directories created.
 
+- Fix: a ``&FILELIST`` in the current directory, like ``cog &files.txt``, no
+  longer fails with an ``OSError``. Previously only file lists given with a
+  directory part were processed.
+
 
 3.6.1 – November 15 2026
 ------------------------
